@@ -1,7 +1,11 @@
 package edu.uoc.tdp.common.util;
 
 
-
+/**
+ * 
+ * @author igomezuoc
+ * TDP 2013
+ */
 public class Nif
 {
 	public static boolean validar (String pnif)
