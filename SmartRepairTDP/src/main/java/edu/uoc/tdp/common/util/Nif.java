@@ -6,7 +6,7 @@ package edu.uoc.tdp.common.util;
  * @author igomezuoc
  * TDP 2013
  * 
- * Descripcion clase nif
+ * Descripcion clase nif 2
  * 
  */
 public class Nif
