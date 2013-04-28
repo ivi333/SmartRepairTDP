@@ -1,13 +1,10 @@
-package edu.uoc.tdp.common.util;
+package edu.uoc.tdp.pac4.common;
 
 
 /**
- * 
- * @author igomezuoc
- * TDP 2013
- * 
- * Descripcion clase nif 2
- * 
+ * Smart Repair 
+ * ETIG - TDP PAC 4 Primavera 2013
+ * Grup: FiveCoreDumped
  */
 public class Nif
 {
