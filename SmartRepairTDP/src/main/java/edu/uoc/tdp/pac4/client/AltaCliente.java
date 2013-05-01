@@ -1,6 +1,7 @@
 package edu.uoc.tdp.pac4.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalExclusionType;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.util.Locale;
@@ -60,6 +61,7 @@ public class AltaCliente extends JFrame {
 				try {
 					AltaCliente frame = new AltaCliente();
 					frame.setVisible(true);
+				
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -75,6 +77,7 @@ public class AltaCliente extends JFrame {
 		seleccionIdioma();
 		initialize();
 		CargarControles();
+		CargarCmbMarca();
 		}
 		catch(Exception ex)
 		{
@@ -90,10 +93,11 @@ public class AltaCliente extends JFrame {
 	}
 	private void CargarControles()
 	{   setTitle(TDSLanguageUtils.getMessage("cliente.new.titulo"));
-		
+
 	    contentPanel = new JPanel();
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPanel);
+		
 		contentPanel.setLayout(null);
 		
 		lblCliente = new JLabel();
@@ -243,5 +247,14 @@ public class AltaCliente extends JFrame {
 		btnCancelar.setBounds(251, 478, 107, 23);
 		contentPanel.add(btnCancelar);
 		
+	}
+	private void CargarCmbMarca()
+	{
+		try{
+			
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
 	}
 }
