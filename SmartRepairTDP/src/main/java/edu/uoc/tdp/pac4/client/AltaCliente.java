@@ -89,7 +89,7 @@ public class AltaCliente extends JFrame {
 		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
 	}
 	private void CargarControles()
-	{   setTitle(TDSLanguageUtils.getMessage("Alta del Cliente"));
+	{   setTitle(TDSLanguageUtils.getMessage("cliente.new.titulo"));
 		
 	    contentPanel = new JPanel();
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
