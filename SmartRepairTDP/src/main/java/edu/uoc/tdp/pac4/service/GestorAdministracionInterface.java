@@ -12,6 +12,8 @@ public interface GestorAdministracionInterface extends Remote{
 	 
 public ArrayList<Peca>getMarcas()throws RemoteException;
 
+public boolean  getExistCliente(String strNIF) throws RemoteException;
+
 public String aux()throws RemoteException;
 }
 

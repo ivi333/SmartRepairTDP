@@ -23,20 +23,22 @@ public class MenuGestionAdmin extends JFrame {
 	private JMenu jMenuAvisos;
 	private JMenu jMenuAlmacen;
 	private JMenuBar jMenuBar1;
-	
+
 	private JMenuItem jMenuItemAltaCliente;
 	private JMenuItem jMenuItemConsulCliente;
-	
+
 	private JMenuItem jMenuItemAltaSol;
 	private JMenuItem jMenuItemConsulSol;
 	private JMenuItem jMenuItemBajaSol;
-	
+
 	private JMenuItem jMenuItemGestionAvisos;
 	private JMenuItem jMenuItemPedidoAlmacen;
 	private JPanel jPanelSeleccionPantalla;
-	
+
 	private JFrame OpenPantalla;
-	
+	private static String NEW = "NEW";
+	private static String UPD = "UPD";
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -63,6 +65,7 @@ public class MenuGestionAdmin extends JFrame {
 			ex.printStackTrace();
 		}
 	}
+
 	private void seleccionIdioma() {
 		Locale localLocale = new Locale("", "");
 		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
@@ -79,34 +82,39 @@ public class MenuGestionAdmin extends JFrame {
 			setTitle(TDSLanguageUtils.getMessage("menu.gestionAdmin.titulo"));
 			this.jScrollPanel = new JScrollPane();
 			getContentPane().add(this.jScrollPanel, "Center");
-			
+
 			this.jMenuBar1 = new JMenuBar();
 			setJMenuBar(this.jMenuBar1);
-			//ITEM 1
+			// ITEM 1
 			this.jMenuClientes = new JMenu();
 			this.jMenuBar1.add(this.jMenuClientes);
-			this.jMenuClientes.setText(TDSLanguageUtils.getMessage("menu.gestionAdmin.clientes"));
+			this.jMenuClientes.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.clientes"));
 			this.jMenuItemAltaCliente = new JMenuItem();
 			this.jMenuClientes.add(this.jMenuItemAltaCliente);
-			this.jMenuItemAltaCliente.setText(TDSLanguageUtils.getMessage("menu.gestionAdmin.alta"));
+			this.jMenuItemAltaCliente.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.alta"));
 			this.jMenuItemAltaCliente.addActionListener(new ActionListener() {
 				public void actionPerformed(
 						ActionEvent paramAnonymousActionEvent) {
-					MenuGestionAdmin.this.OpenFrm_Option(OptionFrame.Frm_NewCliente);
+					MenuGestionAdmin.this
+							.OpenFrm_Option(OptionFrame.Frm_NewCliente);
 				}
 			});
-			
+
 			this.jMenuItemConsulCliente = new JMenuItem();
 			this.jMenuClientes.add(this.jMenuItemConsulCliente);
-			this.jMenuItemConsulCliente.setText(TDSLanguageUtils.getMessage("menu.gestionAdmin.consulta"));
+			this.jMenuItemConsulCliente.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.consulta"));
 			this.jMenuItemConsulCliente.addActionListener(new ActionListener() {
 				public void actionPerformed(
 						ActionEvent paramAnonymousActionEvent) {
-					MenuGestionAdmin.this.OpenFrm_Option(OptionFrame.Frm_UpdCliente);
+					MenuGestionAdmin.this
+							.OpenFrm_Option(OptionFrame.Frm_UpdCliente);
 				}
 			});
-		
-			//ITEM 2
+
+			// ITEM 2
 			this.jMenuSoli = new JMenu();
 			this.jMenuBar1.add(this.jMenuSoli);
 			this.jMenuSoli.setText(TDSLanguageUtils
@@ -120,11 +128,11 @@ public class MenuGestionAdmin extends JFrame {
 			this.jMenuItemAltaSol.addActionListener(new ActionListener() {
 				public void actionPerformed(
 						ActionEvent paramAnonymousActionEvent) {
-					MenuGestionAdmin.this.OpenFrm_Option(OptionFrame.Frm_NewSol);
+					MenuGestionAdmin.this
+							.OpenFrm_Option(OptionFrame.Frm_NewSol);
 				}
 			});
-			
-			
+
 			this.jMenuItemConsulSol = new JMenuItem();
 			this.jMenuSoli.add(this.jMenuItemConsulSol);
 			this.jMenuItemConsulSol.setText(TDSLanguageUtils
@@ -132,7 +140,8 @@ public class MenuGestionAdmin extends JFrame {
 			this.jMenuItemConsulSol.addActionListener(new ActionListener() {
 				public void actionPerformed(
 						ActionEvent paramAnonymousActionEvent) {
-					MenuGestionAdmin.this.OpenFrm_Option(OptionFrame.Frm_UpdSol);
+					MenuGestionAdmin.this
+							.OpenFrm_Option(OptionFrame.Frm_UpdSol);
 				}
 			});
 			this.jMenuItemBajaSol = new JMenuItem();
@@ -142,17 +151,18 @@ public class MenuGestionAdmin extends JFrame {
 			this.jMenuItemBajaSol.addActionListener(new ActionListener() {
 				public void actionPerformed(
 						ActionEvent paramAnonymousActionEvent) {
-					MenuGestionAdmin.this.OpenFrm_Option(OptionFrame.Frm_DeleteSol);
+					MenuGestionAdmin.this
+							.OpenFrm_Option(OptionFrame.Frm_DeleteSol);
 				}
 			});
 
-			//ITEM 3
-			
+			// ITEM 3
+
 			this.jMenuAvisos = new JMenu();
 			this.jMenuBar1.add(this.jMenuAvisos);
 			this.jMenuAvisos.setText(TDSLanguageUtils
 					.getMessage("menu.gestionAdmin.avisos"));
-			
+
 			this.jMenuItemGestionAvisos = new JMenuItem();
 			this.jMenuAvisos.add(this.jMenuItemGestionAvisos);
 			this.jMenuItemGestionAvisos.setText(TDSLanguageUtils
@@ -160,46 +170,51 @@ public class MenuGestionAdmin extends JFrame {
 			this.jMenuItemGestionAvisos.addActionListener(new ActionListener() {
 				public void actionPerformed(
 						ActionEvent paramAnonymousActionEvent) {
-					MenuGestionAdmin.this.OpenFrm_Option(OptionFrame.Frm_Gestion);
+					MenuGestionAdmin.this
+							.OpenFrm_Option(OptionFrame.Frm_Gestion);
 				}
 			});
-			//ITEM 4
-			
+			// ITEM 4
+
 			this.jMenuAlmacen = new JMenu();
 			this.jMenuBar1.add(this.jMenuAlmacen);
 			this.jMenuAlmacen.setText(TDSLanguageUtils
 					.getMessage("menu.gestionAdmin.almacen"));
-			
+
 			this.jMenuItemPedidoAlmacen = new JMenuItem();
 			this.jMenuAlmacen.add(this.jMenuItemPedidoAlmacen);
 			this.jMenuItemPedidoAlmacen.setText(TDSLanguageUtils
 					.getMessage("menu.gestionAdmin.recepcion"));
-			
+
 			this.jMenuItemPedidoAlmacen.addActionListener(new ActionListener() {
 				public void actionPerformed(
 						ActionEvent paramAnonymousActionEvent) {
-					MenuGestionAdmin.this.OpenFrm_Option(OptionFrame.Frm_Recepcion);
+					MenuGestionAdmin.this
+							.OpenFrm_Option(OptionFrame.Frm_Recepcion);
 				}
 			});
-			
+
 			setSize(663, 399);
 		} catch (Exception localException) {
 			localException.printStackTrace();
 		}
 	}
-	private void OpenFrm_Option(OptionFrame Option)
-	{ 
+
+	private void OpenFrm_Option(OptionFrame Option) {
 		try {
 			switch (Option) {
 			case Frm_NewCliente:
-          AltaCliente altaCliente= new AltaCliente();
-
-          jMenuBar1.setEnabled(true);
-          
-          AltaCliente.main(null);
-         
+				AltaCliente altaCliente = new AltaCliente();
+				jMenuBar1.setEnabled(true);
+				altaCliente.setNEW_UPD("NEW");
+				altaCliente.main(null);
+				
 				break;
 			case Frm_UpdCliente:
+				AltaCliente updCliente = new AltaCliente();
+				updCliente.setNEW_UPD("UPD");
+				jMenuBar1.setEnabled(true);
+				updCliente.main(null);
 
 				break;
 			case Frm_NewSol:
@@ -218,13 +233,14 @@ public class MenuGestionAdmin extends JFrame {
 
 				break;
 			}
-			
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+
 	}
+
 	public enum OptionFrame {
-		Frm_NewCliente, Frm_UpdCliente, Frm_NewSol,Frm_UpdSol,Frm_DeleteSol,Frm_Gestion,Frm_Recepcion;
+		Frm_NewCliente, Frm_UpdCliente, Frm_NewSol, Frm_UpdSol, Frm_DeleteSol, Frm_Gestion, Frm_Recepcion;
 	}
 }

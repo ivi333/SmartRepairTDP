@@ -17,7 +17,7 @@ public class Servidor {
 		public Servidor(){
 		try {
 		System.out.println("Iniciando servidor RMI...");
-		Registry registry = LocateRegistry.createRegistry(1099);
+		Registry registry = LocateRegistry.createRegistry(1111);
 		GestorAdministracionInterface objetoRemoto = new GestorAdministracionImpl();
 		registry.rebind("PAC4", objetoRemoto);
 		

@@ -8,5 +8,9 @@ import edu.uoc.tdp.pac4.beans.Peca;
 
 public interface  GestorAdministracionDAO {
 	
-	public abstract ArrayList<Peca> getMarcas();
+	public  ArrayList<Peca> getMarcas();
+
+	public boolean getExistCliente(String strNIF);
+	
+	public  String aux();
 }

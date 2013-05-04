@@ -36,18 +36,40 @@ public class GestorAdministracionImpl extends java.rmi.server.UnicastRemoteObjec
 		try {
 			gestorAdministracionDAO = new GestorAdministracionDAOImpl(cPostgressDB);
 		} catch (GestorAdministracionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return  gestorAdministracionDAO.getMarcas();
 	}
+	public boolean getExistCliente(String strNIF) throws RemoteException{
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		boolean bResult=false;
+		try{
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(cPostgressDB);
+			bResult=gestorAdministracionDAO.getExistCliente(strNIF);
+		}
+		catch(Exception ex){
+			ex.printStackTrace();
+		}
+		return bResult;
+	}
 
+	
+	/**
+	 * version prueba
+	 */
 public String aux()throws RemoteException {
-	return "AUX";
+	GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+	try {
+		gestorAdministracionDAO = new GestorAdministracionDAOImpl(cPostgressDB);
+	} catch (GestorAdministracionException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return  gestorAdministracionDAO.aux();
+}
 }
 	
 	
 	
 
 	
-}

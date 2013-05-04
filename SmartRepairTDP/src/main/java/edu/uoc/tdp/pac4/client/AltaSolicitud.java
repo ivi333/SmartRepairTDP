@@ -2,6 +2,10 @@ package edu.uoc.tdp.pac4.client;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Locale;
 
 import javax.swing.JFrame;
@@ -10,6 +14,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
+import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
+
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
@@ -32,6 +38,8 @@ public class AltaSolicitud extends JFrame {
 	private JTextArea textAreaComentario; 
 	private JButton btnAlta;
 	private JButton btnCancelar;
+	private static GestorAdministracionInterface conexionRemota;
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -56,13 +64,34 @@ public class AltaSolicitud extends JFrame {
 		}
 
 	}
+	
 	private void initialize() {
 		setSize(new Dimension(337, 342));
 	}
+	
 	private void seleccionIdioma() {
 		Locale localLocale = new Locale("", "");
 		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
 	}
+	
+	public static GestorAdministracionInterface getRemoto() throws RemoteException, NotBoundException {
+	       try{
+	    	   
+	    	   
+		   if(conexionRemota == null) {
+	           
+			   Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+	            conexionRemota = (GestorAdministracionInterface) registry.lookup("PAC4");
+	        
+	           
+		   }
+	       }catch(Exception ex)
+	       {
+	    	   ex.printStackTrace();
+	       }
+	        return conexionRemota;
+	    }
+	
 	public void CargarControles() {
 		setTitle(TDSLanguageUtils.getMessage("solicitud.new.titulo"));
 		
@@ -141,4 +170,5 @@ public class AltaSolicitud extends JFrame {
 		contentPane.add(btnCancelar);
 		
 	}
+
 }

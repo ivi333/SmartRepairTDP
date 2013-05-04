@@ -2,6 +2,8 @@ package edu.uoc.tdp.pac4.client;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -19,6 +21,7 @@ import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JSeparator;
 import javax.swing.JComboBox;
@@ -26,21 +29,21 @@ import javax.swing.JComboBox;
 public class AltaCliente extends JFrame {
 
 	private JPanel contentPanel;
-	private JLabel lblCliente ;
+	private JLabel lblCliente;
 	private JLabel lblNif;
-	private JLabel lblDatosCliente; 
+	private JLabel lblDatosCliente;
 	private JLabel lblId;
-	
+
 	private JTextField txtNIF;
 	private JTextField txtID;
 	private JButton btnComprobar;
-	
-	private JSeparator separator1; 
+
+	private JSeparator separator1;
 	private JLabel lblNIFNEW;
 	private JTextField txtNifNew;
 	private JLabel lblNombre;
 	private JTextField txtNombre;
-	
+
 	private JLabel lblApellidos;
 	private JTextField txtApellido;
 	private JLabel lblDireccion;
@@ -52,23 +55,35 @@ public class AltaCliente extends JFrame {
 	private JLabel lblMarca;
 	private JTextField txtModelo;
 	private JLabel lblModelo;
-	private JComboBox<String> cmbMarca; 
+	private JComboBox cmbMarca;
 	private JLabel lblMatricula;
 	private JTextField txtMatricula;
 	private JLabel lblBastidor;
 	private JTextField txtBastidor;
 	private JButton btnNewUpd;
 	private JButton btnCancelar;
-	
+
+	private static String NEW_UPD = "";
+
+	public static String getNEW_UPD() {
+		return NEW_UPD;
+	}
+
+	public void setNEW_UPD(String nEW_UPD) {
+		NEW_UPD = nEW_UPD;
+	}
+
 	private static GestorAdministracionInterface conexionRemota;
-	
-	public static void main(String[] args) {
+
+	public static void main(String args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					AltaCliente frame = new AltaCliente();
+					String s = getNEW_UPD().toString();
+					String ss = s;
 					frame.setVisible(true);
-				
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -76,52 +91,51 @@ public class AltaCliente extends JFrame {
 		});
 	}
 
-	   public static GestorAdministracionInterface getRemoto() throws RemoteException, NotBoundException {
-	       try{
-	    	   
-	    	   
-		   if(conexionRemota == null) {
-	           
-			 //  Registry registry1 = LocateRegistry.createRegistry(1099);
-			   //GestorAdministracionInterface objetoRemoto = new GestorAdministracionImpl();
-			   //registry1.rebind("PAC4", objetoRemoto);
-			   
-			   Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-	            conexionRemota = (GestorAdministracionInterface) registry.lookup("PAC4");
-	        
-	           
-		   }
-	       }catch(Exception ex)
-	       {
-	    	   ex.printStackTrace();
-	       }
-	        return conexionRemota;
-	    }
-	public AltaCliente() {
-		try{
-		
-			
-			
-		seleccionIdioma();
-		initialize();
-		CargarControles();
-		CargarCmbMarca();
+	public static GestorAdministracionInterface getRemoto()
+			throws RemoteException, NotBoundException {
+		try {
+
+			if (conexionRemota == null) {
+
+				Registry registry = LocateRegistry.getRegistry("localhost",
+						1099);
+				conexionRemota = (GestorAdministracionInterface) registry
+						.lookup("PAC4");
+
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		catch(Exception ex)
-		{
+		return conexionRemota;
+	}
+
+	public AltaCliente() {
+		try {
+
+			seleccionIdioma();
+			initialize();
+			CargarControles();
+			CargarCmbMarca();
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
+
 	private void initialize() {
 		setSize(new Dimension(422, 555));
 	}
+
 	private void seleccionIdioma() {
 		Locale localLocale = new Locale("", "");
 		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
 	}
-	private void CargarControles()
-	{   setTitle(TDSLanguageUtils.getMessage("cliente.new.titulo"));
 
+	private void CargarControles()
+		{
+		 if(NEW_UPD.equals("NEW"))
+		setTitle(TDSLanguageUtils.getMessage("cliente.new.titulo"));
+		 if(NEW_UPD.equals("UPD"))
+			 setTitle(TDSLanguageUtils.getMessage("cliente.upd.titulo"));
 	    contentPanel = new JPanel();
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPanel);
@@ -134,9 +148,44 @@ public class AltaCliente extends JFrame {
 		contentPanel.add(lblCliente);
 		
 		 btnComprobar = new JButton();
-		 btnComprobar.setText(TDSLanguageUtils.getMessage("cliente.btn.comprobar"));
+		 if(NEW_UPD.equals("NEW"))
+		     btnComprobar.setText(TDSLanguageUtils.getMessage("cliente.btn.comprobar"));
+		 if(NEW_UPD.equals("UPD"))
+			 btnComprobar.setText(TDSLanguageUtils.getMessage("cliente.btn.consulta"));
+		 
 		 btnComprobar.setBounds(284, 38, 117, 23);
 		contentPanel.add(btnComprobar);
+		this.btnComprobar.addActionListener(new ActionListener() {
+		
+		public void actionPerformed(ActionEvent paramAnonymousActionEvent) {
+		String strMsg="";
+				try{
+					String strNIF=txtNIF.getText().toString();
+					
+					if(!strNIF.equals("") && strNIF!=null)
+					{
+						strMsg= getMsgExisteCliente(strNIF);
+						LeerError(strMsg,TDSLanguageUtils.getMessage("cliente.msg.titulo"));
+					}
+					else
+					{String tittle="";
+						 if(NEW_UPD.equals("NEW"))
+						 tittle=TDSLanguageUtils.getMessage("cliente.new.titulo");
+						
+						 if(NEW_UPD.equals("UPD"))
+						 tittle=TDSLanguageUtils.getMessage("cliente.upd.titulo");
+								 
+						LeerError(TDSLanguageUtils.getMessage("cliente.msg.nif"),tittle);
+					}
+					
+				}catch(Exception ex)
+				{
+					ex.printStackTrace();
+				}
+				
+			}
+		});
+		
 		
 		lblNif = new JLabel();
 		lblNif.setText(TDSLanguageUtils.getMessage("cliente.lbl.NIF"));
@@ -231,7 +280,7 @@ public class AltaCliente extends JFrame {
 		lblMarca.setBounds(10, 326, 96, 14);
 		contentPanel.add(lblMarca);
 		
-		cmbMarca = new JComboBox<String>();
+		cmbMarca = new JComboBox();
 		cmbMarca.setBounds(104, 323, 168, 20);
 		contentPanel.add(cmbMarca);
 		
@@ -266,9 +315,41 @@ public class AltaCliente extends JFrame {
 		txtBastidor.setColumns(10);
 		
 		btnNewUpd = new JButton();
-		btnNewUpd.setText(TDSLanguageUtils.getMessage("cliente.btn.alta.cliente"));
+		
+		 if(NEW_UPD.equals("NEW"))
+			 btnNewUpd.setText(TDSLanguageUtils.getMessage("cliente.btn.alta.cliente"));
+		 if(NEW_UPD.equals("UPD"))
+			 btnNewUpd.setText(TDSLanguageUtils.getMessage("cliente.btn.modificar"));
+			
 		btnNewUpd.setBounds(10, 478, 117, 23);
 		contentPanel.add(btnNewUpd);
+		this.btnNewUpd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent paramAnonymousActionEvent) {
+			String strMsg="";
+					try{
+					 if(NEW_UPD.equals("NEW")){
+						  strMsg=getInsertNewCliente();
+						if (!strMsg.equals("")) {
+							String tittle = TDSLanguageUtils.getMessage("cliente.new.titulo");
+							
+							LeerError(strMsg, tittle);
+						}
+
+					 }
+					 
+					   if(NEW_UPD.equals("UPD"))
+					   {
+						   
+					   }
+					   
+					}catch(Exception ex)
+					{
+						ex.printStackTrace();
+					}
+					
+				}
+			});
+		
 		
 		btnCancelar = new JButton();
 		btnCancelar.setText(TDSLanguageUtils.getMessage("cliente.btn.cancelar"));
@@ -276,21 +357,112 @@ public class AltaCliente extends JFrame {
 		contentPanel.add(btnCancelar);
 		
 	}
-	private void CargarCmbMarca()throws RemoteException 
-	{ArrayList<Peca> ListMarca =null;
-		try{
-			ListMarca	= getRemoto().getMarcas();
-			String ss="sss";
-			cmbMarca.insertItemAt("", 0);
-			
-			for (int i = 0; i < ListMarca.size(); i++) {
-				cmbMarca.insertItemAt(ListMarca.get(i).getMarca(),ListMarca.get(i).getCodiPeca());
-			
-			}
-			
-		}catch(Exception ex)
-		{
+
+	private void LeerError(String paramString1, String paramString2) {
+		JOptionPane.showMessageDialog(this, paramString1, paramString2, 0);
+	}
+
+	private String getMsgExisteCliente(String strNIF) {
+		String strResult = "";
+		try {
+
+			boolean bMsg = getRemoto().getExistCliente(strNIF);
+			if (bMsg)
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.msg.cliente.existe");
+			else
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.msg.cliente.noexiste");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return strResult;
+	}
+
+	private void CargarCmbMarca() throws RemoteException {
+		ArrayList<Peca> ListMarca = null;
+		try {
+			/*
+			 * ListMarca = getRemoto().getMarcas(); cmbMarca.insertItemAt("",
+			 * 0);
+			 * 
+			 * for (int i = 0; i < ListMarca.size(); i++) {
+			 * cmbMarca.insertItemAt
+			 * (ListMarca.get(i).getMarca(),ListMarca.get(i).getCodiPeca());
+			 * 
+			 * }
+			 */
+
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	private String getInsertNewCliente() {
+		String strResult = "";
+		try {
+
+			if (!ImputValues().equals("") && ImputValues() != null) {
+
+			} else {
+				strResult = ImputValues();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return strResult;
+	}
+
+	private String ImputValues() {
+		String strResult = "";
+		try {
+			if (!txtNifNew.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils.getMessage("cliente.btn.nif");
+				return strResult;
+			}
+			if (!txtNombre.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils.getMessage("cliente.btn.nombre");
+				return strResult;
+			}
+			if (!txtApellido.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils.getMessage("cliente.btn.apellido");
+				return strResult;
+			}
+			if (!txtDireccion.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.btn.direccion");
+				return strResult;
+			}
+			if (!txtCP.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils.getMessage("cliente.msg.falta.cp");
+				return strResult;
+			}
+			if (!txtModelo.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.msg.falta.modelo");
+				return strResult;
+			}
+			if (cmbMarca.getSelectedIndex() > 0) {
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.msg.falta.marca");
+				return strResult;
+			}
+			if (!txtMatricula.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.msg.falta.matricula");
+				return strResult;
+			}
+			if (!txtBastidor.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.msg.falta.bastidor");
+				return strResult;
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return strResult;
 	}
 }
