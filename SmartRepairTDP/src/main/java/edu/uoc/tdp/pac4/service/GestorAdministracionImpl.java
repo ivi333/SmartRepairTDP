@@ -2,6 +2,15 @@ package edu.uoc.tdp.pac4.service;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import edu.uoc.tdp.pac4.beans.Peca;
+import edu.uoc.tdp.pac4.dao.ConnectionPostgressDB;
+import edu.uoc.tdp.pac4.dao.GestorAdministracionDAO;
+import edu.uoc.tdp.pac4.dao.GestorAdministracionDAOImpl;
+import edu.uoc.tdp.pac4.exception.DAOException;
+import edu.uoc.tdp.pac4.exception.GestorAdministracionException;
 
 /**
  * Smart Repair 
@@ -10,19 +19,37 @@ import java.rmi.RemoteException;
  */
 public class GestorAdministracionImpl extends java.rmi.server.UnicastRemoteObject implements GestorAdministracionInterface, Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8030410035047028962L;
-
-	public GestorAdministracionImpl() throws RemoteException {
+	private ConnectionPostgressDB cPostgressDB;
+	
+	public GestorAdministracionImpl() throws RemoteException{
 		super();
+		cPostgressDB=new ConnectionPostgressDB();
+		try {
+			cPostgressDB.getConnectionDB();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	/**
-	 *  Implementacion de los servicios RMI 
-	 *  para el subsistema de Administracion
-	 */
+	public ArrayList<Peca> getMarcas() throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return  (ArrayList<Peca>) gestorAdministracionDAO.getMarcas();
+	}
 
+public String aux()throws RemoteException {
+	return "AUX";
+}
+	
+	
+	
 
+	
 }

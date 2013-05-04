@@ -9,6 +9,8 @@ import java.rmi.registry.LocateRegistry;
 import javax.swing.JOptionPane;
 
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
+import edu.uoc.tdp.pac4.exception.DAOException;
+import edu.uoc.tdp.pac4.exception.GestorAdministracionException;
 import edu.uoc.tdp.pac4.service.GestorAdministracionImpl;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 import edu.uoc.tdp.pac4.service.GestorConexionImpl;
@@ -59,7 +61,9 @@ public class Servidor extends javax.swing.JFrame {
 	
 	private void initRemoteObjects () {
 		try {
-			gestorAdmin = new GestorAdministracionImpl ();
+			
+				gestorAdmin = new GestorAdministracionImpl();
+		
 			gestorConex = new GestorConexionImpl();
 			gestorEstad = new GestorEstadisticaImpl();
 			gestorRepar = new GestorReparacionImpl();

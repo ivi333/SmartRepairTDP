@@ -1,19 +1,19 @@
 package edu.uoc.tdp.pac4.service;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 
-/**
- * Smart Repair 
- * ETIG - TDP PAC 4 Primavera 2013
- * Grup: FiveCoreDumped
- */
+
+import edu.uoc.tdp.pac4.beans.Peca;
+import edu.uoc.tdp.pac4.exception.GestorAdministracionException;
+
+
 public interface GestorAdministracionInterface extends Remote{
-	/**
-	 * Definir las interficies de servicios RMI
-	 * para el subsistema de Administracion
-	 */
+	 
+public ArrayList<Peca>getMarcas()throws RemoteException;
 
-
+public String aux()throws RemoteException;
 }
 
 

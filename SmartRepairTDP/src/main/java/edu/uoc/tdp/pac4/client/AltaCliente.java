@@ -4,6 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Dialog.ModalExclusionType;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import javax.swing.JFrame;
@@ -11,7 +17,11 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 
+import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
+import edu.uoc.tdp.pac4.service.GestorAdministracionImpl;
+import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
+
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JSeparator;
@@ -46,7 +56,7 @@ public class AltaCliente extends JFrame {
 	private JLabel lblMarca;
 	private JTextField txtModelo;
 	private JLabel lblModelo;
-	private JComboBox cmbMarca; 
+	private JComboBox<String> cmbMarca; 
 	private JLabel lblMatricula;
 	private JTextField txtMatricula;
 	private JLabel lblBastidor;
@@ -54,6 +64,7 @@ public class AltaCliente extends JFrame {
 	private JButton btnNewUpd;
 	private JButton btnCancelar;
 	
+	private static GestorAdministracionInterface conexionRemota;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -69,11 +80,32 @@ public class AltaCliente extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
+	   public static GestorAdministracionInterface getRemoto() throws RemoteException, NotBoundException {
+	       try{
+	    	   
+	    	   
+		   if(conexionRemota == null) {
+	           
+			 //  Registry registry1 = LocateRegistry.createRegistry(1099);
+			   //GestorAdministracionInterface objetoRemoto = new GestorAdministracionImpl();
+			   //registry1.rebind("PAC4", objetoRemoto);
+			   
+			   Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+	            conexionRemota = (GestorAdministracionInterface) registry.lookup("PAC4");
+	        
+	           
+		   }
+	       }catch(Exception ex)
+	       {
+	    	   ex.printStackTrace();
+	       }
+	        return conexionRemota;
+	    }
 	public AltaCliente() {
 		try{
+		
+			
+			
 		seleccionIdioma();
 		initialize();
 		CargarControles();
@@ -203,7 +235,7 @@ public class AltaCliente extends JFrame {
 		lblMarca.setBounds(10, 326, 96, 14);
 		contentPanel.add(lblMarca);
 		
-		cmbMarca = new JComboBox();
+		cmbMarca = new JComboBox<String>();
 		cmbMarca.setBounds(104, 323, 168, 20);
 		contentPanel.add(cmbMarca);
 		
@@ -248,9 +280,17 @@ public class AltaCliente extends JFrame {
 		contentPanel.add(btnCancelar);
 		
 	}
-	private void CargarCmbMarca()
-	{
+	private void CargarCmbMarca()throws RemoteException 
+	{ArrayList<Peca> ListMarca =null;
 		try{
+			String s	= getRemoto().aux();
+			String ss=s;
+			cmbMarca.insertItemAt("", 0);
+			
+			for (int i = 0; i < ListMarca.size(); i++) {
+				cmbMarca.insertItemAt(ListMarca.get(i).getMarca(),ListMarca.get(i).getCodiPeca());
+			
+			}
 			
 		}catch(Exception ex)
 		{
