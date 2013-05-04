@@ -2,12 +2,10 @@ package edu.uoc.tdp.pac4.service;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.dao.ConnectionPostgressDB;
-import edu.uoc.tdp.pac4.dao.GestorAdministracionDAO;
 import edu.uoc.tdp.pac4.dao.GestorAdministracionDAOImpl;
 import edu.uoc.tdp.pac4.exception.DAOException;
 import edu.uoc.tdp.pac4.exception.GestorAdministracionException;
@@ -41,7 +39,7 @@ public class GestorAdministracionImpl extends java.rmi.server.UnicastRemoteObjec
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return  (ArrayList<Peca>) gestorAdministracionDAO.getMarcas();
+		return  gestorAdministracionDAO.getMarcas();
 	}
 
 public String aux()throws RemoteException {

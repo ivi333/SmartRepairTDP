@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 
 import edu.uoc.tdp.pac4.beans.Peca;
-import edu.uoc.tdp.pac4.exception.GestorAdministracionException;
 
 
 public interface GestorAdministracionInterface extends Remote{

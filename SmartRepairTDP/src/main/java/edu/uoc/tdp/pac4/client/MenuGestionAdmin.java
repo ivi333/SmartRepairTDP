@@ -1,25 +1,17 @@
 package edu.uoc.tdp.pac4.client;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.MenuBar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.EmptyBorder;
-
-
-
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 
 public class MenuGestionAdmin extends JFrame {
@@ -204,7 +196,7 @@ public class MenuGestionAdmin extends JFrame {
 
           jMenuBar1.setEnabled(true);
           
-          altaCliente.main(null);
+          AltaCliente.main(null);
          
 				break;
 			case Frm_UpdCliente:

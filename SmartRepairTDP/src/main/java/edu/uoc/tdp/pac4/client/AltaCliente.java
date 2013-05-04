@@ -1,10 +1,7 @@
 package edu.uoc.tdp.pac4.client;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalExclusionType;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -19,7 +16,6 @@ import javax.swing.JLabel;
 
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
-import edu.uoc.tdp.pac4.service.GestorAdministracionImpl;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 
 import javax.swing.JButton;
@@ -283,8 +279,8 @@ public class AltaCliente extends JFrame {
 	private void CargarCmbMarca()throws RemoteException 
 	{ArrayList<Peca> ListMarca =null;
 		try{
-			String s	= getRemoto().aux();
-			String ss=s;
+			ListMarca	= getRemoto().getMarcas();
+			String ss="sss";
 			cmbMarca.insertItemAt("", 0);
 			
 			for (int i = 0; i < ListMarca.size(); i++) {

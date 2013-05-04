@@ -2,7 +2,6 @@ package edu.uoc.tdp.pac4.client;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
@@ -21,6 +20,7 @@ public class Servidor {
 		Registry registry = LocateRegistry.createRegistry(1099);
 		GestorAdministracionInterface objetoRemoto = new GestorAdministracionImpl();
 		registry.rebind("PAC4", objetoRemoto);
+		
 		System.out.println("Servidor iniciado!");
 		} catch (RemoteException e) {
 			e.printStackTrace();

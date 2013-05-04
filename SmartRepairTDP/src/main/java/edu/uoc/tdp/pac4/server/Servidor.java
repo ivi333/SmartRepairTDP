@@ -9,8 +9,6 @@ import java.rmi.registry.LocateRegistry;
 import javax.swing.JOptionPane;
 
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
-import edu.uoc.tdp.pac4.exception.DAOException;
-import edu.uoc.tdp.pac4.exception.GestorAdministracionException;
 import edu.uoc.tdp.pac4.service.GestorAdministracionImpl;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 import edu.uoc.tdp.pac4.service.GestorConexionImpl;
@@ -87,6 +85,7 @@ public class Servidor extends javax.swing.JFrame {
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
 			public void windowClosing(java.awt.event.WindowEvent evt) {
 				formWindowClosing(evt);
 			}

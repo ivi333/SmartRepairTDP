@@ -15,8 +15,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.SwingConstants;
 
-import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
-
 public class MainGUI {
 
 	private JFrame frmSmartRepairTdp;

@@ -1,6 +1,5 @@
 package edu.uoc.tdp.pac4.client;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.util.Locale;

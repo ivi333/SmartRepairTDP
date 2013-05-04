@@ -1,6 +1,5 @@
 package edu.uoc.tdp.pac4.client;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Rectangle;
@@ -12,10 +11,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.CompoundBorder;
 import javax.swing.JButton;
-import javax.swing.table.DefaultTableModel;
-
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 
 public class GestionAvisos extends JFrame {
