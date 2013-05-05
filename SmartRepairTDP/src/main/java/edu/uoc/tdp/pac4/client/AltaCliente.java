@@ -2,6 +2,7 @@ package edu.uoc.tdp.pac4.client;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.NotBoundException;
@@ -21,12 +22,13 @@ import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JSeparator;
 import javax.swing.JComboBox;
 
-public class AltaCliente extends JFrame {
+public class AltaCliente extends JDialog {
 
 	private JPanel contentPanel;
 	private JLabel lblCliente;
@@ -80,8 +82,7 @@ public class AltaCliente extends JFrame {
 			public void run() {
 				try {
 					AltaCliente frame = new AltaCliente();
-					String s = getNEW_UPD().toString();
-					String ss = s;
+					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
 
 				} catch (Exception e) {
@@ -108,10 +109,22 @@ public class AltaCliente extends JFrame {
 		}
 		return conexionRemota;
 	}
-
+	
 	public AltaCliente() {
 		try {
 
+			seleccionIdioma();
+			initialize();
+			CargarControles();
+			CargarCmbMarca();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public AltaCliente(String tipo) {
+		try {
+			NEW_UPD=tipo;
 			seleccionIdioma();
 			initialize();
 			CargarControles();
@@ -351,13 +364,27 @@ public class AltaCliente extends JFrame {
 			});
 		
 		
-		btnCancelar = new JButton();
-		btnCancelar.setText(TDSLanguageUtils.getMessage("cliente.btn.cancelar"));
-		btnCancelar.setBounds(251, 478, 107, 23);
-		contentPanel.add(btnCancelar);
+	
+		contentPanel.add(getBtnCancelaJ());
 		
 	}
 
+	private JButton getBtnCancelaJ() {
+		if (btnCancelar == null) {
+			btnCancelar = new JButton();
+			btnCancelar.setBounds(new Rectangle(251, 478, 107, 23));
+			btnCancelar.setText(TDSLanguageUtils.getMessage("cliente.btn.cancelar"));
+			btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					dispose();
+					
+				}
+			});
+		}
+		return btnCancelar;
+	}				
+		
+	
 	private void LeerError(String paramString1, String paramString2) {
 		JOptionPane.showMessageDialog(this, paramString1, paramString2, 0);
 	}

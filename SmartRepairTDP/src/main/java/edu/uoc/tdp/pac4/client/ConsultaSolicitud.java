@@ -2,9 +2,11 @@ package edu.uoc.tdp.pac4.client;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Rectangle;
 import java.util.Locale;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -15,7 +17,7 @@ import javax.swing.border.EmptyBorder;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import javax.swing.JSeparator;
 
-public class ConsultaSolicitud extends JFrame {
+public class ConsultaSolicitud extends JDialog {
 
 
 	private JPanel contentPane;
@@ -47,6 +49,7 @@ public class ConsultaSolicitud extends JFrame {
 			public void run() {
 				try {
 					ConsultaSolicitud frame = new ConsultaSolicitud();
+					  frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -74,7 +77,7 @@ public class ConsultaSolicitud extends JFrame {
 	}
 	private void CargarControles()
 	{
-	setTitle(TDSLanguageUtils.getMessage("solicitud.new.titulo"));
+	setTitle(TDSLanguageUtils.getMessage("solicitud.upd.titulo"));
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -145,10 +148,7 @@ public class ConsultaSolicitud extends JFrame {
 		btModificar.setBounds(24, 323, 89, 23);
 		contentPane.add(btModificar);
 		
-		btnCancelar = new JButton();
-		btnCancelar.setText(TDSLanguageUtils.getMessage("solicitud.btn.cancelar"));
-		btnCancelar.setBounds(275, 323, 89, 23);
-		contentPane.add(btnCancelar);
+		contentPane.add(getBtnCancelaJ());
 		
 		btnValidar = new JButton();
 		btnValidar.setText(TDSLanguageUtils.getMessage("solicitud.btn.validar"));
@@ -189,5 +189,18 @@ public class ConsultaSolicitud extends JFrame {
 		lblEstadoInfo.setBounds(265, 62, 79, 14);
 		contentPane.add(lblEstadoInfo);
 	}
-
+	private JButton getBtnCancelaJ() {
+		if (btnCancelar == null) {
+			btnCancelar = new JButton();
+			btnCancelar.setBounds(new Rectangle(275, 323, 89, 23));
+			btnCancelar.setText(TDSLanguageUtils.getMessage("solicitud.btn.cancelar"));
+			btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					dispose();
+					
+				}
+			});
+		}
+		return btnCancelar;
+	}
 }

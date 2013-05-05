@@ -1,11 +1,13 @@
 package edu.uoc.tdp.pac4.client;
 
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -204,32 +206,35 @@ public class MenuGestionAdmin extends JFrame {
 		try {
 			switch (Option) {
 			case Frm_NewCliente:
-				AltaCliente altaCliente = new AltaCliente();
-				jMenuBar1.setEnabled(true);
-				altaCliente.setNEW_UPD("NEW");
-				altaCliente.main(null);
+				AltaCliente altaCliente = new AltaCliente("NEW");
+				altaCliente.setVisible(true);
 				
 				break;
 			case Frm_UpdCliente:
-				AltaCliente updCliente = new AltaCliente();
-				updCliente.setNEW_UPD("UPD");
-				jMenuBar1.setEnabled(true);
-				updCliente.main(null);
-
+				AltaCliente updCliente = new AltaCliente("UPD");
+				updCliente.setVisible(true);
 				break;
 			case Frm_NewSol:
 
+				AltaSolicitud NewSol = new AltaSolicitud();
+				NewSol.setVisible(true);
 				break;
 			case Frm_UpdSol:
 
+				ConsultaSolicitud UpdSol = new ConsultaSolicitud();
+				UpdSol.setVisible(true);
 				break;
 			case Frm_DeleteSol:
-
+				BajaSolicitud bajaSol = new BajaSolicitud();
+				bajaSol.setVisible(true);
 				break;
 			case Frm_Gestion:
-
+				GestionAvisos gestion = new GestionAvisos();
+				gestion.setVisible(true);
 				break;
 			case Frm_Recepcion:
+				RecepcionPedidos pedidos = new RecepcionPedidos();
+				pedidos.setVisible(true);
 
 				break;
 			}

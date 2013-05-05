@@ -2,6 +2,7 @@ package edu.uoc.tdp.pac4.client;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Rectangle;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -16,11 +17,12 @@ import javax.swing.JLabel;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 
+import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 
-public class AltaSolicitud extends JFrame {
+public class AltaSolicitud extends JDialog {
 
 	private JPanel contentPane;
 	private JLabel lblNSolicitud;
@@ -45,6 +47,7 @@ public class AltaSolicitud extends JFrame {
 			public void run() {
 				try {
 					AltaSolicitud frame = new AltaSolicitud();
+					  frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -56,7 +59,6 @@ public class AltaSolicitud extends JFrame {
 	public AltaSolicitud() {
 		try {seleccionIdioma();
 			initialize();
-			
 			CargarControles();
 
 		} catch (Exception ex) {
@@ -164,11 +166,21 @@ public class AltaSolicitud extends JFrame {
 		btnAlta.setBounds(24, 260, 89, 23);
 		contentPane.add(btnAlta);
 		
-		btnCancelar = new JButton();
-		btnCancelar.setText(TDSLanguageUtils.getMessage("solicitud.btn.cancelar"));
-		btnCancelar.setBounds(204, 260, 89, 23);
-		contentPane.add(btnCancelar);
+		contentPane.add(getBtnCancelaJ());
 		
 	}
-
+	private JButton getBtnCancelaJ() {
+		if (btnCancelar == null) {
+			btnCancelar = new JButton();
+			btnCancelar.setBounds(new Rectangle(204, 260, 89, 23));
+			btnCancelar.setText(TDSLanguageUtils.getMessage("solicitud.btn.cancelar"));
+			btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					dispose();
+					
+				}
+			});
+		}
+		return btnCancelar;
+	}
 }
