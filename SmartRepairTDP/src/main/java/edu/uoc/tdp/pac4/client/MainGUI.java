@@ -61,26 +61,26 @@ public class MainGUI {
 		frmSmartRepairTdp.setJMenuBar(menuBar);
 		
 		JMenu mnNewMenu = new JMenu("Mantenimiento");
-		mnNewMenu.setEnabled(false);
+		mnNewMenu.setEnabled(true);
 		menuBar.add(mnNewMenu);
 		
 		JMenuItem mntmNewMenuItem = new JMenuItem("Gestión de Talleres");		
 		mnNewMenu.add(mntmNewMenuItem);
 		
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Gestión de Usuarios");
-		mntmNewMenuItem.setEnabled(false);
+		mntmNewMenuItem.setEnabled(true);
 		mnNewMenu.add(mntmNewMenuItem_1);
 		
 		JMenu mnNewMenu_1 = new JMenu("Administración");
-		mnNewMenu_1.setEnabled(false);
+		mnNewMenu_1.setEnabled(true);
 		menuBar.add(mnNewMenu_1);
 		
 		JMenu mnNewMenu_2 = new JMenu("Reparaciones");
-		mnNewMenu_2.setEnabled(false);
+		mnNewMenu_2.setEnabled(true);
 		menuBar.add(mnNewMenu_2);
 		
 		JMenu mnNewMenu_3 = new JMenu("Estadísticas");
-		mnNewMenu_3.setEnabled(false);
+		mnNewMenu_3.setEnabled(true);
 		menuBar.add(mnNewMenu_3);
 		
 		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Salir");
