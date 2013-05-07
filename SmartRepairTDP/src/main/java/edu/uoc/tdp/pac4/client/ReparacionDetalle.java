@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class ReparacionAnadirPieza extends JFrame {
+public class ReparacionDetalle extends JFrame {
 
 	private JPanel contentPane;
 
@@ -18,7 +18,7 @@ public class ReparacionAnadirPieza extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ReparacionAnadirPieza frame = new ReparacionAnadirPieza();
+					ReparacionDetalle frame = new ReparacionDetalle();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -30,7 +30,7 @@ public class ReparacionAnadirPieza extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ReparacionAnadirPieza() {
+	public ReparacionDetalle() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
