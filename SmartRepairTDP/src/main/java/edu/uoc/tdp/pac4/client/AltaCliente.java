@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 
+import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.common.ItemCombo;
@@ -48,7 +49,7 @@ public class AltaCliente extends JDialog {
 	private JTextField txtNifNew;
 	private JLabel lblNombre;
 	private JTextField txtNombre;
-
+	private JLabel lblPoblacion;
 	private JLabel lblApellidos;
 	private JTextField txtApellido;
 	private JLabel lblDireccion;
@@ -61,13 +62,17 @@ public class AltaCliente extends JDialog {
 	private JTextField txtModelo;
 	private JLabel lblModelo;
 	private JComboBox cmbMarca;
+	private JComboBox cmbAseguradora;
 	private JLabel lblMatricula;
 	private JTextField txtMatricula;
 	private JLabel lblBastidor;
 	private JTextField txtBastidor;
 	private JButton btnNewUpd;
 	private JButton btnCancelar;
+	private JTextField txtPoblacion;
+	
 	private ArrayList<ItemCombo> cbMarca;
+	private ArrayList<ItemCombo> cbAseguradora;
 	private static String NEW_UPD = "";
 
 	public static String getNEW_UPD() {
@@ -79,6 +84,14 @@ public class AltaCliente extends JDialog {
 	}
 
 	private static GestorAdministracionInterface conexionRemota;
+	private JLabel lblTipo;
+	private JTextField txtTipo;
+	private JLabel lblSeleccionAseg;
+	private JLabel lblColor;
+	private JTextField txtColor;
+	private JLabel lblAnyo;
+	private JTextField txtAnyo;
+	private JLabel lblAseguradora;
 
 	public static void main(String args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -102,7 +115,7 @@ public class AltaCliente extends JDialog {
 			if (conexionRemota == null) {
 
 				Registry registry = LocateRegistry.getRegistry("localhost",
-						1099);
+						1555);
 				conexionRemota = (GestorAdministracionInterface) registry
 						.lookup("PAC4");
 
@@ -120,6 +133,7 @@ public class AltaCliente extends JDialog {
 			initialize();
 			CargarControles();
 			CargarCmbMarca();
+			CargarCmbAseg();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -132,13 +146,14 @@ public class AltaCliente extends JDialog {
 			initialize();
 			CargarControles();
 			CargarCmbMarca();
+			CargarCmbAseg();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
 	private void initialize() {
-		setSize(new Dimension(422, 555));
+		setSize(new Dimension(422, 781));
 	}
 
 	private void seleccionIdioma() {
@@ -247,50 +262,50 @@ public class AltaCliente extends JDialog {
 		txtCP.setColumns(10);
 		
 		separator = new JSeparator();
-		separator.setBounds(10, 288, 403, 2);
+		separator.setBounds(10, 336, 403, 2);
 		contentPanel.add(separator);
 		
 		lblDatosVehiculo = new JLabel();
 		lblDatosVehiculo.setText(TDSLanguageUtils.getMessage("cliente.lbl.datos.vehiculo"));
-		lblDatosVehiculo.setBounds(10, 301, 200, 14);
+		lblDatosVehiculo.setBounds(20, 448, 200, 14);
 		contentPanel.add(lblDatosVehiculo);
 		
 		lblMarca = new JLabel();
 		lblMarca.setText(TDSLanguageUtils.getMessage("cliente.lbl.vehiculo.marca"));
-		lblMarca.setBounds(10, 326, 96, 14);
+		lblMarca.setBounds(20, 473, 96, 14);
 		contentPanel.add(lblMarca);
 		
 		cmbMarca = new JComboBox();
-		cmbMarca.setBounds(104, 323, 168, 20);
+		cmbMarca.setBounds(114, 470, 168, 20);
 		contentPanel.add(cmbMarca);
 		
 		lblModelo = new JLabel();
 		lblModelo.setText(TDSLanguageUtils.getMessage("cliente.lbl.vehiculo.modelo"));
-		lblModelo.setBounds(10, 354, 96, 14);
+		lblModelo.setBounds(20, 501, 96, 14);
 		contentPanel.add(lblModelo);
 		
 		txtModelo = new JTextField();
-		txtModelo.setBounds(104, 351, 137, 20);
+		txtModelo.setBounds(114, 498, 137, 20);
 		contentPanel.add(txtModelo);
 		txtModelo.setColumns(10);
 		
 		lblMatricula = new JLabel();
 		lblMatricula.setText(TDSLanguageUtils.getMessage("cliente.lbl.vehiculo.matricula"));
-		lblMatricula.setBounds(10, 385, 96, 14);
+		lblMatricula.setBounds(20, 532, 96, 14);
 		contentPanel.add(lblMatricula);
 		
 		txtMatricula = new JTextField();
-		txtMatricula.setBounds(104, 382, 137, 20);
+		txtMatricula.setBounds(114, 529, 137, 20);
 		contentPanel.add(txtMatricula);
 		txtMatricula.setColumns(10);
 		
 		lblBastidor = new JLabel();
 		lblBastidor.setText(TDSLanguageUtils.getMessage("cliente.lbl.vehiculo.bastidor"));
-		lblBastidor.setBounds(10, 413, 96, 14);
+		lblBastidor.setBounds(20, 560, 96, 14);
 		contentPanel.add(lblBastidor);
 		
 		txtBastidor = new JTextField();
-		txtBastidor.setBounds(104, 413, 137, 20);
+		txtBastidor.setBounds(114, 560, 137, 20);
 		contentPanel.add(txtBastidor);
 		txtBastidor.setColumns(10);
 		
@@ -301,7 +316,7 @@ public class AltaCliente extends JDialog {
 		 if(NEW_UPD.equals("UPD"))
 			 btnNewUpd.setText(TDSLanguageUtils.getMessage("cliente.btn.modificar"));
 			
-		btnNewUpd.setBounds(10, 478, 117, 23);
+		btnNewUpd.setBounds(10, 700, 117, 23);
 		contentPanel.add(btnNewUpd);
 		this.btnNewUpd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent paramAnonymousActionEvent) {
@@ -334,12 +349,69 @@ public class AltaCliente extends JDialog {
 	
 		contentPanel.add(getBtnCancelaJ());
 		
+		lblPoblacion = new JLabel();
+		lblPoblacion.setBounds(10, 288, 46, 14);
+		contentPanel.add(lblPoblacion);
+		
+		txtPoblacion = new JTextField();
+		txtPoblacion.setBounds(115, 285, 86, 20);
+		contentPanel.add(txtPoblacion);
+		txtPoblacion.setColumns(10);
+		
+		lblTipo = new JLabel();
+		lblTipo.setBounds(20, 585, 62, 14);
+		lblTipo.setText(TDSLanguageUtils.getMessage("cliente.lbl.vehiculo.tipo"));
+		contentPanel.add(lblTipo);
+		
+		txtTipo = new JTextField();
+		txtTipo.setBounds(114, 585, 137, 20);
+		contentPanel.add(txtTipo);
+		txtTipo.setColumns(10);
+		
+		lblColor = new JLabel();
+		lblColor.setBounds(20, 619, 62, 14);
+		lblColor.setText(TDSLanguageUtils.getMessage("cliente.lbl.vehiculo.color"));
+		contentPanel.add(lblColor);
+		
+		txtColor = new JTextField();
+		txtColor.setBounds(114, 616, 137, 20);
+		contentPanel.add(txtColor);
+		txtColor.setColumns(10);
+		
+		lblAnyo = new JLabel();
+		lblAnyo.setBounds(20, 650, 62, 14);
+		lblAnyo.setText(TDSLanguageUtils.getMessage("cliente.lbl.vehiculo.anyo"));
+		contentPanel.add(lblAnyo);
+		
+		txtAnyo = new JTextField();
+		txtAnyo.setBounds(114, 647, 137, 20);
+		contentPanel.add(txtAnyo);
+		txtAnyo.setColumns(10);
+		
+		lblAseguradora = new JLabel();
+		lblAseguradora.setBounds(10, 397, 146, 14);
+		lblAseguradora.setText(TDSLanguageUtils.getMessage("cliente.lbl.vehiculo.aseguradora"));
+		contentPanel.add(lblAseguradora);
+		
+		JSeparator separator_1 = new JSeparator();
+		separator_1.setBounds(10, 435, 403, 2);
+		contentPanel.add(separator_1);
+		
+		cmbAseguradora = new JComboBox();
+		cmbAseguradora.setBounds(166, 394, 214, 20);
+		contentPanel.add(cmbAseguradora);
+		
+		lblSeleccionAseg = new JLabel();
+		lblSeleccionAseg.setBounds(10, 351, 292, 14);
+		lblSeleccionAseg.setText(TDSLanguageUtils.getMessage("cliente.lbl.vehiculo.selec.aseguradora"));
+		contentPanel.add(lblSeleccionAseg);
+		
 	}
 
 	private JButton getBtnCancelaJ() {
 		if (btnCancelar == null) {
 			btnCancelar = new JButton();
-			btnCancelar.setBounds(new Rectangle(251, 478, 107, 23));
+			btnCancelar.setBounds(new Rectangle(236, 700, 107, 23));
 			btnCancelar.setText(TDSLanguageUtils.getMessage("cliente.btn.cancelar"));
 			btnCancelar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -441,7 +513,28 @@ public class AltaCliente extends JDialog {
 			ex.printStackTrace();
 		}
 	}
+	private void CargarCmbAseg() throws RemoteException {
+		ArrayList<Asseguradora> ListAseg = null;
+		try {
+			cbAseguradora = null;
+			cbAseguradora = new ArrayList<ItemCombo>();
+			ListAseg = getRemoto().getAseguradoras();
+			  cmbAseguradora.insertItemAt("",0);
+			  
+			  for (int i = 0; i < ListAseg.size(); i++)
+			  {
+				  cbAseguradora.add(new ItemCombo(i, ListAseg.get(i).getNom(), String.valueOf(ListAseg.get(i).getIdasseguradora()))); 
+				  cmbAseguradora.insertItemAt(ListAseg.get(i).getNom(),i);
+			  
+			  }
+			 
 
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	
 	private String getInsertNewCliente() {
 		String strResult = "";
 		try {

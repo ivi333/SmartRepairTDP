@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.dao.ConnectionPostgressDB;
@@ -81,6 +82,16 @@ public class GestorAdministracionImpl extends java.rmi.server.UnicastRemoteObjec
 			e.printStackTrace();
 		}
 		return gestorAdministracionDAO.getNewClient(altaCliente);
+	}
+
+	public  ArrayList<Asseguradora> getAseguradoras() throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			e.printStackTrace();
+		}
+		return  gestorAdministracionDAO.getAseguradoras();
 	}
 }
 	

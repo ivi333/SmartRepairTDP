@@ -2,7 +2,7 @@ package edu.uoc.tdp.pac4.beans;
 
 import java.util.Date;
 
-public class Client implements java.io.Serializable {
+public class Client {
 
 	private static final long serialVersionUID = 1L;
 	private String nom;
