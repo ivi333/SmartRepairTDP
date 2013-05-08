@@ -13,12 +13,86 @@ public class Client implements java.io.Serializable {
 	private String codiPostal;
 	private int numClient;
 	private Date dataAlta;
+	private int idasseguradora;
+	private String marca;
+	private String tipus;
+	private String num_chasis;
+	private String model;
+	private String matricula;
+	private String color;
+	private Date anyo;
 	
 	public Client ()
 	{
 		
 		
 	}
+	
+	  	public int getIdasseguradora() {
+		return idasseguradora;
+	}
+
+	public void setIdasseguradora(int idasseguradora) {
+		this.idasseguradora = idasseguradora;
+	}
+
+	public String getMarca() {
+		return marca;
+	}
+
+	public void setMarca(String marca) {
+		this.marca = marca;
+	}
+
+	public String getTipus() {
+		return tipus;
+	}
+
+	public void setTipus(String tipus) {
+		this.tipus = tipus;
+	}
+
+	public String getNum_chasis() {
+		return num_chasis;
+	}
+
+	public void setNum_chasis(String num_chasis) {
+		this.num_chasis = num_chasis;
+	}
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	public String getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public Date getAnyo() {
+		return anyo;
+	}
+
+	public void setAnyo(Date anyo) {
+		this.anyo = anyo;
+	}
+
+	
 	
 	public String getNom() {
 		return nom;

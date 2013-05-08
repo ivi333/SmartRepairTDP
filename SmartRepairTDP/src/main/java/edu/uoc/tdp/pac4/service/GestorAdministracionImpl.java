@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.dao.ConnectionPostgressDB;
 import edu.uoc.tdp.pac4.dao.GestorAdministracionDAOImpl;
@@ -57,18 +58,33 @@ public class GestorAdministracionImpl extends java.rmi.server.UnicastRemoteObjec
 	/**
 	 * version prueba
 	 */
-public String aux()throws RemoteException {
-	GestorAdministracionDAOImpl gestorAdministracionDAO = null;
-	try {
-		gestorAdministracionDAO = new GestorAdministracionDAOImpl(cPostgressDB);
-	} catch (GestorAdministracionException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	public String aux() throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return gestorAdministracionDAO.aux();
 	}
-	return  gestorAdministracionDAO.aux();
-}
+	
+	
+	public int getNewClient(Client altaCliente) throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return gestorAdministracionDAO.getNewClient(altaCliente);
+	}
 }
 	
+
 	
 	
 
