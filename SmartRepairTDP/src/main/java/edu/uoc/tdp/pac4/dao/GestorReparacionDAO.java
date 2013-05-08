@@ -1,5 +1,11 @@
 package edu.uoc.tdp.pac4.dao;
 
+import java.util.ArrayList;
+
+import edu.uoc.tdp.pac4.beans.Peca;
+
+
+
 
 /**
  * Clase abstracta que gestiona las operaciones basicas de conexion con postgres
@@ -8,8 +14,5 @@ package edu.uoc.tdp.pac4.dao;
  * Grup: FiveCoreDumped
  */
 public interface GestorReparacionDAO {
-	/**
-	 * Definir las interficies de base de datos
-	 * para el subsistema de Reparaciones 
-	 */
+	public abstract ArrayList<Peca> getMarcas();
 }

@@ -18,7 +18,7 @@ import edu.uoc.tdp.pac4.exception.DAOException;
  * ETIG - TDP PAC 4 Primavera 2013
  * Grup: FiveCoreDumped
  */
-public abstract class ConnectionPostgressDB {
+public  class ConnectionPostgressDB {
 
 	private static Connection cnn = null;
 

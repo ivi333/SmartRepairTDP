@@ -1,5 +1,9 @@
 package edu.uoc.tdp.pac4.dao;
 
+import java.util.ArrayList;
+
+import edu.uoc.tdp.pac4.beans.Peca;
+
 
 /**
  * Smart Repair 
@@ -7,6 +11,11 @@ package edu.uoc.tdp.pac4.dao;
  * Grup: FiveCoreDumped
  */
 public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements GestorReparacionDAO {
+
+	public ArrayList<Peca> getMarcas() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	/**
 	 * Implementar las operaciones de base de datos
