@@ -1,15 +1,24 @@
 package edu.uoc.tdp.pac4.dao;
 
 
-/**
- * Clase abstracta que gestiona las operaciones basicas de conexion con postgres
- * Smart Repair 
- * ETIG - TDP PAC 4 Primavera 2013
- * Grup: FiveCoreDumped
- */
-public interface GestorAdministracionDAO {
-	/**
-	 * Definir las interficies de base de datos
-	 * para el subsistema de Administracion
-	 */
+
+import java.util.ArrayList;
+
+import edu.uoc.tdp.pac4.beans.Asseguradora;
+import edu.uoc.tdp.pac4.beans.Client;
+import edu.uoc.tdp.pac4.beans.Peca;
+
+
+public interface  GestorAdministracionDAO {
+	
+	public  ArrayList<Peca> getMarcas();
+
+	public boolean getExistCliente(String strNIF);
+	
+	public  String aux();
+	
+	public int getNewClient(Client altaCliente);
+	
+	public ArrayList<Asseguradora> getAseguradoras();
+	
 }
