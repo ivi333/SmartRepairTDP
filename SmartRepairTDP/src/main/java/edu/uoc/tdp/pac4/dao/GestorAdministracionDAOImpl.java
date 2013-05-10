@@ -1,8 +1,11 @@
 package edu.uoc.tdp.pac4.dao;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import edu.uoc.tdp.pac4.beans.Asseguradora;
@@ -67,10 +70,11 @@ private ConnectionPostgressDB cPostgressDB;
 	{ 
 		boolean bResult=false;
 		try{
-			String sql = "SELECT * FROM client  WHERE nif=?";
+			String sql = "SELECT nif FROM client  WHERE nif=?";
 			PreparedStatement pstmt = cPostgressDB.createPrepareStatment(sql, ResultSet.CONCUR_UPDATABLE);
 			pstmt.setString(1, strNIF);
 			ResultSet rs = pstmt.executeQuery();
+		
 			if(rs.getRow()>0){
 				bResult=true;
 			}else
@@ -87,30 +91,80 @@ private ConnectionPostgressDB cPostgressDB;
 	public int getNewClient(Client altaCliente) {
 		int iResult=-1;
 		try{
-			String sql = "insert into  client  values()";
+			String sql = " insert into  client "
+					+ "( nom, cognoms, adreca, nif, poblacio, "
+					+ " codiPostal,  dataAlta, IdAsseguradora,"
+					+ " marca, tipus, num_chasis, model, matricula, color, anyo )"
+             + " VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?)";
+			 
 			PreparedStatement prep = cPostgressDB.createPrepareStatment(sql, ResultSet.CONCUR_UPDATABLE);
-			prep.setString(1, altaCliente.getAdreca());
-			prep.setString(1, altaCliente.getAdreca());
-			prep.setString(1, altaCliente.getAdreca());
-			prep.setString(1, altaCliente.getAdreca());
-			prep.setString(1, altaCliente.getAdreca());
 			
-				
-			ResultSet rs = prep.executeQuery();
-			if(rs.getRow()>0){
-				iResult=1;
-			}else
-				iResult=-2;
+			prep.setString(1, altaCliente.getNom());
+			prep.setString(2, altaCliente.getCognoms());
+			prep.setString(3, altaCliente.getAdreca());
+			prep.setString(4, altaCliente.getNif());
+			prep.setString(5, altaCliente.getPoblacio());
+			prep.setInt(6,altaCliente.getCodiPostal());
 			
+			java.util.Date  dt = new java.util.Date ();
+			java.sql.Date dateAlta = new java.sql.Date(dt.getTime());
+       	    prep.setDate(7, (java.sql.Date) dateAlta);
+			
+			prep.setInt(8, altaCliente.getIdasseguradora());
+			prep.setString(9,altaCliente.getMarca());
+			prep.setString(10,altaCliente.getTipus());
+			prep.setString(11,altaCliente.getNum_chasis());
+			prep.setString(12,altaCliente.getModel());
+			prep.setString(13,altaCliente.getMatricula());
+			prep.setString(14,altaCliente.getColor());
+			
+			prep.setDate(15, (java.sql.Date) altaCliente.getAnyo());
+			prep.executeQuery();
+			iResult=1;
 		}catch(Exception ex)
-		{
+		{iResult=-2;
 			ex.printStackTrace();
 		}
 		
 		return iResult;
 	}
 	
-	public ArrayList<Asseguradora> getAseguradoras()
+	public Client getDadeClient(String strNIF)
+	{
+		Client client=null;
+		try{
+			String sql = "SELECT * FROM client  WHERE nif=?";
+			PreparedStatement pstmt = cPostgressDB.createPrepareStatment(sql, ResultSet.CONCUR_UPDATABLE);
+			pstmt.setString(1, strNIF);
+			ResultSet rs = pstmt.executeQuery();
+			  while (rs.next()){
+				client = new Client();
+				client.setNumClient(rs.getInt("numclient"));
+				client.setNom(rs.getString("nom"));
+				client.setCognoms(rs.getString("cognoms"));
+				client.setAdreca(rs.getString("adreca"));
+				client.setNif(rs.getString("nif"));
+				client.setPoblacio(rs.getString("poblacio"));
+				client.setCodiPostal(rs.getInt("codipostal"));
+				client.setDataAlta(rs.getDate("dataalta"));
+				client.setIdasseguradora(rs.getInt("idasseguradora"));
+				client.setMarca(rs.getString("marca"));
+				client.setTipus(rs.getString("tipus"));
+				client.setNum_chasis(rs.getString("num_chasis"));
+				client.setModel(rs.getString("model"));
+				client.setMatricula(rs.getString("matricula"));
+				client.setColor(rs.getString("color"));
+				client.setAnyo(rs.getDate("anyo"));
+			}
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		return client;
+	}
+	
+		public ArrayList<Asseguradora> getAseguradoras()
 	{
 		ArrayList<Asseguradora> Aseguradoras = new ArrayList<Asseguradora>();
 		PreparedStatement pstmt =null;

@@ -9,13 +9,16 @@ import edu.uoc.tdp.pac4.service.GestorAdministracionImpl;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 
 public class Servidor {
+	
+	private static int port=1454;
+	
 	public static void main(String args[]) throws IOException{
 		new Servidor();
 		}
 		public Servidor(){
 		try {
 		System.out.println("Iniciando servidor RMI...");
-		Registry registry = LocateRegistry.createRegistry(1555);
+		Registry registry = LocateRegistry.createRegistry(port);
 		GestorAdministracionInterface objetoRemoto = new GestorAdministracionImpl();
 		registry.rebind("PAC4", objetoRemoto);
 		

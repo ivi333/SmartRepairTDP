@@ -9,6 +9,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -27,13 +29,15 @@ import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JSeparator;
 import javax.swing.JComboBox;
+import java.awt.Color;
 
 public class AltaCliente extends JDialog {
-
+private static int port=1454;
 	private JPanel contentPanel;
 	private JLabel lblCliente;
 	private JLabel lblNif;
@@ -55,7 +59,7 @@ public class AltaCliente extends JDialog {
 	private JLabel lblDireccion;
 	private JTextField txtDireccion;
 	private JLabel lblCP;
-	private JTextField txtCP;
+	private JFormattedTextField txtCP;
 	private JSeparator separator;
 	private JLabel lblDatosVehiculo;
 	private JLabel lblMarca;
@@ -88,10 +92,13 @@ public class AltaCliente extends JDialog {
 	private JTextField txtTipo;
 	private JLabel lblSeleccionAseg;
 	private JLabel lblColor;
-	private JTextField txtColor;
+	private  JTextField txtColor;
 	private JLabel lblAnyo;
-	private JTextField txtAnyo;
+	private JFormattedTextField txtAnyo;
 	private JLabel lblAseguradora;
+	
+	private JFormattedTextField txtMes;
+	private JFormattedTextField txtDia;
 
 	public static void main(String args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -115,7 +122,7 @@ public class AltaCliente extends JDialog {
 			if (conexionRemota == null) {
 
 				Registry registry = LocateRegistry.getRegistry("localhost",
-						1555);
+						port);
 				conexionRemota = (GestorAdministracionInterface) registry
 						.lookup("PAC4");
 
@@ -207,6 +214,8 @@ public class AltaCliente extends JDialog {
 		contentPanel.add(lblId);
 		
 		txtID = new JTextField();
+		txtID.setEditable(false);
+		txtID.setEnabled(false);
 		txtID.setBounds(115, 105, 146, 20);
 		contentPanel.add(txtID);
 		txtID.setColumns(10);
@@ -256,7 +265,7 @@ public class AltaCliente extends JDialog {
 		lblCP.setBounds(10, 256, 96, 14);
 		contentPanel.add(lblCP);
 		
-		txtCP = new JTextField();
+		txtCP = new JFormattedTextField();
 		txtCP.setBounds(115, 253, 86, 20);
 		contentPanel.add(txtCP);
 		txtCP.setColumns(10);
@@ -267,7 +276,7 @@ public class AltaCliente extends JDialog {
 		
 		lblDatosVehiculo = new JLabel();
 		lblDatosVehiculo.setText(TDSLanguageUtils.getMessage("cliente.lbl.datos.vehiculo"));
-		lblDatosVehiculo.setBounds(20, 448, 200, 14);
+		lblDatosVehiculo.setBounds(20, 431, 200, 14);
 		contentPanel.add(lblDatosVehiculo);
 		
 		lblMarca = new JLabel();
@@ -329,6 +338,7 @@ public class AltaCliente extends JDialog {
 							
 							LeerError(strMsg, tittle);
 						}
+						
 
 					 }
 					 
@@ -350,7 +360,8 @@ public class AltaCliente extends JDialog {
 		contentPanel.add(getBtnCancelaJ());
 		
 		lblPoblacion = new JLabel();
-		lblPoblacion.setBounds(10, 288, 46, 14);
+		lblPoblacion.setBounds(10, 288, 96, 14);
+		lblPoblacion.setText(TDSLanguageUtils.getMessage("cliente.lbl.vehiculo.poblacion"));
 		contentPanel.add(lblPoblacion);
 		
 		txtPoblacion = new JTextField();
@@ -383,22 +394,19 @@ public class AltaCliente extends JDialog {
 		lblAnyo.setText(TDSLanguageUtils.getMessage("cliente.lbl.vehiculo.anyo"));
 		contentPanel.add(lblAnyo);
 		
-		txtAnyo = new JTextField();
-		txtAnyo.setBounds(114, 647, 137, 20);
-		contentPanel.add(txtAnyo);
-		txtAnyo.setColumns(10);
+		
 		
 		lblAseguradora = new JLabel();
-		lblAseguradora.setBounds(10, 397, 146, 14);
+		lblAseguradora.setBounds(10, 376, 146, 14);
 		lblAseguradora.setText(TDSLanguageUtils.getMessage("cliente.lbl.vehiculo.aseguradora"));
 		contentPanel.add(lblAseguradora);
 		
 		JSeparator separator_1 = new JSeparator();
-		separator_1.setBounds(10, 435, 403, 2);
+		separator_1.setBounds(10, 418, 403, 2);
 		contentPanel.add(separator_1);
 		
 		cmbAseguradora = new JComboBox();
-		cmbAseguradora.setBounds(166, 394, 214, 20);
+		cmbAseguradora.setBounds(166, 373, 214, 20);
 		contentPanel.add(cmbAseguradora);
 		
 		lblSeleccionAseg = new JLabel();
@@ -406,11 +414,43 @@ public class AltaCliente extends JDialog {
 		lblSeleccionAseg.setText(TDSLanguageUtils.getMessage("cliente.lbl.vehiculo.selec.aseguradora"));
 		contentPanel.add(lblSeleccionAseg);
 		
+		JLabel lblNewLabel = new JLabel();
+		lblNewLabel.setText("( dd / MM / yyyy )");
+		lblNewLabel.setBounds(274, 650, 106, 14);
+		
+		contentPanel.add(lblNewLabel);
+		
+		txtDia = new JFormattedTextField();
+		txtDia.setBounds(115, 647, 33, 20);
+		contentPanel.add(txtDia);
+		txtDia.setColumns(10);
+		
+		txtMes = new JFormattedTextField();
+		txtMes.setBounds(166, 647, 33, 20);
+		contentPanel.add(txtMes);
+		txtMes.setColumns(10);
+		
+		
+		txtAnyo = new JFormattedTextField();
+		txtAnyo.setBounds(209, 647, 41, 20);
+		contentPanel.add(txtAnyo);
+		txtAnyo.setColumns(10);
+		
+		
+		JLabel label = new JLabel("/");
+		label.setBounds(156, 650, 12, 14);
+		contentPanel.add(label);
+		
+		JLabel label_1 = new JLabel("/");
+		label_1.setBounds(201, 650, 19, 14);
+		contentPanel.add(label_1);
+		
 	}
 
 	private JButton getBtnCancelaJ() {
 		if (btnCancelar == null) {
 			btnCancelar = new JButton();
+			btnCancelar.setForeground(Color.RED);
 			btnCancelar.setBounds(new Rectangle(236, 700, 107, 23));
 			btnCancelar.setText(TDSLanguageUtils.getMessage("cliente.btn.cancelar"));
 			btnCancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -427,6 +467,7 @@ public class AltaCliente extends JDialog {
 		
 		if (btnComprobar == null) {
 			btnComprobar = new JButton();
+			btnComprobar.setForeground(new Color(0, 100, 0));
 			if (NEW_UPD.equals("NEW"))
 				btnComprobar.setText(TDSLanguageUtils
 						.getMessage("cliente.btn.comprobar"));
@@ -539,15 +580,15 @@ public class AltaCliente extends JDialog {
 		String strResult = "";
 		try {
 
-			if (ImputValues().equals("") && ImputValues() == null) {
+			if (ImputValues().equals("")) {
 
 				Client altaCliente=new Client();
 				
 				altaCliente.setAdreca(txtDireccion.getText().toString());
-				altaCliente.setCodiPostal(txtCP.getText().toString());
+				altaCliente.setCodiPostal(Integer.parseInt(txtCP.getText()));
 				altaCliente.setCognoms(txtApellido.getText().toString());
 				altaCliente.setNom(txtNombre.getText().toString());
-				altaCliente.setPoblacio(txtCP.getText().toString());
+				altaCliente.setPoblacio(txtPoblacion.getText().toString());
 				altaCliente.setNif(txtNIF.getText().toString());
 				
 				altaCliente.setIdasseguradora(1);
@@ -559,17 +600,35 @@ public class AltaCliente extends JDialog {
 						break;
 					}
 				}
+				for(int i=0; i<cbAseguradora.size();i++)
+				{
+					if(cmbAseguradora.getSelectedIndex()==cbAseguradora.get(i).getId())
+					{
+						altaCliente.setMarca(cbAseguradora.get(i).getValue());
+						break;
+					}
+				}
 				
-				
-				altaCliente.setTipus("aux");
+				altaCliente.setTipus(txtTipo.getText().toString());
 				
 				altaCliente.setNum_chasis(txtBastidor.getText().toString());
 				altaCliente.setModel(txtModelo.getText().toString());
 				altaCliente.setMatricula(txtMatricula.getText().toString());
-				altaCliente.setColor("rojo");
+				altaCliente.setColor(txtColor.getText().toString());
+				altaCliente.setPoblacio(txtPoblacion.getText().toString());
 				
-			//	altaCliente.setAnyo(d.);
-				  int iResult  = getRemoto().getNewClient(altaCliente);
+				String anyo=txtAnyo.getText().toString();
+				String dia=txtDia.getText().toString();
+				String mes=txtMes.getText().toString();
+								String strFecha=dia+"/" +mes +"/"+anyo;
+								
+				DateFormat  formatter = new SimpleDateFormat("dd/MM/yyyy");
+				java.util.Date  dt1 = (java.util.Date) formatter.parse(strFecha);
+				java.sql.Date DateAnyo = new java.sql.Date(dt1.getTime());
+				
+				altaCliente.setAnyo(DateAnyo);
+			  	
+				getRemoto().getNewClient(altaCliente);
 				
 			} else {
 				strResult = ImputValues();
@@ -609,7 +668,7 @@ public class AltaCliente extends JDialog {
 						.getMessage("cliente.msg.falta.modelo");
 				return strResult;
 			}
-			if (cmbMarca.getSelectedIndex() > 0) {
+			if (cmbMarca.getSelectedIndex() == 0) {
 				strResult = TDSLanguageUtils
 						.getMessage("cliente.msg.falta.marca");
 				return strResult;
@@ -624,7 +683,38 @@ public class AltaCliente extends JDialog {
 						.getMessage("cliente.msg.falta.bastidor");
 				return strResult;
 			}
+			if(cmbAseguradora.getSelectedIndex()==0)
+			{
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.msg.falta.aseguradora");
+				return strResult;
+			}
+			if(txtColor.getText().toString().equals(""))
+			{
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.msg.falta.color");
+				return strResult;
+			}
+			if(txtAnyo.getText().toString().equals(""))
+			{
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.msg.falta.anyo");
+				return strResult;
+			}
+			if(txtTipo.getText().toString().equals(""))
+			{
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.msg.falta.tipo");
+				return strResult;
+			}
+			if(txtPoblacion.getText().toString().equals(""))
+			{
 
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.msg.falta.poblacion");
+				return strResult;
+			}
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

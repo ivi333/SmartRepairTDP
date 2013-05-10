@@ -1,8 +1,9 @@
 package edu.uoc.tdp.pac4.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Client {
+public class Client implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private String nom;
@@ -10,7 +11,7 @@ public class Client {
 	private String adreca;
 	private String nif;
 	private String poblacio;
-	private String codiPostal;
+	private int codiPostal;
 	private int numClient;
 	private Date dataAlta;
 	private int idasseguradora;
@@ -124,10 +125,10 @@ public class Client {
 	public void setPoblacio(String poblacio) {
 		this.poblacio = poblacio;
 	}
-	public String getCodiPostal() {
+	public int getCodiPostal() {
 		return codiPostal;
 	}
-	public void setCodiPostal(String codiPostal) {
+	public void setCodiPostal(int codiPostal) {
 		this.codiPostal = codiPostal;
 	}
 	public int getNumClient() {
