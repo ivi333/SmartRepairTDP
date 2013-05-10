@@ -5,6 +5,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 
+import edu.uoc.tdp.pac4.beans.Asseguradora;
+import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Peca;
 
 
@@ -15,6 +17,11 @@ public ArrayList<Peca>getMarcas()throws RemoteException;
 public boolean  getExistCliente(String strNIF) throws RemoteException;
 
 public String aux()throws RemoteException;
+
+public int getNewClient(Client altaCliente)throws RemoteException;
+
+public ArrayList<Asseguradora> getAseguradoras()throws RemoteException;
+
 }
 
 

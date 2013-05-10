@@ -4,7 +4,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+
+import edu.uoc.tdp.pac4.beans.Asseguradora;
+import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Peca;
+import edu.uoc.tdp.pac4.exception.DAOException;
 import edu.uoc.tdp.pac4.exception.GestorAdministracionException;
 
 
@@ -20,15 +24,20 @@ private ConnectionPostgressDB cPostgressDB;
 	public GestorAdministracionDAOImpl(ConnectionPostgressDB cPostgressDB)throws GestorAdministracionException
 	{
 		this.cPostgressDB=cPostgressDB;
-		//this.cPostgressDB=cPostgressDB.getConnectionDB();
+		try {
+			cPostgressDB.getConnectionDB();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public ArrayList<Peca> getMarcas()
 	{
 		ArrayList<Peca> modelos = new ArrayList<Peca>();
 		PreparedStatement pstmt =null;
-		   ResultSet rs = null;
-		String sql = "SELECT * FROM Client";
+		   ResultSet rs =null;
+		String sql = "SELECT * FROM peca";
 		try{
 			pstmt= cPostgressDB.createPrepareStatment(sql,ResultSet.CONCUR_UPDATABLE);
 			 rs =pstmt.executeQuery();
@@ -58,6 +67,14 @@ private ConnectionPostgressDB cPostgressDB;
 	{ 
 		boolean bResult=false;
 		try{
+			String sql = "SELECT * FROM client  WHERE nif=?";
+			PreparedStatement pstmt = cPostgressDB.createPrepareStatment(sql, ResultSet.CONCUR_UPDATABLE);
+			pstmt.setString(1, strNIF);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.getRow()>0){
+				bResult=true;
+			}else
+				bResult=false;
 		}
 		catch(Exception ex)
 		{
@@ -66,5 +83,61 @@ private ConnectionPostgressDB cPostgressDB;
 		return bResult;
 		
 	}
+
+	public int getNewClient(Client altaCliente) {
+		int iResult=-1;
+		try{
+			String sql = "insert into  client  values()";
+			PreparedStatement prep = cPostgressDB.createPrepareStatment(sql, ResultSet.CONCUR_UPDATABLE);
+			prep.setString(1, altaCliente.getAdreca());
+			prep.setString(1, altaCliente.getAdreca());
+			prep.setString(1, altaCliente.getAdreca());
+			prep.setString(1, altaCliente.getAdreca());
+			prep.setString(1, altaCliente.getAdreca());
+			
+				
+			ResultSet rs = prep.executeQuery();
+			if(rs.getRow()>0){
+				iResult=1;
+			}else
+				iResult=-2;
+			
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		
+		return iResult;
+	}
 	
+	public ArrayList<Asseguradora> getAseguradoras()
+	{
+		ArrayList<Asseguradora> Aseguradoras = new ArrayList<Asseguradora>();
+		PreparedStatement pstmt =null;
+		   ResultSet rs =null;
+		String sql = "SELECT * FROM asseguradora ";
+		try{
+			pstmt= cPostgressDB.createPrepareStatment(sql,ResultSet.CONCUR_UPDATABLE);
+			 rs =pstmt.executeQuery();
+			while (rs.next()){
+				Asseguradora aseg=new Asseguradora();
+				aseg.setIdasseguradora(rs.getInt("idasseguradora"));
+				aseg.setCif(rs.getString("cif"));
+				aseg.setNom(rs.getString("nom"));
+				aseg.setAdreca(rs.getString("adreca"));
+				aseg.setTelefon(rs.getInt("telefon"));
+				
+				Aseguradoras.add(aseg);
+			}
+			
+		}catch(Exception e){
+			try {
+				throw new GestorAdministracionException("Server.error.ConBD");
+			} catch (GestorAdministracionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		return Aseguradoras;
+	}
 }
