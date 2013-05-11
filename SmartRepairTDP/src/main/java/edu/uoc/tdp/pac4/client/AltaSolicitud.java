@@ -12,6 +12,7 @@ import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.JTextComponent;
 import javax.swing.JLabel;
 
 import edu.uoc.tdp.pac4.beans.Client;
@@ -25,6 +26,9 @@ import javax.swing.JTextArea;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
 import javax.swing.JSeparator;
 
 public class AltaSolicitud extends JDialog {
@@ -76,7 +80,7 @@ public class AltaSolicitud extends JDialog {
 	}
 	
 	private void initialize() {
-		setSize(new Dimension(469, 365));
+		setSize(new Dimension(469, 525));
 	}
 	
 	private void seleccionIdioma() {
@@ -163,11 +167,11 @@ public class AltaSolicitud extends JDialog {
 		
 		lblComentario = new JLabel();
 		lblComentario.setText(TDSLanguageUtils.getMessage("solicitud.lbl.comentarios"));
-		lblComentario.setBounds(24, 196, 89, 14);
+		lblComentario.setBounds(38, 352, 89, 14);
 		contentPane.add(lblComentario);
 		
 		 textAreaComentario = new JTextArea();
-		textAreaComentario.setBounds(123, 196, 257, 76);
+		textAreaComentario.setBounds(137, 352, 257, 76);
 		contentPane.add(textAreaComentario);
 		
 		btnAlta = new JButton();
@@ -176,7 +180,7 @@ public class AltaSolicitud extends JDialog {
 			}
 		});
 		btnAlta.setText(TDSLanguageUtils.getMessage("solicitud.btn.alta"));
-		btnAlta.setBounds(24, 283, 89, 23);
+		btnAlta.setBounds(38, 457, 89, 23);
 		contentPane.add(btnAlta);
 		
 		contentPane.add(getBtnCancelaJ());
@@ -195,6 +199,7 @@ public class AltaSolicitud extends JDialog {
 		txtNIF = new JTextField();
 		txtNIF.setBounds(172, 17, 120, 20);
 		txtNIF.setColumns(10);
+		txtNIF.addKeyListener(new KeyAdapterNumbersOnly());
 		contentPane.add(txtNIF);
 		
 		contentPane.add(getBtnConsultar());
@@ -203,16 +208,13 @@ public class AltaSolicitud extends JDialog {
 	
 	private JButton getBtnAlta()
 	{
-		if()
-		{
-			
-		}
-		return 
+		
+		return null;
 	}
 	private JButton getBtnCancelaJ() {
 		if (btnCancelar == null) {
 			btnCancelar = new JButton();
-			btnCancelar.setBounds(new Rectangle(291, 283, 89, 23));
+			btnCancelar.setBounds(new Rectangle(305, 457, 89, 23));
 			btnCancelar.setText(TDSLanguageUtils.getMessage("solicitud.btn.cancelar"));
 			btnCancelar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -239,10 +241,10 @@ public class AltaSolicitud extends JDialog {
 									String strMsg = "";
 									String strNIF = txtNIF.getText().toString();
 									if (!strNIF.equals("") && strNIF != null) {
-										strMsg = getMsgExisteCliente(strNIF);
+										strMsg = getMsgExisteCliente((strNIF));
 										MuestraOk(strMsg, TDSLanguageUtils.getMessage("solicitud.new.titulo"));
 											if (isOkCLiente)
-												getCargarClienteByNIF(strNIF);
+												getCargarClienteByNIF((strNIF));
 										}
 									
 									// es necesario el nif
@@ -303,4 +305,21 @@ public class AltaSolicitud extends JDialog {
 
 		return strResult;
 	}
+	 public class KeyAdapterNumbersOnly extends KeyAdapter {
+
+			/**
+			 * Regular expression which defines the allowed characters.
+			 */
+			private String allowedRegex = "[^0-9]";
+
+			/**
+			 * Key released on field.
+			 */
+			public void keyReleased(KeyEvent e) {
+				String curText = ((JTextComponent) e.getSource()).getText();
+				curText = curText.replaceAll(allowedRegex, "");
+
+				((JTextComponent) e.getSource()).setText(curText);
+			}
+		}
 }

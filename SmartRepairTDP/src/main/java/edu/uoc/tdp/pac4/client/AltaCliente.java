@@ -194,11 +194,13 @@ public class AltaCliente extends JDialog {
 		lblNif = new JLabel();
 		lblNif.setText(TDSLanguageUtils.getMessage("cliente.lbl.NIF"));
 		lblNif.setBounds(10, 42, 62, 14);
+		
 		contentPanel.add(lblNif);
 
 		txtNIF = new JTextField();
 		txtNIF.setBounds(82, 39, 86, 20);
 		contentPanel.add(txtNIF);
+		txtNIF.addKeyListener(new KeyAdapterNumbersOnly());
 		txtNIF.setColumns(10);
 
 		separator1 = new JSeparator();
@@ -231,6 +233,7 @@ public class AltaCliente extends JDialog {
 		txtNifNew = new JTextField();
 		txtNifNew.setBounds(115, 133, 146, 20);
 		contentPanel.add(txtNifNew);
+		txtNifNew.addKeyListener(new KeyAdapterNumbersOnly());
 		txtNifNew.setColumns(10);
 
 		lblNombre = new JLabel();
@@ -498,9 +501,9 @@ public class AltaCliente extends JDialog {
 
 					try {
 						String strMsg = "";
-						String strNIF = txtNIF.getText().toString();
+						String strNIF = (txtNIF.getText());
 
-						if (!strNIF.equals("") && strNIF != null) {
+						if (String.valueOf(strNIF)!=null&& !String.valueOf(strNIF).equals("")) {
 							strMsg = getMsgExisteCliente(strNIF);
 							LeerError(strMsg, TDSLanguageUtils
 									.getMessage("cliente.msg.titulo"));
@@ -544,7 +547,7 @@ public class AltaCliente extends JDialog {
 			if (client != null) {
 				txtID.setText(String.valueOf(client.getNumClient()));
 				txtID.setEnabled(false);
-				txtNifNew.setText(String.valueOf(client.getNif().toString().trim()));
+				txtNifNew.setText(String.valueOf(client.getNif()));
 				txtNifNew.setEnabled(false);
 				txtNombre.setText(String.valueOf(client.getNom().toString().trim()));
 				txtApellido.setText(String.valueOf(client.getCognoms().toString().trim()));
@@ -762,7 +765,7 @@ public class AltaCliente extends JDialog {
 			altaCliente.setCognoms(txtApellido.getText().toString());
 			altaCliente.setNom(txtNombre.getText().toString());
 			altaCliente.setPoblacio(txtPoblacion.getText().toString());
-			altaCliente.setNif(txtNifNew.getText().toString());
+			altaCliente.setNif(txtNifNew.getText());
 
 			altaCliente.setIdasseguradora(1);
 			for (int i = 0; i < cbMarca.size(); i++) {

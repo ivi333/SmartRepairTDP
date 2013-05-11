@@ -33,6 +33,10 @@ public class Reparacio implements java.io.Serializable{
 		this.dataFi = dataFi;
 	}
 	
+	public Reparacio() {
+		
+	}
+
 	public int getOrdreReparacio() {
 		return ordreReparacio;
 	}

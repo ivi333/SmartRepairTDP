@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Peca;
+import edu.uoc.tdp.pac4.beans.Reparacio;
+import edu.uoc.tdp.pac4.beans.Solicitud;
 import edu.uoc.tdp.pac4.exception.DAOException;
 import edu.uoc.tdp.pac4.exception.GestorAdministracionException;
 
@@ -102,7 +104,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			prep.setString(1, altaCliente.getNom().toString().trim());
 			prep.setString(2, altaCliente.getCognoms().toString().trim());
 			prep.setString(3, altaCliente.getAdreca().toString().trim());
-			prep.setString(4, altaCliente.getNif().toString().trim());
+			prep.setString(4, altaCliente.getNif());
 			prep.setString(5, altaCliente.getPoblacio().toString().trim());
 			prep.setInt(6, altaCliente.getCodiPostal());
 
@@ -187,7 +189,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 				client.setNom(rs.getString("nom"));
 				client.setCognoms(rs.getString("cognoms"));
 				client.setAdreca(rs.getString("adreca"));
-				client.setNif(rs.getString("nif"));
+				client.setNif((rs.getString("nif")));
 				client.setPoblacio(rs.getString("poblacio"));
 				client.setCodiPostal(rs.getInt("codipostal"));
 				client.setDataAlta(rs.getDate("dataalta"));
@@ -236,4 +238,64 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		}
 		return Aseguradoras;
 	}
+	
+	public ArrayList<Reparacio> getReparaciones()
+	{
+		ArrayList<Reparacio> Reparaciones = new ArrayList<Reparacio>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT * FROM reparacio ";
+			pstmt = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				Reparacio r= new Reparacio();
+				r.setOrdreReparacio(rs.getInt("ordrereparacio"));
+				r.setCapTaller(rs.getInt("captaller"));
+				r.setAcceptada(rs.getBoolean("acceptada"));
+				r.setIdMecanic(rs.getInt("idmecanic"));
+				r.setAssignada(rs.getBoolean("assignada"));
+				r.setComptador(rs.getDouble("comptador"));
+				r.setObservacions(rs.getString("observacions"));
+				r.setNumCom(rs.getInt("numcom"));
+				r.setDataAssignacio(rs.getDate("dataassignacio"));
+				r.setDataInici(rs.getDate("datainici"));
+				r.setDataFi(rs.getDate("datafi"));
+				Reparaciones.add(r);
+			}
+		} catch (Exception e) {
+		}
+		return Reparaciones;
+	}
+	
+	public Solicitud getSolicitudByCodeReparacion(int codigoReparacion)
+	{ 
+		Solicitud sol =null;
+		try{
+			String sql = "SELECT * FROM solicitud  WHERE numreparacio=?";
+			PreparedStatement pstmt = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+			pstmt.setInt(1, codigoReparacion);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				sol =new Solicitud();
+				sol.setNumsol(rs.getInt("numsol"));
+				sol.setComentaris(rs.getString("comentaris"));
+				sol.setDataalta(rs.getDate("dataalta"));
+				sol.setDatafinalitzacio(rs.getDate("datafinalitzacio"));
+				sol.setClient(rs.getInt("client"));
+				sol.setNumreparacio(rs.getInt("numreparacio"));
+				sol.setPendent(rs.getBoolean("pendent"));
+				sol.setFinalitzada(rs.getBoolean("finalitzada"));
+				sol.setNumpoliza(rs.getString("numpoliza"));
+				
+			}
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		return sol;
+	}
 }
+

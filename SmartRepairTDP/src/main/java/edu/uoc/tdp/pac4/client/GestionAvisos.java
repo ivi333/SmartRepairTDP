@@ -3,10 +3,16 @@ package edu.uoc.tdp.pac4.client;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Rectangle;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -14,22 +20,28 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
+
+import edu.uoc.tdp.pac4.beans.Client;
+import edu.uoc.tdp.pac4.beans.Reparacio;
+import edu.uoc.tdp.pac4.beans.Solicitud;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
+import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
+import javax.swing.ScrollPaneConstants;
 
 public class GestionAvisos extends JDialog {
-
+	private static int port = 1444;
 	private JPanel contentPane;
-	private JButton btnSalir; 
+	private JButton btnSalir;
 	private JButton btnGestionar;
-	private JTable jTableResultado =new JTable();
+	private JTable jTableResultado = new JTable();
 	private JScrollPane scrollPaneResultado;
-	
+	private static GestorAdministracionInterface conexionRemota;
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					GestionAvisos frame = new GestionAvisos();
-					  frame.setLocationRelativeTo(null);
+					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -49,85 +61,176 @@ public class GestionAvisos extends JDialog {
 			initialize();
 			CargarControles();
 
-			   GruposTableModel gtm = (GruposTableModel) jTableResultado.getModel();
-               gtm.addRow(new Object[]{
-                           "", "", "", "" });
-                           
-               
+			GruposTableModel gtm = (GruposTableModel) jTableResultado
+					.getModel();
+			gtm.addRow(new Object[] { "", "", "", "" });
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 
 	}
 
-	
 	private void initialize() {
-		setSize(new Dimension(491, 250));
+		setSize(new Dimension(912, 250));
 	}
 
 	private void seleccionIdioma() {
 		Locale localLocale = new Locale("", "");
 		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
 	}
-	private void CargarControles()
-	{ setTitle(TDSLanguageUtils.getMessage("aviso.titulo"));
+	
+	public static GestorAdministracionInterface getRemoto()
+			throws RemoteException, NotBoundException {
+		try {
+
+			if (conexionRemota == null) {
+
+				Registry registry = LocateRegistry.getRegistry("localhost",
+						port);
+				conexionRemota = (GestorAdministracionInterface) registry
+						.lookup("PAC4");
+
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return conexionRemota;
+	}
+	private void LeerError(String paramString1, String paramString2) {
+		JOptionPane.showMessageDialog(this, paramString1, paramString2, 0);
+	}
+	 private void MuestraOk(String paramString1, String paramString2) {
+	        JOptionPane.showMessageDialog(this, paramString1, paramString2, 1);
+	    }
+
+	private void CargarControles() {
+		setTitle(TDSLanguageUtils.getMessage("aviso.titulo"));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
-		btnGestionar = new JButton();
-		btnGestionar.setText(TDSLanguageUtils.getMessage("aviso.btn.gestionar"));
-		btnGestionar.setBounds(25, 181, 89, 23);
-		contentPane.add(btnGestionar);
-		
-		
+
+		contentPane.add(getbtnGestionar());
+
 		contentPane.add(getbtnSalirJ());
-		
-		
-	
+
 		scrollPaneResultado = new JScrollPane();
+		scrollPaneResultado.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPaneResultado.setViewportBorder(UIManager
 				.getBorder("ComboBox.border"));
-		scrollPaneResultado.setBounds(new Rectangle(25, 11, 414, 150));
+		scrollPaneResultado.setBounds(new Rectangle(25, 11, 869, 150));
 		this.jTableResultado.setModel(new GruposTableModel());
-		
+
 		scrollPaneResultado.setViewportView(jTableResultado);
 		getContentPane().add(this.scrollPaneResultado, null);
-		
 
 	}
+
 	private JButton getbtnSalirJ() {
 		if (btnSalir == null) {
 			btnSalir = new JButton();
-			btnSalir.setBounds(new Rectangle(350, 181, 89, 23));
+			btnSalir.setBounds(new Rectangle(764, 172, 89, 23));
 			btnSalir.setText(TDSLanguageUtils.getMessage("aviso.btn.salir"));
 			btnSalir.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					dispose();
-					
+
 				}
 			});
 		}
 		return btnSalir;
 	}
+
+	private JButton getbtnGestionar() {
+		if (btnGestionar == null) {
+			btnGestionar = new JButton();
+			btnGestionar.setBounds(new Rectangle(35, 172, 89, 23));
+			btnGestionar.setText(TDSLanguageUtils
+					.getMessage("aviso.btn.gestionar"));
+			btnGestionar.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					getDadesGestion();
+
+				}
+			});
+		}
+		return btnGestionar;
+	}
+	
+	private void getDadesGestion()
+	{
+		try{
+			GruposTableModel gtm = (GruposTableModel) jTableResultado.getModel();
+			ArrayList<Reparacio>Reparaciones = getRemoto().getReparaciones();
+			
+			if(Reparaciones!=null)
+			{
+			
+			for(Reparacio r :Reparaciones)
+			{
+				Solicitud sol =new Solicitud();
+				Client cli=new Client();
+				
+				sol=getRemoto().getSolicitudByCodeReparacion(r.getOrdreReparacio());
+				int numsol=0;
+				boolean bPendiente=false;
+				boolean bFinalizada=false;
+				String nom="";
+				String Cognom="";
+				String nif="";
+				if(sol!=null)
+				{
+					numsol=	sol.getNumsol();
+					bPendiente=	sol.isPendent();
+					bFinalizada=sol.isFinalitzada();
+					
+					cli=getRemoto().getDadeClient(String.valueOf(sol.getClient()));
+					if(cli!=null)
+					{
+						nom=cli.getNom();
+						Cognom=cli.getCognoms();
+						nif=	cli.getNif();
+					}
+				}
+				
+				gtm.addRow(new Object[] {numsol,bPendiente,bFinalizada,nom,Cognom,nif,r.getObservacions(),r.getDataAssignacio(),r.getDataInici(),r.getDataFi()});
+			}
+		
+			}
+			
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		
+	}
+
 	private static class GruposTableModel extends DefaultTableModel {
 
 		private static final long serialVersionUID = 1L;
-
+		
 		public GruposTableModel() {
-            super(new String[]{
-                        TDSLanguageUtils.getMessage("aviso.lbl.solicitud"), //
-                        TDSLanguageUtils.getMessage("aviso.lbl.estado"), //
-                        TDSLanguageUtils.getMessage("aviso.lbl.cliente"), //
-                        TDSLanguageUtils.getMessage("aviso.lbl.apellidos"), //
-                       },0);//numFilas); //
-        }
+			super(new String[] {
+					TDSLanguageUtils.getMessage("aviso.lbl.solicitud"), //
+					TDSLanguageUtils.getMessage("aviso.lbl.estadoPendiente"), //
+					TDSLanguageUtils.getMessage("aviso.lbl.estadoFinalizado"), //
+					//TDSLanguageUtils.getMessage("aviso.lbl.poliza"),
+					TDSLanguageUtils.getMessage("aviso.lbl.nombre"),
+					TDSLanguageUtils.getMessage("aviso.lbl.apellido"),
+					TDSLanguageUtils.getMessage("aviso.lbl.nif"),
+					TDSLanguageUtils.getMessage("aviso.lbl.detalle.reparacion"),
+					TDSLanguageUtils.getMessage("aviso.lbl.reparacion.fechaAsig"),
+					TDSLanguageUtils.getMessage("aviso.lbl.reparacion.fechainicio"),
+					TDSLanguageUtils.getMessage("aviso.lbl.reparacion.fechafin"),
+					//
+			}, 0);// numFilas); //
+		}
 
-        @Override
-        public boolean isCellEditable(int row, int col) {
-            return false;
-        }
-    }
-	
+		@Override
+		public boolean isCellEditable(int row, int col) {
+			return false;
+		}
+	}
+
 }
