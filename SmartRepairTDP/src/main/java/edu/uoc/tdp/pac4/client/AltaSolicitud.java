@@ -49,6 +49,7 @@ public class AltaSolicitud extends JDialog {
 	private JTextField txtNIF;
 	private JButton  btnConsultar;
 	private boolean isOkCLiente = false;
+	private JButton btnNewButton;
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -75,7 +76,7 @@ public class AltaSolicitud extends JDialog {
 	}
 	
 	private void initialize() {
-		setSize(new Dimension(424, 391));
+		setSize(new Dimension(469, 365));
 	}
 	
 	private void seleccionIdioma() {
@@ -179,9 +180,11 @@ public class AltaSolicitud extends JDialog {
 		contentPane.add(btnAlta);
 		
 		contentPane.add(getBtnCancelaJ());
+	
+		
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(24, 45, 368, 2);
+		separator.setBounds(24, 45, 416, 2);
 		contentPane.add(separator);
 		
 		JLabel lblNewLabel = new JLabel("New label");
@@ -194,9 +197,17 @@ public class AltaSolicitud extends JDialog {
 		txtNIF.setColumns(10);
 		contentPane.add(txtNIF);
 		
-		
 		contentPane.add(getBtnConsultar());
-		
+			
+	}
+	
+	private JButton getBtnAlta()
+	{
+		if()
+		{
+			
+		}
+		return 
 	}
 	private JButton getBtnCancelaJ() {
 		if (btnCancelar == null) {
@@ -214,10 +225,10 @@ public class AltaSolicitud extends JDialog {
 	}
 
 	private JButton getBtnConsultar() {
-		try {
+	
 			if (btnConsultar == null) {
 				btnConsultar = new JButton();
-				btnConsultar.setBounds(302, 11, 104, 23);
+				btnConsultar.setBounds(306, 16, 134, 23);
 				btnConsultar.setText(TDSLanguageUtils
 						.getMessage("solicitud.btn.consultar"));
 				btnConsultar
@@ -247,9 +258,6 @@ public class AltaSolicitud extends JDialog {
 							}
 						});
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
 		return btnConsultar;
 	}
 
@@ -270,7 +278,8 @@ public class AltaSolicitud extends JDialog {
 	private void LeerError(String paramString1, String paramString2) {
 		JOptionPane.showMessageDialog(this, paramString1, paramString2, 0);
 	}
-	 private void MuestraOk(String paramString1, String paramString2) {
+	
+   private void MuestraOk(String paramString1, String paramString2) {
 	        JOptionPane.showMessageDialog(this, paramString1, paramString2, 1);
 	    }
 	
