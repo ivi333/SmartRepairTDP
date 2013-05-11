@@ -349,7 +349,7 @@ public class AltaCliente extends JDialog {
 						if (!strMsg.equals("")) {
 							String tittle = TDSLanguageUtils
 									.getMessage("cliente.new.titulo");
-							LeerError(strMsg, tittle);
+							MuestraOk(strMsg, tittle);
 						}
 					}
 
@@ -593,7 +593,9 @@ public class AltaCliente extends JDialog {
 	private void LeerError(String paramString1, String paramString2) {
 		JOptionPane.showMessageDialog(this, paramString1, paramString2, 0);
 	}
-
+	 private void MuestraOk(String paramString1, String paramString2) {
+	        JOptionPane.showMessageDialog(this, paramString1, paramString2, 1);
+	    }
 	private String getMsgExisteCliente(String strNIF) {
 		String strResult = "";
 		try {
