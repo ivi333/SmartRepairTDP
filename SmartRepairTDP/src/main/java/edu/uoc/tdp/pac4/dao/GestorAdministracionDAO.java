@@ -21,4 +21,8 @@ public interface  GestorAdministracionDAO {
 	
 	public ArrayList<Asseguradora> getAseguradoras();
 	
+	public Client getDadeClient(String strNIF);
+	
+	public int getUpdClient(Client updCliente);
+	
 }

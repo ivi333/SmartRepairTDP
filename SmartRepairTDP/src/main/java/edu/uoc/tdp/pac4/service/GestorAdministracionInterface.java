@@ -22,6 +22,9 @@ public int getNewClient(Client altaCliente)throws RemoteException;
 
 public ArrayList<Asseguradora> getAseguradoras()throws RemoteException;
 
+public Client getDadeClient(String strNIF)throws RemoteException;
+
+public int getUpdClient(Client updCliente)throws RemoteException;
 }
 
 
