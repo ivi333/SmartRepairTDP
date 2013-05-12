@@ -131,6 +131,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 
 		return iResult;
 	}
+
 	public int getUpdClient(Client updCliente) {
 		int iResult = -1;
 		try{
@@ -175,6 +176,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 	}
 	return iResult;
 	}
+
 	public Client getDadeClient(String strNIF) {
 		Client client = null;
 		try {
@@ -267,6 +269,49 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		} catch (Exception e) {
 		}
 		return Reparaciones;
+	}
+	
+	public ArrayList<String> getPedidosPeca()
+	{    ArrayList<String> list=new ArrayList<String>();
+		
+		try{
+		
+			String sql = " select "
+					+ " peca.codipeca ,"
+					+ " peca.descripcio ,"
+					+ " peca.pvp ,"
+					+ " peca.pvd ,"
+					+ " peca.marca,"
+					+ " peca.model,"
+					+ " stockpeca.stock,"
+					+ " stockpeca.stockminim,"
+					+ " proveidor.nom  from "
+					+ " peca inner join stockpeca"
+					+ " on peca.codipeca=stockpeca.codipeca"
+					+ " inner join proveidor on peca.idproveidor=proveidor.idproveidor";
+				
+			PreparedStatement pstmt = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+		
+			ResultSet rs = pstmt.executeQuery();
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				list.add(String.valueOf(rs.getInt(("codipeca"))));
+				list.add(rs.getString("descripcio"));
+				list.add(String.valueOf(rs.getInt(("pvp"))));
+				list.add(String.valueOf(rs.getInt(("pvd"))));
+				list.add(rs.getString("marca"));
+				list.add(rs.getString("model"));
+				list.add(String.valueOf(rs.getInt(("stock"))));
+				list.add(String.valueOf(rs.getInt(("stockminim"))));
+				list.add(rs.getString("nom"));
+				
+			}
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		return list;
 	}
 	
 	public Solicitud getSolicitudByCodeReparacion(int codigoReparacion)

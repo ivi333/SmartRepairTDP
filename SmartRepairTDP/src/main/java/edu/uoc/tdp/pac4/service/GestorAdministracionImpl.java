@@ -133,6 +133,17 @@ public class GestorAdministracionImpl extends
 		return gestorAdministracionDAO.getReparaciones();
 	}
 
+	public ArrayList<String> getPedidosPeca() throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			e.printStackTrace();
+		}
+		return gestorAdministracionDAO.getPedidosPeca();
+	}
+
 	public Solicitud getSolicitudByCodeReparacion(int codigoReparacion) throws RemoteException {
 		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
 		try {

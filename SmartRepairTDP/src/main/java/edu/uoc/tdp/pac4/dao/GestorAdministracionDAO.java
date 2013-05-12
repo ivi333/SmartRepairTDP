@@ -30,5 +30,7 @@ public interface  GestorAdministracionDAO {
 	
 	public  ArrayList<Reparacio> getReparaciones();
 	
+	public ArrayList<String> getPedidosPeca();
+	
 	public Solicitud getSolicitudByCodeReparacion(int codigoReparacion);
 }

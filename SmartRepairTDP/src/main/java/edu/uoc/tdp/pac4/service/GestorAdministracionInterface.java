@@ -30,6 +30,7 @@ public int getUpdClient(Client updCliente)throws RemoteException;
 
 public  ArrayList<Reparacio> getReparaciones()throws RemoteException;
 
+public ArrayList<String> getPedidosPeca()throws RemoteException;
 
 public Solicitud getSolicitudByCodeReparacion(int codigoReparacion)throws RemoteException;
 }
