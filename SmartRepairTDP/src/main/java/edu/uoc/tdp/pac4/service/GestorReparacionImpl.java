@@ -84,7 +84,7 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 	
 	@Override
 	public List<Stockpeca> getStockPiezas()
-			throws GestorReparacionException {
+			throws GestorReparacionException { 
 		try {
 			return gestorReparacionDAO.getStockPiezas();
 		} catch (DAOException e) {
