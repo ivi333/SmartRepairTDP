@@ -38,11 +38,74 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
 	}
 
+	public List<Reparacio> getReparaciones() throws RemoteException,
+			GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getReparaciones();
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public Reparacio getReparacion(int ordenReparacion) throws RemoteException,
+			GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getReparacion(ordenReparacion);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public List<Mecanic> getMecanicos() throws RemoteException,
+			GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getMecanicos();
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public Mecanic getMecanico(int idMecanico) throws RemoteException,
+			GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getMecanico(idMecanico);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public List<Stockpeca> getStockPiezas() throws RemoteException,
+			GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getStockPiezas();
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public List<Peca> getPiezas() throws RemoteException,
+			GestorReparacionException {
+		try{
+			return gestorReparacionDAO.getPiezas();
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public Peca getPieza(int idPieza) throws RemoteException,
+			GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getPieza(idPieza);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
 	/**
 	 * Definir Implementaciones
 	 */
 	
-	@Override
+	/*@Override
 	public List<Reparacio> getReparaciones()
 			throws GestorReparacionException {
 		try {
@@ -110,7 +173,7 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 		} catch (DAOException e) {
 			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
 		}
-	}
+	}*/
 
 	
 

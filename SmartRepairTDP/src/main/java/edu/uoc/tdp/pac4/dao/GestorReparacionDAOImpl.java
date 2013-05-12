@@ -10,8 +10,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Reparacio;
+import edu.uoc.tdp.pac4.beans.Stockpeca;
 import edu.uoc.tdp.pac4.beans.TipusReparacio;
 import edu.uoc.tdp.pac4.exception.DAOException;
 
@@ -34,9 +36,9 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			super();
 	}
 
-	@Override
-	public List<Reparacio> getReparaciones()throws DAOException {
-		List<Reparacio> result = new LinkedList<Reparacio>();
+
+	public List<Reparacio> getReparaciones() throws DAOException {
+		/*List<Reparacio> result = new LinkedList<Reparacio>();
 		getConnectionDB();
 		
 		Statement stm = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -64,10 +66,43 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
 				}
 			}
-		}
+		}*/return null;
 	}
 
+
+	public Reparacio getReparacion(int ordenReparacion) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+
+	public List<Mecanic> getMecanicos() throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public Mecanic getMecanico(int idMecanico) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public List<Stockpeca> getStockPiezas() throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public List<Peca> getPiezas() throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public Peca getPieza(int idPieza) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
