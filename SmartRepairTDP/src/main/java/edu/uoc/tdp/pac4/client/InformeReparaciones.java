@@ -14,6 +14,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class InformeReparaciones extends JFrame {
 
@@ -102,6 +106,12 @@ public class InformeReparaciones extends JFrame {
 		textField_2.setColumns(10);
 		
 		JButton btnConsultar = new JButton("Consultar");
+		btnConsultar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+			}
+		});
+
 		btnConsultar.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnConsultar.setBounds(252, 62, 89, 23);
 		contentPane.add(btnConsultar);
@@ -203,5 +213,19 @@ public class InformeReparaciones extends JFrame {
 		btnSalir.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnSalir.setBounds(522, 416, 89, 23);
 		contentPane.add(btnSalir);
+	}
+
+	private void btnConsultar_click()
+	{
+		//TODO:
+		/*
+		 * InformeReparacionesBR informeReparacionesBR = new InformeReparacionesBR();
+		 * 
+		 * table.rellenar = informeReparacionesBR.obtenerReparaciones(param1, param2, ... paramN );
+		 * textField_5.Text = informeReparacionesBR.calcularTiempoMedioFinalizacion(table.DatosAsignados);
+		 * textField_6.Text = informeReparacionesBR.calcularBLABLABAL ( table.datos Embebidos) ;
+		 * textField_7.Text = informeReparacionesBR.calcularBLABLABAL ( table.datos Embebidos) ;
+		 * 
+		 */		
 	}
 }
