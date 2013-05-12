@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Peca;
+import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Solicitud;
 import edu.uoc.tdp.pac4.exception.DAOException;
@@ -342,5 +343,26 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		}
 		return sol;
 	}
+
+	public ArrayList<Proveidor> getProveedores() {
+		ArrayList<Proveidor> Proveedores = new ArrayList<Proveidor>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT * FROM proveidor ";
+			pstmt = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				Proveidor p= new Proveidor();
+				p.setIdproveidor(rs.getInt("idproveidor"));
+				p.setNom(rs.getString("nom"));
+				Proveedores.add(p);
+			}
+		} catch (Exception e) {
+		}
+		return Proveedores;
+			}
+	
 }
 
