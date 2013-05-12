@@ -16,6 +16,10 @@ public class Proveidor implements java.io.Serializable {
 		
 	}
 
+	public Proveidor() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public int getIdproveidor() {
 		return idproveidor;
 	}

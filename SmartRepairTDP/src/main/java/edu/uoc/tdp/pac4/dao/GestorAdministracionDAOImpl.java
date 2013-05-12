@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Peca;
+import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Solicitud;
 import edu.uoc.tdp.pac4.exception.DAOException;
@@ -131,6 +132,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 
 		return iResult;
 	}
+
 	public int getUpdClient(Client updCliente) {
 		int iResult = -1;
 		try{
@@ -175,6 +177,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 	}
 	return iResult;
 	}
+
 	public Client getDadeClient(String strNIF) {
 		Client client = null;
 		try {
@@ -269,6 +272,49 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		return Reparaciones;
 	}
 	
+	public ArrayList<String> getPedidosPeca()
+	{    ArrayList<String> list=new ArrayList<String>();
+		
+		try{
+		
+			String sql = " select "
+					+ " peca.codipeca ,"
+					+ " peca.descripcio ,"
+					+ " peca.pvp ,"
+					+ " peca.pvd ,"
+					+ " peca.marca,"
+					+ " peca.model,"
+					+ " stockpeca.stock,"
+					+ " stockpeca.stockminim,"
+					+ " proveidor.nom  from "
+					+ " peca inner join stockpeca"
+					+ " on peca.codipeca=stockpeca.codipeca"
+					+ " inner join proveidor on peca.idproveidor=proveidor.idproveidor";
+				
+			PreparedStatement pstmt = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+		
+			ResultSet rs = pstmt.executeQuery();
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				list.add(String.valueOf(rs.getInt(("codipeca"))));
+				list.add(rs.getString("descripcio"));
+				list.add(String.valueOf(rs.getInt(("pvp"))));
+				list.add(String.valueOf(rs.getInt(("pvd"))));
+				list.add(rs.getString("marca"));
+				list.add(rs.getString("model"));
+				list.add(String.valueOf(rs.getInt(("stock"))));
+				list.add(String.valueOf(rs.getInt(("stockminim"))));
+				list.add(rs.getString("nom"));
+				
+			}
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		return list;
+	}
+	
 	public Solicitud getSolicitudByCodeReparacion(int codigoReparacion)
 	{ 
 		Solicitud sol =null;
@@ -297,5 +343,26 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		}
 		return sol;
 	}
+
+	public ArrayList<Proveidor> getProveedores() {
+		ArrayList<Proveidor> Proveedores = new ArrayList<Proveidor>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT * FROM proveidor ";
+			pstmt = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				Proveidor p= new Proveidor();
+				p.setIdproveidor(rs.getInt("idproveidor"));
+				p.setNom(rs.getString("nom"));
+				Proveedores.add(p);
+			}
+		} catch (Exception e) {
+		}
+		return Proveedores;
+			}
+	
 }
 

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Peca;
+import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Solicitud;
 import edu.uoc.tdp.pac4.dao.ConnectionPostgressDB;
@@ -120,7 +121,16 @@ public class GestorAdministracionImpl extends
 		}
 		return gestorAdministracionDAO.getAseguradoras();
 	}
-
+	public ArrayList<Proveidor> getProveedores() throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			e.printStackTrace();
+		}
+		return gestorAdministracionDAO.getProveedores();
+	}
 	
 	public ArrayList<Reparacio> getReparaciones() throws RemoteException {
 		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
@@ -131,6 +141,17 @@ public class GestorAdministracionImpl extends
 			e.printStackTrace();
 		}
 		return gestorAdministracionDAO.getReparaciones();
+	}
+
+	public ArrayList<String> getPedidosPeca() throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			e.printStackTrace();
+		}
+		return gestorAdministracionDAO.getPedidosPeca();
 	}
 
 	public Solicitud getSolicitudByCodeReparacion(int codigoReparacion) throws RemoteException {

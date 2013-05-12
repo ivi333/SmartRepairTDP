@@ -11,6 +11,8 @@ public class Peca implements java.io.Serializable {
 	private String Model;
 	private int IdProveidor;
 
+	
+	
 	public Peca() {
 
 	}
