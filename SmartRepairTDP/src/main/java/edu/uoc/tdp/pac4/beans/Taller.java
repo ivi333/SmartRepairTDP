@@ -25,6 +25,23 @@ public class Taller implements Serializable{
 	public Taller () {
 		
 	}
+	
+	public Taller (int id, String cif, String adreca, int capacitat, int capTaller,
+			String telefon, String web, boolean actiu, Date dataApertura,
+			Date dataModificacio, Date dataBaixa) {
+		this.id = id;
+		this.cif = cif;
+		this.adreca = adreca;
+		this.capacitat = capacitat;
+		this.capTaller = capTaller;
+		this.telefon = telefon;
+		this.web = web;
+		this.actiu = actiu;
+		this.dataApertura = dataApertura;
+		this.dataModificacio = dataModificacio;
+		this.dataBaixa = dataBaixa;
+		
+	}
 
 	public int getId() {
 		return id;
@@ -114,5 +131,11 @@ public class Taller implements Serializable{
 		this.dataBaixa = dataBaixa;
 	}
 	
-
+	public String toString () {
+		return "id = " + this.id + " cif = " + this.cif + " adreca = " + this.adreca 
+				+ " capacitat = " + this.capacitat + " capTaller = " + this.capTaller 
+				+ " telefon = " + this.telefon + " web = " + this.web + " actiu = " 
+				+ this.actiu + " dataApertura = " + this.dataApertura + " dataModificacio = " 
+				+ this.dataModificacio + " dataBaixa = " + this.dataBaixa;
+	}
 }
