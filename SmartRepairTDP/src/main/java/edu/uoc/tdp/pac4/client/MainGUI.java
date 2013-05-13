@@ -23,9 +23,13 @@ import javax.swing.SwingConstants;
 
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
+import edu.uoc.tdp.pac4.service.GestorAdministracionImpl;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
+import edu.uoc.tdp.pac4.service.GestorConexionImpl;
 import edu.uoc.tdp.pac4.service.GestorConexionInterface;
+import edu.uoc.tdp.pac4.service.GestorEstadisticaImpl;
 import edu.uoc.tdp.pac4.service.GestorEstadisticaInterface;
+import edu.uoc.tdp.pac4.service.GestorReparacionImpl;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 
 
@@ -178,9 +182,9 @@ public class MainGUI extends JFrame {
 
 	private void doRegistry() throws MalformedURLException, RemoteException, NotBoundException  {
 		gestorConexion = (GestorConexionInterface) Naming.lookup(urlRMIConex);
-		//gestorAdministracion = (GestorAdministracionInterface) Naming.lookup("urlRMIAdmin");
-		//gestorReparacion = (GestorReparacionInterface) Naming.lookup("urlRMIRepar");
-		//gestorEstadistica = (GestorEstadisticaInterface) Naming.lookup("urlRMIEstad");
+		gestorAdministracion = (GestorAdministracionInterface) Naming.lookup(urlRMIAdmin);
+		gestorReparacion = (GestorReparacionInterface) Naming.lookup(urlRMIRepar);
+		gestorEstadistica = (GestorEstadisticaInterface) Naming.lookup(urlRMIEstad);
 
 	}
 	

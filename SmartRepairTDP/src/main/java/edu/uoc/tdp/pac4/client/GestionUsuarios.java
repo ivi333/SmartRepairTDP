@@ -243,9 +243,9 @@ public class GestionUsuarios extends JFrame {
 		int z=0;
 		for (Usuari usuari : usuaris) {
 			rowData[z][0] = String.valueOf(usuari.getId());
-			rowData[z][1] = String.valueOf(usuari.getUsuari());
-			rowData[z][2] = String.valueOf(usuari.getContrasenya());
-			rowData[z][3] = String.valueOf(usuari.getPerfil());
+			rowData[z][1] = String.valueOf(usuari.getNif());
+			rowData[z][2] = String.valueOf(usuari.getNom());
+			rowData[z][3] = String.valueOf(usuari.getCognoms());
 			rowData[z][4] = String.valueOf(usuari.getPerfil());
 			z++;
 		}
