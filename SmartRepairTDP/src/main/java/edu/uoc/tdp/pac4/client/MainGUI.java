@@ -191,7 +191,7 @@ public class MainGUI extends JFrame {
 	private void winLogin(){
 		login = new Login (this.frmSmartRepairTdp,gestorConexion);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		login.setSize(350, 250);
+		login.setSize(450, 300);
 		login.setLocation(dim.width/2-login.getSize().width/2, dim.height/2-login.getSize().height/2);
 		login.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		login.setModal(true);
@@ -206,10 +206,12 @@ public class MainGUI extends JFrame {
 	}
 
 	private void enableMenu (){
-		mnNewMenu.setEnabled(true);
-		mnNewMenu.setVisible(true);
-		
-		if (usuari.getPerfil().equalsIgnoreCase("Administracion")){
+
+		/*Administracion, JefeTaller, Administrador, Mecanic;*/
+		if (usuari.getPerfil().equalsIgnoreCase("Administrador")){
+			mnNewMenu.setEnabled(true);
+			mnNewMenu.setVisible(true);		
+		}else if (usuari.getPerfil().equalsIgnoreCase("Administracion")){
 			mnNewMenu_1.setEnabled(true);
 			mnNewMenu_1.setVisible(true);
 		} else if (usuari.getPerfil().equalsIgnoreCase("JefeTaller")) {
