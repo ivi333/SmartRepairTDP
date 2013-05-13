@@ -44,7 +44,13 @@ public class GestorAdministracionImpl extends
 		} catch (GestorAdministracionException e) {
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getMarcas();
+		try {
+			return gestorAdministracionDAO.getMarcas();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public boolean getExistCliente(String strNIF) throws RemoteException {
@@ -129,7 +135,13 @@ public class GestorAdministracionImpl extends
 		} catch (GestorAdministracionException e) {
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getProveedores();
+		try {
+			return gestorAdministracionDAO.getProveedores();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public ArrayList<Reparacio> getReparaciones() throws RemoteException {
@@ -165,5 +177,50 @@ public class GestorAdministracionImpl extends
 		}
 		return gestorAdministracionDAO.getSolicitudByCodeReparacion(codigoReparacion);
 	}
+	
+	public int getNuevoPedido(Peca peca) throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return gestorAdministracionDAO.getNuevoPedido(peca);
+	}
 
+	public ArrayList<Peca> getPiezaByCodeProveedor(int codigoProv)
+	{GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+	try {
+		gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+				cPostgressDB);
+	} catch (GestorAdministracionException e) {
+		e.printStackTrace();
+	}
+	try {
+		return gestorAdministracionDAO.getPiezaByCodeProveedor(codigoProv);
+	} catch (DAOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return null;
+	}
+
+	public Peca getPiezaByCode(int codigoPieza) throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			e.printStackTrace();
+		}
+		try {
+			return gestorAdministracionDAO.getPiezaByCode(codigoPieza);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		}
 }

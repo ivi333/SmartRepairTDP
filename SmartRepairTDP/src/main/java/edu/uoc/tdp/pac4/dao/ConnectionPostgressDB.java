@@ -101,7 +101,15 @@ public  class ConnectionPostgressDB {
 			throw new DAOException(DAOException.ERR_GENERIC, e.getMessage(), e);
 		}
 	}
-
+	public PreparedStatement createPrepareStatment(String sql) throws DAOException{
+		try {
+			return cnn.prepareStatement(sql);
+		} catch (SQLException sqle) {
+			throw new DAOException(DAOException.ERR_SQL, sqle.getMessage(), sqle);
+		} catch (Exception e) {
+			throw new DAOException(DAOException.ERR_GENERIC, e.getMessage(), e);
+		}
+	}
 
 	/**
 	 * Cierra la conexion con el servidor postgress

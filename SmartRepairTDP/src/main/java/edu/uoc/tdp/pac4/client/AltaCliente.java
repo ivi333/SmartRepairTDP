@@ -628,7 +628,7 @@ public class AltaCliente extends JDialog {
 			ListMarca = getRemoto().getMarcas();
 			cmbMarca.insertItemAt("", 0);
 
-			for (int i = 0; i < ListMarca.size(); i++) {
+			for (int i = 1; i < ListMarca.size(); i++) {
 				cbMarca.add(new ItemCombo(i, ListMarca.get(i).getMarca(),
 						String.valueOf(ListMarca.get(i).getCodiPeca())));
 				cmbMarca.insertItemAt(ListMarca.get(i).getMarca(), i);
@@ -648,7 +648,7 @@ public class AltaCliente extends JDialog {
 			ListAseg = getRemoto().getAseguradoras();
 			cmbAseguradora.insertItemAt("", 0);
 
-			for (int i = 0; i < ListAseg.size(); i++) {
+			for (int i = 1; i < ListAseg.size(); i++) {
 				cbAseguradora.add(new ItemCombo(i, ListAseg.get(i).getNom(),
 						String.valueOf(ListAseg.get(i).getIdasseguradora())));
 				cmbAseguradora.insertItemAt(ListAseg.get(i).getNom(), i);

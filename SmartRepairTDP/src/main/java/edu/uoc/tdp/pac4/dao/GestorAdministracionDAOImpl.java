@@ -3,6 +3,7 @@ package edu.uoc.tdp.pac4.dao;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -14,8 +15,10 @@ import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Solicitud;
+import edu.uoc.tdp.pac4.beans.Stockpeca;
 import edu.uoc.tdp.pac4.exception.DAOException;
 import edu.uoc.tdp.pac4.exception.GestorAdministracionException;
+
 
 /**
  * Smart Repair ETIG - TDP PAC 4 Primavera 2013 Grup: FiveCoreDumped
@@ -36,7 +39,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		}
 	}
 
-	public ArrayList<Peca> getMarcas() {
+	public ArrayList<Peca> getMarcas() throws DAOException{
 		ArrayList<Peca> modelos = new ArrayList<Peca>();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -51,16 +54,70 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 						.getInt("PVD"), rs.getString("Marca"), rs
 						.getString("Model"), rs.getInt("IdProveidor")));
 			}
-
-		} catch (Exception e) {
-			try {
-				throw new GestorAdministracionException("Server.error.ConBD");
-			} catch (GestorAdministracionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			return modelos;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (pstmt!=null) {
+				try {pstmt.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
 			}
 		}
-		return modelos;
+		
+	}
+	
+	public ArrayList<Peca> getPiezaByCodeProveedor(int codigoProv)throws DAOException
+	{
+		ArrayList<Peca> piezas = new ArrayList<Peca>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = " select codipeca,descripcio,pvp,pvd,marca,model from peca "
+		+ " inner join proveidorpeca " 
+		+ " on peca.codipeca = proveidorpeca.idpeca" 
+		+ " where idproveidor= ? ";
+		try {
+	    pstmt = cPostgressDB.createPrepareStatment(sql,ResultSet.CONCUR_READ_ONLY);
+		pstmt.setInt(1, codigoProv);
+		rs = pstmt.executeQuery();
+		while (rs.next()) {
+			Peca p=new Peca();
+			p.setCodiPeca(rs.getInt("codipeca"));
+			p.setDescripcio(rs.getString("descripcio"));
+			p.setMarca(rs.getString("marca"));
+			p.setModel( rs.getString("model"));
+			p.setPVP(rs.getInt("pvp"));
+			p.setPVPD(rs.getInt("pvd"));
+			
+			piezas.add(p);
+		}
+		return piezas;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (pstmt!=null) {
+				try {pstmt.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+		
 	}
 
 	public String aux() {
@@ -84,7 +141,12 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			}
 			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			try {
+				throw new GestorAdministracionException("Server.error.ConBD");
+			} catch (GestorAdministracionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		return bResult;
 
@@ -127,7 +189,12 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			iResult = 1;
 		} catch (Exception ex) {
 			iResult = -2;
-			ex.printStackTrace();
+			try {
+				throw new GestorAdministracionException("Server.error.ConBD");
+			} catch (GestorAdministracionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 
 		return iResult;
@@ -168,7 +235,8 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			prep.setDate(14, (java.sql.Date) updCliente.getAnyo());
 			
 			prep.setString(15, updCliente.getNif());
-			prep.execute();
+			int ii=prep.executeUpdate();
+			
 			iResult = 1;
 		
 	}catch(Exception ex)
@@ -344,7 +412,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		return sol;
 	}
 
-	public ArrayList<Proveidor> getProveedores() {
+	public ArrayList<Proveidor> getProveedores() throws DAOException{
 		ArrayList<Proveidor> Proveedores = new ArrayList<Proveidor>();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -359,10 +427,109 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 				p.setNom(rs.getString("nom"));
 				Proveedores.add(p);
 			}
-		} catch (Exception e) {
+			return Proveedores;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (pstmt!=null) {
+				try {pstmt.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
 		}
-		return Proveedores;
+			}
+
+	public int getNuevoPedido(Peca peca) {
+		int idResult=-1;
+		try{
+			String sql = " insert into peca "
+					+ "(descripcio, pvp, pvd,  marca, model, idproveidor )"
+					+" VALUES(?,?,?,?,?,?)";
+			
+			PreparedStatement prep = cPostgressDB.createPrepareStatment(sql,Statement.RETURN_GENERATED_KEYS);  
+			
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+			idResult=-2;
+		}
+		return idResult;
+	}
+	
+	public int getNuevoStockPedido(Stockpeca stockPeca)
+	{  int idResult=-1;
+		try{
+			String sql = " insert into   stockpeca "
+					+ "(codipeca, stock, idtaller,  stockminim )"
+					+ " VALUES (?,?, ?,?)";
+
+			PreparedStatement prep = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+			
+			
+			prep.setInt(1, stockPeca.getCodipeca());
+			prep.setInt(2, stockPeca.getStock());
+			prep.setInt(3, stockPeca.getIdtaller());
+			prep.setInt(4, stockPeca.getStockminim());
+			
+			prep.executeQuery();
+			idResult = 1;
+			
+		}catch(Exception ex)
+		{    idResult=-2;
+			ex.printStackTrace();
+		}
+		return idResult;
+	}
+
+	public Peca getPiezaByCode(int codigoPieza) throws DAOException{
+		Peca p= null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT * FROM peca  where codipeca =?";
+			pstmt = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+			pstmt.setInt(1, codigoPieza);
+			 rs = pstmt.executeQuery();
+			while (rs.next()) {
+				 p= new Peca();
+				 p.setCodiPeca(rs.getInt("codipeca"));
+					p.setDescripcio(rs.getString("descripcio"));
+					p.setMarca(rs.getString("marca"));
+					p.setModel( rs.getString("model"));
+					p.setPVP(rs.getInt("pvp"));
+					p.setPVPD(rs.getInt("pvd"));
+			}
+			return p;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (pstmt!=null) {
+				try {pstmt.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
 			}
 	
-}
+
+
+} 
 

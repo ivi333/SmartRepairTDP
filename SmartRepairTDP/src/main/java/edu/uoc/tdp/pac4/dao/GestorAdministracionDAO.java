@@ -2,6 +2,7 @@ package edu.uoc.tdp.pac4.dao;
 
 
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import edu.uoc.tdp.pac4.beans.Asseguradora;
@@ -10,29 +11,36 @@ import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Solicitud;
+import edu.uoc.tdp.pac4.exception.DAOException;
 
 
 public interface  GestorAdministracionDAO {
 	
-	public  ArrayList<Peca> getMarcas();
+	public  ArrayList<Peca> getMarcas()throws DAOException;;
 
-	public boolean getExistCliente(String strNIF);
+	public boolean getExistCliente(String strNIF)throws DAOException;;
 	
-	public  String aux();
+	public  String aux()throws DAOException;;
 	
-	public int getNewClient(Client altaCliente);
+	public int getNewClient(Client altaCliente)throws DAOException;;
 	
-	public ArrayList<Asseguradora> getAseguradoras();
+	public ArrayList<Asseguradora> getAseguradoras()throws DAOException;;
 	
-	public Client getDadeClient(String strNIF);
+	public Client getDadeClient(String strNIF)throws DAOException;;
 	
-	public int getUpdClient(Client updCliente);
+	public int getUpdClient(Client updCliente)throws DAOException;;
 	
-	public ArrayList<Proveidor> getProveedores();
+	public ArrayList<Proveidor> getProveedores()throws DAOException;;
 	
-	public  ArrayList<Reparacio> getReparaciones();
+	public  ArrayList<Reparacio> getReparaciones()throws DAOException;
 	
-	public ArrayList<String> getPedidosPeca();
+	public ArrayList<String> getPedidosPeca()throws DAOException;;
 	
-	public Solicitud getSolicitudByCodeReparacion(int codigoReparacion);
+	public Solicitud getSolicitudByCodeReparacion(int codigoReparacion)throws DAOException;;
+	
+	public int getNuevoPedido(Peca peca)throws DAOException;;
+	
+	public ArrayList<Peca> getPiezaByCodeProveedor(int codigoProv)throws DAOException;
+	
+	public Peca getPiezaByCode(int codigoPieza)throws DAOException;
 }

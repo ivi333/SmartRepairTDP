@@ -11,7 +11,7 @@ public class Peca implements java.io.Serializable {
 	private String Model;
 	private int IdProveidor;
 
-	
+	private Stockpeca stockPeca;
 	
 	public Peca() {
 
@@ -82,6 +82,14 @@ public class Peca implements java.io.Serializable {
 
 	public void setIdProveidor(int idProveidor) {
 		IdProveidor = idProveidor;
+	}
+
+	public Stockpeca getStockPeca() {
+		return stockPeca;
+	}
+
+	public void setStockPeca(Stockpeca stockPeca) {
+		this.stockPeca = stockPeca;
 	}
 
 }
