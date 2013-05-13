@@ -133,9 +133,9 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 		if (nif.length() > 0)
 			sql += " AND nif = '" + nif +"'";
 		if ((nombre.length() > 0))
-			sql += " AND nombre = '" + nombre +"'";
+			sql += " AND nom = '" + nombre +"'";
 		if (apellidos.length() > 0)
-			sql += " AND apellidos = '" + apellidos +"'";
+			sql += " AND cognoms = '" + apellidos +"'";
 		if (perfil.length() > 0)
 			sql += " AND perfil = '" + perfil +"'";
 		getConnectionDB();	
