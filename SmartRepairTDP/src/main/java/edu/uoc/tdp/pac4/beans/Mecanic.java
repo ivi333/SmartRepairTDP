@@ -14,17 +14,13 @@ public class Mecanic extends Usuari implements java.io.Serializable{
 	private int idrep1;
 	private int idrep2;
 	
-	public Mecanic(int idmecanic, boolean disponible, Taller taller, Usuari usuari,
-			String perfil, String contrasenya, boolean actiu, Date dataAlta,
-			Date dataModificacio, Date dataBaixa, int reparacionsAssignades){
-		
-		/*super (taller, usuari, perfil, contrasenya, actiu, dataAlta, dataModificacio,
-				dataBaixa, reparacionsAssignades);*/
-		
+	public Mecanic(int idmecanic, boolean disponible, int idrep1, int idrep2){
 		super();
 		
 		this.idmecanic = idmecanic;
 		this.disponible = disponible;
+		this.idrep1 = idrep1;
+		this.idrep2 = idrep2;
 	}
 
 	public int getIdmecanic() {
