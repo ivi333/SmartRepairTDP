@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 
 import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.service.GestorConexionImpl;
+import edu.uoc.tdp.pac4.service.GestorConexionInterface;
 
 public class MntoTaller extends JFrame {
 
@@ -18,6 +19,8 @@ public class MntoTaller extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 
+	protected GestorConexionInterface gestorConexion = null;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -41,7 +44,12 @@ public class MntoTaller extends JFrame {
 		initialize ();
 	}
 	
-	public MntoTaller (GestorConexionImpl gestorConexion,  Taller taller, String accion){
+	public MntoTaller (GestorConexionInterface gestorConexion){
+		
+		initialize ();
+	}
+	
+	public MntoTaller (GestorConexionInterface gestorConexion, String accion, int idTaller){
 		initialize ();
 	}
 	

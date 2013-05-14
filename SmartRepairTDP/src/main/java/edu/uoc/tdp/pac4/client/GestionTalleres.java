@@ -1,9 +1,11 @@
 package edu.uoc.tdp.pac4.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Panel;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -129,6 +131,14 @@ public class GestionTalleres extends JFrame {
 		contentPane.add(panel, BorderLayout.SOUTH);
 		
 		JButton btnSalir = new JButton(TDSLanguageUtils.getMessage("gestiontalleres.boton.salir"));
+		btnSalir.setActionCommand("BTN_SALIR");
+		btnSalir.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				actions (e);
+				
+			}
+		});
 		panel.add(btnSalir);
 		
 		JPanel panel_1 = new JPanel();
@@ -357,11 +367,14 @@ public class GestionTalleres extends JFrame {
 				tabla.setModel(getAllTallers());
 			enableButtons(false);
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_NUEVO")) {
-			winMantenimiento("x");
+			winMantenimiento("ALTA","");
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_MODIFICAR")){
-			System.out.println ("MODIFICAR " + tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
+			winMantenimiento("MODIFICAR",tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_BAJA")){
-			System.out.println ("BAJA = " + tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
+			winMantenimiento("BAJA",tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
+			
+		} else if (actionEvent.getActionCommand().toString().equals("BTN_SALIR")){
+			dispose();
 		}
 	}
 	
@@ -374,9 +387,9 @@ public class GestionTalleres extends JFrame {
 						cbCapTaller.get(cmbCapTaller.getSelectedIndex()).getAux());
 			model = new DefaultTableModel((Object[][]) makeTabla(talleres), columnNames);
 		}  catch (RemoteException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);			
 		} catch (GestorConexionException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);			
 		}
 		
 		
@@ -391,9 +404,9 @@ public class GestionTalleres extends JFrame {
 		try {
 			tallers = gestorConexion.getAllTallers();
 		} catch (RemoteException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);			
 		} catch (GestorConexionException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);			
 		}
 		
 		TableModel model = new DefaultTableModel((Object[][]) makeTabla(tallers), columnNames);
@@ -406,15 +419,15 @@ public class GestionTalleres extends JFrame {
 		Usuari usuari = null;
 		int z=0;
 		for (Taller taller : talleres) {
-			if (taller.getCapTaller()!=0){
+			if (taller.getCapTaller()>0){
 				try {			
 					usuari = gestorConexion.getUsuariById(taller.getCapTaller());
 					rowData[z][4] = String.valueOf(usuari.getNomCognoms());
 				} catch (RemoteException e) {
-					JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
 					rowData[z][4] = String.valueOf(GestorConexionException.ERR_USER_NOTFOUND);
 				} catch (GestorConexionException e) {
-					JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
 					rowData[z][4] = String.valueOf(GestorConexionException.ERR_USER_NOTFOUND);
 				}
 			}
@@ -427,10 +440,16 @@ public class GestionTalleres extends JFrame {
 		return rowData;
 	}
 	
-	private void winMantenimiento (String accion) {
-		MntoUsuario mnto = new MntoUsuario();		
-		mnto.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		mnto.setVisible(true);
+	private void winMantenimiento (String accion, String id) {
+		MntoTaller mnto;
+		if (accion.equals("ALTA"))
+			mnto = new MntoTaller(gestorConexion);
+		else
+			mnto = new MntoTaller(gestorConexion, accion, Integer.valueOf(id));
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		mnto.setLocation(dim.width/2-mnto.getSize().width/2, dim.height/2-mnto.getSize().height/2);
+		mnto.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		mnto.setVisible(true);		
 	}
 	
 	private void enableButtons (boolean status){
@@ -445,7 +464,7 @@ public class GestionTalleres extends JFrame {
 		cbCapTaller = new ArrayList<ItemCombo>();
 		try {
 			capTaller = gestorConexion.getUsuarisCapTaller();
-			cbCapTaller.add (new ItemCombo(0, "", "0"));
+			cbCapTaller.add (new ItemCombo(0, "", ""));
 			for (int i = 0; i < capTaller.size(); i++) {
 				Usuari usuari = capTaller.get(i);
 				cbCapTaller.add(new ItemCombo(i+1, usuari.getNomCognoms(), 
@@ -454,12 +473,31 @@ public class GestionTalleres extends JFrame {
 			for (int i = 0; i < cbCapTaller.size(); i++)
 				defaultCombo.insertElementAt(cbCapTaller.get(i).getValue(), i);
 			cmbCapTaller.setModel(defaultCombo);
+			cmbCapTaller.setSelectedIndex(0);
 		} catch (RemoteException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
 		} catch (GestorConexionException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);			
 		}
 		
+	}
+	
+	private void showMessage (String message, int image){
+		String text;
+		switch  (image) { 
+			case JOptionPane.ERROR_MESSAGE:
+				text = "Error";
+				break;
+			case JOptionPane.INFORMATION_MESSAGE:
+				text = "Informacion";
+				break;
+			case JOptionPane.WARNING_MESSAGE:
+				text = "Atencio";
+				break;
+			default:
+				text = new String();
+		}
+		JOptionPane.showMessageDialog(this, message, text, image);
 	}
 	public class KeyAdapterNumbersOnly extends KeyAdapter {
 

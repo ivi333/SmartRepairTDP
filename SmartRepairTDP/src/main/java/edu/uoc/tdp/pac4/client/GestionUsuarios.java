@@ -126,6 +126,14 @@ public class GestionUsuarios extends JFrame {
 		contentPane.add(panel, BorderLayout.SOUTH);
 		
 		JButton btnSalir = new JButton(TDSLanguageUtils.getMessage("gestionusuarios.boton.salir"));
+		btnSalir.setActionCommand("BTN_SALIR");
+		btnSalir.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				actions (e);
+				
+			}
+		});
 		panel.add(btnSalir);
 		
 		JPanel panel_1 = new JPanel();
@@ -365,6 +373,8 @@ public class GestionUsuarios extends JFrame {
 			System.out.println ("MODIFICAR " + tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_BAJA")){
 			System.out.println ("BAJA = " + tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
+		} else if (actionEvent.getActionCommand().toString().equals("BTN_SALIR")){
+			dispose ();
 		}
 	}
 	
