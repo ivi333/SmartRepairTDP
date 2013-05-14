@@ -4,6 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.exception.GestorConexionException;
 
@@ -19,7 +20,10 @@ public interface GestorConexionInterface extends Remote{
 	 */
 
 	public Usuari doLogin (String username, String contrasenya) 
-			throws RemoteException, GestorConexionException;
+		throws RemoteException, GestorConexionException;
+	
+	public Usuari getUsuariById (int id)
+		throws RemoteException, GestorConexionException;
 	
 	public Usuari getUsuariByUsuari (String username)
 		throws RemoteException, GestorConexionException;
@@ -29,6 +33,17 @@ public interface GestorConexionInterface extends Remote{
 	
 	public List<Usuari> getUsuarisByFilter (String id, String nif, String nombre, String apellidos, String perfil)
 			throws RemoteException, GestorConexionException;
-				
+
+	public List<Usuari> getUsuarisCapTaller () 
+		throws RemoteException, GestorConexionException;
+	
+	public List<Taller> getAllTallers ()
+		throws RemoteException, GestorConexionException;
+	
+	public Taller getTallerById (int id) 
+		throws RemoteException, GestorConexionException;
+	
+	public List<Taller> getTallersByFilter (String id, String cif, String adreca, String capacitat, String idCapTaller)
+		throws RemoteException, GestorConexionException;
 }
 

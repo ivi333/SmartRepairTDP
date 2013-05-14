@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 
+import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.dao.GestorConexionDAO;
@@ -62,6 +63,19 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 		}		
 		
 	}
+	
+	public Usuari getUsuariById (int id) throws RemoteException, GestorConexionException {
+		Usuari usuari = null;
+		try {
+			usuari = gestorConexionDAO.getUsuariById(id);
+			if (usuari == null)
+				throw new GestorConexionException(GestorConexionException.ERR_USER_NOTFOUND);
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		}
+		return usuari;
+	
+	}
 
 	public Usuari getUsuariByUsuari(String username) throws RemoteException,
 			GestorConexionException {
@@ -93,7 +107,38 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
 		}
 	}
-
 	
+	public List<Usuari> getUsuarisCapTaller () throws RemoteException, GestorConexionException {
+		try {
+			return gestorConexionDAO.getUsuarisCapTaller();
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		}
+	}
+
+	public List<Taller> getAllTallers () throws RemoteException, GestorConexionException {
+		try {
+			return gestorConexionDAO.getAllTallers();
+		} catch (DAOException e){
+			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		}
+	}
+	
+	public Taller getTallerById (int id) throws RemoteException, GestorConexionException {
+		try {
+			return gestorConexionDAO.getTallerById(id);
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		}
+	}
+
+	public List<Taller> getTallersByFilter (String id, String cif, String adreca, String capacitat, String idCapTaller)
+			throws RemoteException, GestorConexionException {
+		try {
+			return gestorConexionDAO.getTallersByFilter(id, cif, adreca, capacitat, idCapTaller);
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		}	
+	}
 
 }

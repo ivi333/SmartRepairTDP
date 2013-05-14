@@ -8,8 +8,13 @@ import java.awt.GridLayout;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -19,6 +24,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -58,7 +64,12 @@ public class GestionUsuarios extends JFrame {
 	private JTextField txtApellidos;
 	private JComboBox cmbPerfil;
 	
+	private JButton btnModificar;
+	private JButton btnBaja;
+	
 	private JTable tabla;
+	
+	
 	private static final Object columnNames[] = {
 		TDSLanguageUtils.getMessage("gestionusuarios.label.id"),
 		TDSLanguageUtils.getMessage("gestionusuarios.label.nif"),
@@ -74,9 +85,9 @@ public class GestionUsuarios extends JFrame {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {
-					TDSLanguageUtils.setDefaultLanguage("i18n/messages");
+				try {					
 					GestorConexionInterface gestorConexion = (GestorConexionInterface) Naming.lookup("rmi://localhost/GestorConexion");
+					TDSLanguageUtils.setDefaultLanguage("i18n/messages");
 					GestionUsuarios frame = new GestionUsuarios(gestorConexion);
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -98,6 +109,7 @@ public class GestionUsuarios extends JFrame {
 		this.gestorConexion = gestorConexion;
 		initialize ();
 		tabla.setModel(getAllUsuaris());
+		enableButtons(false);
 	}
 	
 	private void initialize (){
@@ -144,7 +156,7 @@ public class GestionUsuarios extends JFrame {
 			}
 		});
 		
-		JButton btnModificar = new JButton(TDSLanguageUtils.getMessage("gestionusuarios.boton.modif"));
+		btnModificar = new JButton(TDSLanguageUtils.getMessage("gestionusuarios.boton.modif"));
 		btnModificar.setActionCommand("BTN_MODIFICAR");
 		btnModificar.addActionListener(new ActionListener() {
 			
@@ -154,7 +166,7 @@ public class GestionUsuarios extends JFrame {
 			}
 		});
 		
-		JButton btnBaja = new JButton(TDSLanguageUtils.getMessage("gestionusuarios.boton.baja"));
+		btnBaja = new JButton(TDSLanguageUtils.getMessage("gestionusuarios.boton.baja"));
 		btnBaja.setActionCommand("BTN_BAJA");
 		btnBaja.addActionListener(new ActionListener() {
 			
@@ -170,21 +182,20 @@ public class GestionUsuarios extends JFrame {
 					.addContainerGap()
 					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnNuevo)
-						.addGroup(gl_panel_2.createSequentialGroup()
-							.addComponent(btnModificar)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnBaja)))
-					.addContainerGap(186, Short.MAX_VALUE))
+						.addComponent(btnModificar))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnBaja)
+					.addContainerGap(567, Short.MAX_VALUE))
 		);
 		gl_panel_2.setVerticalGroup(
-			gl_panel_2.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_panel_2.createSequentialGroup()
+			gl_panel_2.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panel_2.createSequentialGroup()
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 					.addComponent(btnNuevo)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnModificar)
-						.addComponent(btnBaja))
+					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
+						.addComponent(btnModificar, Alignment.TRAILING)
+						.addComponent(btnBaja, Alignment.TRAILING))
 					.addContainerGap())
 		);
 		panel_2.setLayout(gl_panel_2);
@@ -197,13 +208,12 @@ public class GestionUsuarios extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		GroupLayout gl_panel_3 = new GroupLayout(panel_3);
 		gl_panel_3.setHorizontalGroup(
-			gl_panel_3.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_panel_3.createSequentialGroup()
-					.addComponent(panel_4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+			gl_panel_3.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panel_3.createSequentialGroup()
+					.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
+						.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 675, Short.MAX_VALUE)
+						.addComponent(panel_4, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addGap(1))
-				.addGroup(Alignment.TRAILING, gl_panel_3.createSequentialGroup()
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
-					.addContainerGap())
 		);
 		gl_panel_3.setVerticalGroup(
 			gl_panel_3.createParallelGroup(Alignment.LEADING)
@@ -247,75 +257,98 @@ public class GestionUsuarios extends JFrame {
 				.addGroup(gl_panel_4.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panel_4.createParallelGroup(Alignment.LEADING)
-						.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblId))
+						.addComponent(lblId)
+						.addComponent(txtId))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_panel_4.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblNewLabel)
-						.addComponent(txtNif, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(txtNif)
+						.addComponent(lblNewLabel))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_panel_4.createParallelGroup(Alignment.LEADING)
-						.addComponent(txtNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblNewLabel_1))
+						.addComponent(lblNewLabel_1)
+						.addComponent(txtNombre))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_panel_4.createParallelGroup(Alignment.LEADING)
-						.addComponent(txtApellidos, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblNewLabel_2))
+						.addComponent(lblNewLabel_2)
+						.addComponent(txtApellidos))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_panel_4.createParallelGroup(Alignment.LEADING)
 						.addComponent(lblNewLabel_3)
 						.addComponent(cmbPerfil, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(45, Short.MAX_VALUE))
+					.addGap(68))
 		);
 		gl_panel_4.setVerticalGroup(
 			gl_panel_4.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_4.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panel_4.createParallelGroup(Alignment.LEADING)
-						.addGroup(Alignment.TRAILING, gl_panel_4.createSequentialGroup()
-							.addComponent(lblId)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGroup(Alignment.TRAILING, gl_panel_4.createSequentialGroup()
-							.addGroup(gl_panel_4.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblNewLabel_1)
-								.addComponent(lblNewLabel_2)
-								.addComponent(lblNewLabel_3)
-								.addComponent(lblNewLabel))
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(txtNif, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addComponent(txtNombre, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtApellidos, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(cmbPerfil, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(lblId)
+						.addComponent(lblNewLabel)
+						.addComponent(lblNewLabel_1)
+						.addComponent(lblNewLabel_2)
+						.addComponent(lblNewLabel_3))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_panel_4.createParallelGroup(Alignment.LEADING)
+						.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtNif, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtApellidos, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(cmbPerfil, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap())
 		);
 		panel_4.setLayout(gl_panel_4);
 		
 		
 		scrollPane.setViewportView(makeTabla());
-		panel_3.setLayout(gl_panel_3);
+		panel_3.setLayout(gl_panel_3);		
 	}
 			
 	
 	
+
 	private JTable makeTabla()  
 	{  
 		String dataValues[][] =	{ };  		
 		tabla = new JTable(dataValues, columnNames);
 		tabla.setModel(new DefaultTableModel(dataValues, columnNames)
 			{
-			boolean[] columnEditables = new boolean[] {
-				false, false, false, false, false
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
+			/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+				boolean[] columnEditables = new boolean[] {
+						false, false, false, false, false
+				};
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+			});
+		tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tabla.addMouseListener(new MouseListener() {
+			
+			public void mouseReleased(MouseEvent e) {		
+			}
+			
+			public void mousePressed(MouseEvent e) {
+			}
+			
+			public void mouseExited(MouseEvent e) {
+			}
+			
+			public void mouseEntered(MouseEvent e) {
+			}
+			
+			public void mouseClicked(MouseEvent e) {
+				if (e.getModifiers() == InputEvent.BUTTON1_MASK){
+					enableButtons(true);
+				}
 			}
 		});
-		tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		
 		return tabla;  
 	}
+
 	
 	private void actions (ActionEvent actionEvent){
 		if (actionEvent.getActionCommand().toString().equals("BTN_FILTRAR")) {
@@ -325,8 +358,13 @@ public class GestionUsuarios extends JFrame {
 				tabla.setModel(getUsuariByFilter());
 			else
 				tabla.setModel(getAllUsuaris());
+			enableButtons(false);
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_NUEVO")) {
 			winMantenimiento("x");
+		} else if (actionEvent.getActionCommand().toString().equals("BTN_MODIFICAR")){
+			System.out.println ("MODIFICAR " + tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
+		} else if (actionEvent.getActionCommand().toString().equals("BTN_BAJA")){
+			System.out.println ("BAJA = " + tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
 		}
 	}
 	
@@ -338,11 +376,9 @@ public class GestionUsuarios extends JFrame {
 						txtNombre.getText(), txtApellidos.getText(), cmbPerfil.getSelectedItem().toString());
 			model = new DefaultTableModel((Object[][]) makeTabla(usuaris), columnNames);
 		}  catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		} catch (GestorConexionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		} 
 		
 		
@@ -350,16 +386,21 @@ public class GestionUsuarios extends JFrame {
 		
 		
 	}
+		
 	private TableModel getAllUsuaris () {
+		
+		List<Usuari> usuaris = null;
 		try {
-		List<Usuari> usuaris = gestorConexion.getAllUsuaris();
+			usuaris = gestorConexion.getAllUsuaris();
+		} catch (RemoteException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		} catch (GestorConexionException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 		
 		TableModel model = new DefaultTableModel((Object[][]) makeTabla(usuaris), columnNames);
 		return model;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+		
 	}
 	
 	private Object makeTabla(List<Usuari> usuaris){
@@ -382,6 +423,11 @@ public class GestionUsuarios extends JFrame {
 		mnto.setVisible(true);
 	}
 	
+	private void enableButtons (boolean status){
+		btnModificar.setEnabled(status);
+		btnBaja.setEnabled(status);
+		
+	}
 	public class KeyAdapterNumbersOnly extends KeyAdapter {
 
 		/**

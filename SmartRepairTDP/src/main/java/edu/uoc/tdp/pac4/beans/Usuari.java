@@ -150,6 +150,10 @@ public class Usuari implements Serializable{
 	public void setReparacionsAssignades(int reparacionsAssignades) {
 		this.reparacionsAssignades = reparacionsAssignades;
 	}
+
+	public String getNomCognoms () {
+		return this.nom + " " + this.cognoms;
+	}
 	
 	public String toString () {
 		return "ID = " + this.id + " taller = " + this.taller + " usuari = " + this.usuari
