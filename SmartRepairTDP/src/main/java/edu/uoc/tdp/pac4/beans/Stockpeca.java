@@ -15,10 +15,17 @@ public class Stockpeca  implements Serializable{
 	private int idtaller;
 	private int stockminim;
 	
-	public Stockpeca()
+	public Stockpeca(int idStockPeca, int codiPeca, int stock, int idTaller, int stockMinim)
 	{
+		super();
 		
+		this.idstockpeca = idStockPeca;
+		this.codipeca = codiPeca;
+		this.stock = stock;
+		this.idtaller = idTaller;
+		this.stockminim = stockMinim;
 	}
+	
 	public int getIdstockpeca() {
 		return idstockpeca;
 	}

@@ -20,7 +20,7 @@ public class Reparacio implements java.io.Serializable{
 	
 	public Reparacio(int ordreReparacio, int capTaller, boolean acceptada, int idMecanic,
 					 boolean assignada, double comptador, String observacions, int numCom,
-					 Date dataAssignacio, Date dataInici, Date dataFi, TipusReparacio tipusReparacio){
+					 Date dataAssignacio, Date dataInici, Date dataFi){
 		this.ordreReparacio = ordreReparacio;
 		this.capTaller = capTaller;
 		this.acceptada = acceptada;
@@ -32,7 +32,6 @@ public class Reparacio implements java.io.Serializable{
 		this.dataAssignacio = dataAssignacio;
 		this.dataInici = dataInici;
 		this.dataFi = dataFi;
-		this.tipusReparacio = tipusReparacio;
 	}
 	
 	public Reparacio() {
