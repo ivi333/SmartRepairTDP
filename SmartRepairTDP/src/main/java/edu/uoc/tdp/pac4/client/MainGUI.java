@@ -21,6 +21,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
+import edu.uoc.tdp.pac4.beans.PerfilUsuari;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionImpl;
@@ -130,7 +131,6 @@ public class MainGUI extends JFrame {
 				gestionTalleres.setLocation(dim.width/2-gestionTalleres.getSize().width/2, dim.height/2-gestionTalleres.getSize().height/2);
 				gestionTalleres.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				gestionTalleres.setVisible(true);
-				gestionTalleres.setAlwaysOnTop(true);
 
 			}
 		});
@@ -147,7 +147,6 @@ public class MainGUI extends JFrame {
 				gestionUsuarios.setLocation(dim.width/2-gestionUsuarios.getSize().width/2, dim.height/2-gestionUsuarios.getSize().height/2);
 				gestionUsuarios.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				gestionUsuarios.setVisible(true);
-				gestionUsuarios.setAlwaysOnTop(true);
 
 			}
 		});
@@ -208,16 +207,16 @@ public class MainGUI extends JFrame {
 	private void enableMenu (){
 
 		/*Administracion, JefeTaller, Administrador, Mecanic;*/
-		if (usuari.getPerfil().equalsIgnoreCase("Administrador")){
+		if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.Administrador.toString())){
 			mnNewMenu.setEnabled(true);
 			mnNewMenu.setVisible(true);		
-		}else if (usuari.getPerfil().equalsIgnoreCase("Administracion")){
+		}else if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.Administracion.toString())){
 			mnNewMenu_1.setEnabled(true);
 			mnNewMenu_1.setVisible(true);
-		} else if (usuari.getPerfil().equalsIgnoreCase("JefeTaller")) {
+		} else if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.JefeTaller.toString())) {
 			mnNewMenu_2.setEnabled(true);
 			mnNewMenu_2.setVisible(true);
-		} else if (usuari.getPerfil().equalsIgnoreCase("Mecanic")){
+		} else if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.Mecanic.toString())){
 			mnNewMenu_2.setEnabled(true);
 			mnNewMenu_2.setVisible(true);
 		}
