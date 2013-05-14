@@ -16,6 +16,7 @@ public class Reparacio implements java.io.Serializable{
 	private Date dataAssignacio;
 	private Date dataInici;
 	private Date dataFi;
+	private TipusReparacio tipusReparacio ;
 	
 	public Reparacio(int ordreReparacio, int capTaller, boolean acceptada, int idMecanic,
 					 boolean assignada, double comptador, String observacions, int numCom,
@@ -33,6 +34,10 @@ public class Reparacio implements java.io.Serializable{
 		this.dataFi = dataFi;
 	}
 	
+	public Reparacio() {
+		
+	}
+
 	public int getOrdreReparacio() {
 		return ordreReparacio;
 	}
@@ -119,6 +124,14 @@ public class Reparacio implements java.io.Serializable{
 	
 	public void setDataFi(Date dataFi) {
 		this.dataFi = dataFi;
+	}
+
+	public TipusReparacio getTipusReparacio() {
+		return tipusReparacio;
+	}
+
+	public void setTipusReparacio(TipusReparacio tipusReparacio) {
+		this.tipusReparacio = tipusReparacio;
 	}
 	
 }

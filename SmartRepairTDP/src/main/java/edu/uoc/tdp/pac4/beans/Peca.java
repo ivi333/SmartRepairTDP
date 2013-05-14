@@ -9,21 +9,16 @@ public class Peca implements java.io.Serializable {
 	private int PVPD;
 	private String Marca;
 	private String Model;
-	private int IdProveidor;
-
-	public Peca() {
-
-	}
+	
 
 	public Peca(int CodiPeca, String Descripcio, int PVP, int PVPD,
-			String Marca, String Model, int IdProveidor) {
+			String Marca, String Model) {
 		this.CodiPeca = CodiPeca;
 		this.Descripcio = Descripcio;
 		this.PVP = PVP;
 		this.PVPD = PVPD;
 		this.Marca = Marca;
 		this.Model = Model;
-		this.IdProveidor = IdProveidor;
 	}
 
 	public int getCodiPeca() {
@@ -74,12 +69,5 @@ public class Peca implements java.io.Serializable {
 		Model = model;
 	}
 
-	public int getIdProveidor() {
-		return IdProveidor;
-	}
-
-	public void setIdProveidor(int idProveidor) {
-		IdProveidor = idProveidor;
-	}
 
 }

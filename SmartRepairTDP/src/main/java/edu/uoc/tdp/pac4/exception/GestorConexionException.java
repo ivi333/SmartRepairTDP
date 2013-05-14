@@ -17,6 +17,10 @@ public class GestorConexionException extends Exception {
 	 * Definicion de Errores
 	 */
 	public static final String ERR_DAO = TDSLanguageUtils.getMessage("ERR_DAO");
+	public static final String ERR_USER_INVALID = TDSLanguageUtils.getMessage("ERR_USER_INVALID");
+	public static final String ERR_USER_DISABLED = TDSLanguageUtils.getMessage("ERR_USER_DISABLED");
+	public static final String ERR_USER_NOTFOUND = TDSLanguageUtils.getMessage("ERR_USER_NOTFOUND");
+
 
 
 	public GestorConexionException() {

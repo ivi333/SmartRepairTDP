@@ -11,7 +11,7 @@ public class Solicitud implements java.io.Serializable {
 	private String  comentaris;
 	private Date dataalta;
 	private Date datafinalitzacio;
-	private String client;
+	private int client;
 	private int numreparacio;
 	private boolean pendent;
 	private boolean finalitzada;
@@ -45,10 +45,10 @@ public class Solicitud implements java.io.Serializable {
 	public void setDatafinalitzacio(Date datafinalitzacio) {
 		this.datafinalitzacio = datafinalitzacio;
 	}
-	public String getClient() {
+	public int getClient() {
 		return client;
 	}
-	public void setClient(String client) {
+	public void setClient(int client) {
 		this.client = client;
 	}
 	public int getNumreparacio() {

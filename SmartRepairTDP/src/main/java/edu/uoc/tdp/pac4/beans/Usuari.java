@@ -14,6 +14,9 @@ public class Usuari implements Serializable{
 	private int taller;
 	private String usuari;
 	private String perfil;
+	private String nif;
+	private String nom;
+	private String cognoms;
 	private String contrasenya;
 	private boolean actiu;
 	private Date dataAlta;
@@ -25,6 +28,25 @@ public class Usuari implements Serializable{
 		
 	}
 
+	public Usuari (int id, int taller, String usuari, String perfil,
+			String nif, String nom, String cognoms, String contrasenya,
+			boolean actiu, Date dataAlta, Date dataModificacio, Date dataBaixa,
+			int reparacionAssignades){
+		this.id = id;
+		this.taller = taller;
+		this.usuari = usuari;
+		this.perfil = perfil;
+		this.nif = nif;
+		this.nom = nom;
+		this.cognoms = cognoms;
+		this.contrasenya = contrasenya;
+		this.actiu = actiu;
+		this.dataAlta = dataAlta;
+		this.dataModificacio = dataModificacio;
+		this.dataBaixa = dataBaixa;
+		this.reparacionsAssignades = reparacionAssignades;
+		
+	}
 	public int getId() {
 		return id;
 	}
@@ -57,6 +79,30 @@ public class Usuari implements Serializable{
 		this.perfil = perfil;
 	}
 
+	public String getNif () {
+		return this.nif;
+	}
+	
+	public void setNif (String nif) {
+		this.nif = nif; 
+	}
+	
+	public String getNom () {
+		return this.nom;
+	}
+	
+	public void setNom (String nom){
+		this.nom = nom;
+	}
+	
+	public String getCognoms (){
+		return this.cognoms;
+	}
+	
+	public void setCognoms (String cognoms) {
+		this.cognoms =  cognoms;
+	}
+	
 	public String getContrasenya() {
 		return contrasenya;
 	}
@@ -104,8 +150,19 @@ public class Usuari implements Serializable{
 	public void setReparacionsAssignades(int reparacionsAssignades) {
 		this.reparacionsAssignades = reparacionsAssignades;
 	}
-	
 
+	public String getNomCognoms () {
+		return this.nom + " " + this.cognoms;
+	}
+	
+	public String toString () {
+		return "ID = " + this.id + " taller = " + this.taller + " usuari = " + this.usuari
+				+ " perfil = " + this.perfil + " nif = " + this.nif + " nom = "+ this.nom
+				+ " cognoms = "+ this.cognoms + " contrasenya = " + this.contrasenya
+				+ " actiu = "  + this.actiu + " dataAlta = "  + this.dataAlta
+				+ " dataModificacio = " + this.dataModificacio + " dataBaixa = " + this.dataBaixa
+				+ " reparacionsAssignades = "+ this.reparacionsAssignades;
+	}
 	
 	
 }

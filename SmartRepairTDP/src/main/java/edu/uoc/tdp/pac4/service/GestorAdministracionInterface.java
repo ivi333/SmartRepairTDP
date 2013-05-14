@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Peca;
+import edu.uoc.tdp.pac4.beans.Proveidor;
+import edu.uoc.tdp.pac4.beans.Reparacio;
+import edu.uoc.tdp.pac4.beans.Solicitud;
 
 
 public interface GestorAdministracionInterface extends Remote{
@@ -25,6 +28,14 @@ public ArrayList<Asseguradora> getAseguradoras()throws RemoteException;
 public Client getDadeClient(String strNIF)throws RemoteException;
 
 public int getUpdClient(Client updCliente)throws RemoteException;
+
+public  ArrayList<Reparacio> getReparaciones()throws RemoteException;
+
+public ArrayList<String> getPedidosPeca()throws RemoteException;
+
+public Solicitud getSolicitudByCodeReparacion(int codigoReparacion)throws RemoteException;
+
+public ArrayList<Proveidor> getProveedores()throws RemoteException;
 }
 
 
