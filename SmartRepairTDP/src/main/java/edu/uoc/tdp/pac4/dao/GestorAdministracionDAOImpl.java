@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
+import edu.uoc.tdp.pac4.beans.Comanda;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
@@ -74,6 +75,107 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		}
 		
 	}
+	
+	public int getNuevoPedido(Comanda comanda) throws DAOException {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "insert into comanda "
+		+ "( estat,dataalta, codipeca,idcaptaller, idproveidor,ordrereparacio, tipusreparacio,cantidad)"
+		+ " VALUES (?,?, ?,?, ?,?, ?,?)";
+		try {
+			 
+			pstmt = cPostgressDB.createPrepareStatment(sql,
+						ResultSet.CONCUR_UPDATABLE);
+			pstmt.setBoolean(1, comanda.isEstat());
+			pstmt.setDate(2, (java.sql.Date) comanda.getDataalta());
+			pstmt.setInt(3, comanda.getCodipeca());
+			pstmt.setInt(4, comanda.getIdcaptaller());
+			pstmt.setInt(5, comanda.getCodigoProveedor());
+			pstmt.setInt(6, 1);//comanda.getOrdrereparacio());
+			pstmt.setBoolean(7, comanda.isTipusreparacio());
+			
+			pstmt.setInt(8, comanda.getCantidad());
+			if(pstmt.executeUpdate()>0)
+			{
+				int ivalue=getUpdateStock(comanda);
+				return 1;
+			}else{
+			return -1;
+			}
+			
+		}catch (Exception e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		}finally {
+			if (pstmt!=null) {
+				try {pstmt.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+	private int getUpdateStock(Comanda comanda)throws DAOException
+	{
+		int iStock=0;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		//obtengo el stock
+		String sql = "select stock from stockpeca "
+				+ " inner join proveidorpeca on stockpeca.codipeca=proveidorpeca.idpeca " 
+				+ " where   idproveidor=? and codipeca=? ";
+		try {
+			pstmt = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_READ_ONLY);
+			pstmt.setInt(1, comanda.getCodigoProveedor());
+			pstmt.setInt(2, comanda.getCodipeca());
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				iStock = rs.getInt(("stock"));
+				break;
+			}
+			 pstmt = null;
+		
+			// actualizo el stock
+			String sql1 = "update stockpeca "
+					+ " SET " + " stock=? "
+					+ " where  codipeca in ( select idpeca  from proveidorpeca "
+			    	+ " where   idproveidor=? and idpeca=? ) ";
+
+			
+			pstmt = cPostgressDB.createPrepareStatment(sql1,
+					ResultSet.CONCUR_UPDATABLE);
+			int stockTotal=iStock + comanda.getCantidad();
+			pstmt.setInt(1, stockTotal);
+			pstmt.setInt(2, comanda.getCodigoProveedor());
+			pstmt.setInt(3, comanda.getCodipeca());
+			int ii=pstmt.executeUpdate();
+			return 1;
+		}catch (Exception e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		}finally {
+			if (pstmt!=null) {
+				try {pstmt.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+	
 	
 	public ArrayList<Peca> getPiezaByCodeProveedor(int codigoProv)throws DAOException
 	{
@@ -446,23 +548,6 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			}
 		}
 			}
-
-	public int getNuevoPedido(Peca peca) {
-		int idResult=-1;
-		try{
-			String sql = " insert into peca "
-					+ "(descripcio, pvp, pvd,  marca, model, idproveidor )"
-					+" VALUES(?,?,?,?,?,?)";
-			
-			PreparedStatement prep = cPostgressDB.createPrepareStatment(sql,Statement.RETURN_GENERATED_KEYS);  
-			
-		}catch(Exception ex)
-		{
-			ex.printStackTrace();
-			idResult=-2;
-		}
-		return idResult;
-	}
 	
 	public int getNuevoStockPedido(Stockpeca stockPeca)
 	{  int idResult=-1;
@@ -528,7 +613,58 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			}
 		}
 			}
-	
+
+	public ArrayList<String> getCargarPedidos() throws DAOException {
+		ArrayList<String> list = new ArrayList<String>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = " select  numcom,dataalta,cantidad,peca.descripcio,proveidor.nom,web,stock "
+				+ " from comanda "
+				+ " left join peca on comanda.codipeca= peca.codipeca "
+				+ " inner join stockpeca on stockpeca.codipeca=peca.codipeca "
+				+ " left join proveidor on  comanda.idproveidor=proveidor.idproveidor "
+				+ " left join  taller on comanda.idcaptaller=taller.id "
+				+ " where comanda.estat=true and comanda.tipusreparacio=false ";
+		try {
+			 pstmt = cPostgressDB.createPrepareStatment(sql,ResultSet.CONCUR_READ_ONLY);
+			
+				rs = pstmt.executeQuery();
+				while (rs.next()) {
+					list.add(String.valueOf(rs.getInt(("numcom"))));
+					list.add(String.valueOf(rs.getDate("dataalta")));
+					list.add(String.valueOf(rs.getInt(("cantidad"))));
+					list.add(String.valueOf(rs.getString(("descripcio"))));
+					list.add(rs.getString("nom"));
+					list.add(rs.getString("web"));
+					list.add(String.valueOf(rs.getInt(("stock"))));
+					
+				}
+			return list;
+			
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED,
+							e.getMessage(), e);
+				}
+			}
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED,
+							e.getMessage(), e);
+				}
+			}
+		}
+
+	}
+
+
 
 
 } 

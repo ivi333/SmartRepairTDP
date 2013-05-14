@@ -12,7 +12,10 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 import javax.swing.JFrame;
@@ -23,6 +26,7 @@ import javax.swing.text.JTextComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import edu.uoc.tdp.pac4.beans.Comanda;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Stockpeca;
@@ -38,6 +42,7 @@ import java.awt.Font;
 
 public class NuevoPedido extends JFrame {
 	private static int port = 1444;
+	private static int IDTALLER = 1;
 	private JPanel contentPane;
 	private JLabel lblDescripcion;
 	private JLabel lblStock;
@@ -123,7 +128,7 @@ public class NuevoPedido extends JFrame {
 
 		lblStock = new JLabel();
 		lblStock.setBounds(17, 232, 88, 14);
-		lblStock.setText(TDSLanguageUtils.getMessage("nuevo.pedido.stock"));
+		lblStock.setText(TDSLanguageUtils.getMessage("nuevo.pedido.cantidad"));
 		contentPane.add(lblStock);
 
 		txtStock = new JTextField();
@@ -388,10 +393,42 @@ public class NuevoPedido extends JFrame {
 
 	private void getNuevoPedido()
 	{ 
+		 int codigoProv=0;
+		 int codigoPeca=0;
 		try{
 			
+			Comanda comanda= new Comanda();
 			
+			int icodPeca= cmbPieza.getSelectedIndex();
+			int icodProv= cmbProveedor.getSelectedIndex();
+			for (int i = 0; i < cbPieza.size(); i++) {
+				if (icodPeca == cbPieza.get(i).getId()) {
+					codigoPeca = Integer.valueOf(cbPieza.get(i).getAux());
+					break;
+				}
+			}
+
+			for (int i = 0; i < cbProveedor.size(); i++) {
+				if (icodProv == cbProveedor.get(i).getId()) {
+					codigoProv = Integer.valueOf(cbProveedor.get(i).getAux());
+					break;
+				}
+			}
+
+			comanda.setCodipeca(codigoPeca);
+			comanda.setCodigoProveedor(codigoProv);
+			java.util.Date dt = new java.util.Date();
+			java.sql.Date dateAlta = new java.sql.Date(dt.getTime());
+
+			comanda.setDataalta(dateAlta);
+			comanda.setEstat(true);
+			comanda.setIdcaptaller(IDTALLER);
+
+			comanda.setOrdrereparacio(0);
+			comanda.setTipusreparacio(false);
+			comanda.setCantidad(Integer.valueOf(txtStock.getText()));
 			
+			getRemoto().getNuevoPedido(comanda);
 		}catch(Exception ex)
 		{
 			ex.printStackTrace();
@@ -402,12 +439,23 @@ public class NuevoPedido extends JFrame {
 		String srtResult = "";
 		try {
 			
-			if (cmbProveedor.getSelectedIndex() == 0) {
+			if (cmbProveedor.getSelectedItem().equals("")) {
 				srtResult = TDSLanguageUtils
 						.getMessage("nuevo.msg.proveedor");
 				return srtResult;
 			}
+			if (cmbProveedor.getSelectedItem().equals("")) {
+				srtResult = TDSLanguageUtils
+						.getMessage("nuevo.msg.pieza");
+				return srtResult;
+			}
 			
+			if(txtStock.getText().equals(""))
+			{
+				srtResult = TDSLanguageUtils
+						.getMessage("nuevo.msg.cantidad");
+				return srtResult;
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

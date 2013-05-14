@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
+import edu.uoc.tdp.pac4.beans.Comanda;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
@@ -31,17 +32,17 @@ public int getUpdClient(Client updCliente)throws RemoteException;
 
 public  ArrayList<Reparacio> getReparaciones()throws RemoteException;
 
-public ArrayList<String> getPedidosPeca()throws RemoteException;
-
 public Solicitud getSolicitudByCodeReparacion(int codigoReparacion)throws RemoteException;
 
 public ArrayList<Proveidor> getProveedores()throws RemoteException;
 
-public int getNuevoPedido(Peca peca)throws RemoteException;
+public int getNuevoPedido(Comanda comanda)throws RemoteException;
 
 public ArrayList<Peca> getPiezaByCodeProveedor(int codigoProv)throws RemoteException;
 
 public Peca getPiezaByCode(int codigoPieza)throws RemoteException;
+
+public ArrayList<String> getCargarPedidos()throws RemoteException;
 }
 
 

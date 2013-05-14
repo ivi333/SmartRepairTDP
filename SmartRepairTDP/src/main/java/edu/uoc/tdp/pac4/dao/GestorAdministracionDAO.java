@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
+import edu.uoc.tdp.pac4.beans.Comanda;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
@@ -38,9 +39,12 @@ public interface  GestorAdministracionDAO {
 	
 	public Solicitud getSolicitudByCodeReparacion(int codigoReparacion)throws DAOException;;
 	
-	public int getNuevoPedido(Peca peca)throws DAOException;;
-	
+
 	public ArrayList<Peca> getPiezaByCodeProveedor(int codigoProv)throws DAOException;
 	
 	public Peca getPiezaByCode(int codigoPieza)throws DAOException;
+	
+	public int getNuevoPedido(Comanda comanda)throws DAOException;
+	
+	public ArrayList<String> getCargarPedidos()throws DAOException;
 }

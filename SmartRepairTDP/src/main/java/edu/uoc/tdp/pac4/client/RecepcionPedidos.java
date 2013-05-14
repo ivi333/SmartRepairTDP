@@ -1,8 +1,6 @@
 package edu.uoc.tdp.pac4.client;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -27,7 +25,7 @@ import java.awt.Color;
 import java.awt.Font;
 
 public class RecepcionPedidos extends JDialog {
-	private static int port = 1212;
+	private static int port = 1444;
 	private JPanel contentPane;
 	private JButton btnSalir;
 	private JButton btnGestionar;
@@ -86,15 +84,13 @@ public class RecepcionPedidos extends JDialog {
 		this.jTableResultado = new JTable();
 		this.jTableResultado.setModel(new GruposTableModel());
 		jTableResultado.getColumnModel().getColumn(0).setPreferredWidth(50);
-		jTableResultado.getColumnModel().getColumn(1).setPreferredWidth(130);
-		jTableResultado.getColumnModel().getColumn(2).setPreferredWidth(80);
+		jTableResultado.getColumnModel().getColumn(1).setPreferredWidth(50);
+		jTableResultado.getColumnModel().getColumn(2).setPreferredWidth(50);
 		jTableResultado.getColumnModel().getColumn(3).setPreferredWidth(80);
-		jTableResultado.getColumnModel().getColumn(4).setPreferredWidth(50);
-		jTableResultado.getColumnModel().getColumn(5).setPreferredWidth(50);
-		jTableResultado.getColumnModel().getColumn(6).setPreferredWidth(50);
-		jTableResultado.getColumnModel().getColumn(7).setPreferredWidth(80);
-		jTableResultado.getColumnModel().getColumn(8).setPreferredWidth(140);
-		
+		jTableResultado.getColumnModel().getColumn(4).setPreferredWidth(80);
+		jTableResultado.getColumnModel().getColumn(5).setPreferredWidth(80);
+		//jTableResultado.getColumnModel().getColumn(6).setPreferredWidth(50);
+	
 		
 		scrollPaneResultado.setViewportView(jTableResultado);
 
@@ -159,6 +155,7 @@ public class RecepcionPedidos extends JDialog {
 
 		return btnGestionar;
 	}
+	
 	public static GestorAdministracionInterface getRemoto()
 			throws RemoteException, NotBoundException {
 		try {
@@ -176,39 +173,37 @@ public class RecepcionPedidos extends JDialog {
 		}
 		return conexionRemota;
 	}
+	
 	private void getCargarPedidos() {
 		
 		try {
-
-			ArrayList<String> list=getRemoto().getPedidosPeca();
-			
-			Iterator<String> it=list.iterator();
-			
-			
-			
-			GruposTableModel gtm = (GruposTableModel) jTableResultado.getModel();
-			
-			if(list.size()>0)
-			{while (it.hasNext())
-			{
-				
-				String codigo=it.next();
-				String descripcion= it.next();
-			
-				String pvp= it.next();
-				String pvd= it.next();
-				String marca= it.next();
-				String modelo= it.next();
-				String stock= it.next();
-				String stockminimo= it.next();
-				String proveedor= it.next();
-				
-				gtm.addRow(new Object[] {codigo,descripcion,stock,stockminimo,pvp,pvd,marca,modelo,proveedor});
-			
+			GruposTableModel gtm1 = (GruposTableModel) jTableResultado.getModel();
+			if (gtm1.getRowCount() > 0) {
+			    for (int i = gtm1.getRowCount() - 1; i > -1; i--) {
+			    	gtm1.removeRow(i);
+			    }
 			}
-				
-				
-				
+
+			ArrayList<String> list = getRemoto().getCargarPedidos();
+
+			Iterator<String> it = list.iterator();
+			GruposTableModel gtm = (GruposTableModel) jTableResultado.getModel();
+			gtm.setRowCount(0);
+			
+			if (list.size() > 0) {
+				while (it.hasNext()) {
+					String codigo = it.next();
+					String fecha = it.next();
+					String cantidad = it.next();
+					String pieza = it.next();
+					String proveedor = it.next();
+					String taller = it.next();
+					String stock = it.next();
+
+					gtm.addRow(new Object[] { codigo, fecha, cantidad, pieza,
+							proveedor, taller });
+
+				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -222,20 +217,23 @@ public class RecepcionPedidos extends JDialog {
 		public GruposTableModel() {
 			super(new String[] {
 					TDSLanguageUtils.getMessage("recep.lbl.codigo"), //
-					TDSLanguageUtils.getMessage("recep.lbl.descripcion"), //
-					TDSLanguageUtils.getMessage("recep.lbl.stock"),
-					TDSLanguageUtils.getMessage("recep.lbl.stock.minimo"),
-					TDSLanguageUtils.getMessage("recep.lbl.pvp"),
-					TDSLanguageUtils.getMessage("recep.lbl.pvd"),//
-					TDSLanguageUtils.getMessage("recep.lbl.marca"),
-					TDSLanguageUtils.getMessage("recep.lbl.modelo"),					
-					TDSLanguageUtils.getMessage("recep.lbl.proveedor"),//
-			}, 0);// numFilas); //
+					TDSLanguageUtils.getMessage("recep.lbl.fecha"), //
+					TDSLanguageUtils.getMessage("recep.lbl.cantidad"),
+					TDSLanguageUtils.getMessage("recep.lbl.pieza"),
+					TDSLanguageUtils.getMessage("recep.lbl.proveedor"),
+					TDSLanguageUtils.getMessage("recep.lbl.taller"),//
+					//TDSLanguageUtils.getMessage("recep.lbl.stock.total"),
+			},0);// numFilas); //
 		}
-
+		
 		@Override
 		public boolean isCellEditable(int row, int col) {
 			return false;
 		}
+		public void setRowCount(int rowCount)
+		{
+			
+		}
+		
 	}
 }
