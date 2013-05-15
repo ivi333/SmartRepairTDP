@@ -40,7 +40,7 @@ import javax.swing.JComboBox;
 import java.awt.Color;
 
 public class AltaCliente extends JDialog {
-	private static int port = 1454;
+	private static int port = 1444;
 	private JPanel contentPanel;
 	private JLabel lblCliente;
 	private JLabel lblNif;
@@ -333,6 +333,7 @@ public class AltaCliente extends JDialog {
 		txtBastidor.setColumns(10);
 
 		btnNewUpd = new JButton();
+		btnNewUpd.setForeground(new Color(0, 128, 0));
 
 		if (NEW_UPD.equals("NEW"))
 			btnNewUpd.setText(TDSLanguageUtils
@@ -352,21 +353,38 @@ public class AltaCliente extends JDialog {
 						if (!strMsg.equals("")) {
 							String tittle = TDSLanguageUtils
 									.getMessage("cliente.new.titulo");
-							MuestraOk(strMsg, tittle);
+							LeerError(strMsg, tittle);
+						}else
+						{
+							MuestraOk( TDSLanguageUtils
+									.getMessage("cliente.msg.ok") ,TDSLanguageUtils
+									.getMessage("cliente.new.titulo"));
+							dispose();
 						}
+						
 					}
 
 					if (NEW_UPD.equals("UPD")) {
 						strMsg = getNewOrUpdCliente();
 						if (!strMsg.equals("")) {
 							String tittle = TDSLanguageUtils
-									.getMessage("cliente.new.titulo");
+									.getMessage("cliente.upd.titulo");
 							LeerError(strMsg, tittle);
 						}
+						else
+							MuestraOk( TDSLanguageUtils
+									.getMessage("cliente.msg.ok") ,TDSLanguageUtils
+									.getMessage("cliente.upd.titulo"));
+						dispose();
 					}
 
 				} catch (Exception ex) {
 					ex.printStackTrace();
+					String titleError = TDSLanguageUtils
+							.getMessage("mensaje.Error");
+					String msgCombo = TDSLanguageUtils
+							.getMessage("mensaje.ErrorCombo");
+					LeerError(msgCombo, titleError);
 				}
 
 			}
@@ -505,8 +523,14 @@ public class AltaCliente extends JDialog {
 
 						if (String.valueOf(strNIF)!=null&& !String.valueOf(strNIF).equals("")) {
 							strMsg = getMsgExisteCliente(strNIF);
-							LeerError(strMsg, TDSLanguageUtils
+							if(isOkCLiente)//existe cliente
+								MuestraOk(strMsg, TDSLanguageUtils
+										.getMessage("cliente.msg.titulo"));
+							else
+								LeerError(strMsg, TDSLanguageUtils
 									.getMessage("cliente.msg.titulo"));
+							
+							
 							if (NEW_UPD.equals("UPD")) {
 								if (isOkCLiente)
 									getCargarClienteByNIF(strNIF);
@@ -570,20 +594,23 @@ public class AltaCliente extends JDialog {
 				String strMarca = client.getMarca();
 				if (!strMarca.equals("")) {
 					for (int i = 0; i < cbMarca.size(); i++) {
-						if (strMarca.equals(cbMarca.get(i).getValue())) {
-							cmbMarca.setSelectedIndex(Integer.parseInt(cbMarca.get(i).getAux()));
-							break;
+						String strM=cbMarca.get(i).getValue();
+						if (strMarca.equals(strM)) {
+							cmbMarca.setSelectedIndex((cbMarca.get(i).getId()));
+						
+							//JComboBox d =(JComboBox) cmbMarca.getSelectedItem();
+							
 						}
 					}
 				}
 				
-				for (int i = 0; i < cbAseguradora.size(); i++) {
-					if (client.getIdasseguradora() == Integer.parseInt(cbAseguradora.get(i).getAux())) {
-						cmbAseguradora.setSelectedIndex(Integer.parseInt(cbAseguradora.get(i).getAux()));
-						
-						break;
-					}
-				}
+			//	for (int i = 0; i < cbAseguradora.size(); i++) {
+				//	if (client.getIdasseguradora() == (cbAseguradora.get(i).getId())) {
+						cmbAseguradora.setSelectedIndex(client.getIdasseguradora()-1);
+						//cmbAseguradora.getItemAt(Integer.parseInt(cbAseguradora.get(i).getAux()));
+						//break;
+					//}
+				//}
 				
 			}
 
@@ -596,9 +623,11 @@ public class AltaCliente extends JDialog {
 	private void LeerError(String paramString1, String paramString2) {
 		JOptionPane.showMessageDialog(this, paramString1, paramString2, 0);
 	}
-	 private void MuestraOk(String paramString1, String paramString2) {
+
+	private void MuestraOk(String paramString1, String paramString2) {
 	        JOptionPane.showMessageDialog(this, paramString1, paramString2, 1);
 	    }
+
 	private String getMsgExisteCliente(String strNIF) {
 		String strResult = "";
 		try {
@@ -626,9 +655,9 @@ public class AltaCliente extends JDialog {
 			cbMarca = null;
 			cbMarca = new ArrayList<ItemCombo>();
 			ListMarca = getRemoto().getMarcas();
-			cmbMarca.insertItemAt("", 0);
+		//	cmbMarca.insertItemAt("", 0);
 
-			for (int i = 1; i < ListMarca.size(); i++) {
+			for (int i = 0; i < ListMarca.size(); i++) {
 				cbMarca.add(new ItemCombo(i, ListMarca.get(i).getMarca(),
 						String.valueOf(ListMarca.get(i).getCodiPeca())));
 				cmbMarca.insertItemAt(ListMarca.get(i).getMarca(), i);
@@ -637,6 +666,11 @@ public class AltaCliente extends JDialog {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			String titleError = TDSLanguageUtils
+					.getMessage("mensaje.Error");
+			String msgCombo = TDSLanguageUtils
+					.getMessage("mensaje.ErrorCombo");
+			LeerError(msgCombo, titleError);
 		}
 	}
 
@@ -646,9 +680,9 @@ public class AltaCliente extends JDialog {
 			cbAseguradora = null;
 			cbAseguradora = new ArrayList<ItemCombo>();
 			ListAseg = getRemoto().getAseguradoras();
-			cmbAseguradora.insertItemAt("", 0);
+			//cmbAseguradora.insertItemAt("", 0);
 
-			for (int i = 1; i < ListAseg.size(); i++) {
+			for (int i = 0; i < ListAseg.size(); i++) {
 				cbAseguradora.add(new ItemCombo(i, ListAseg.get(i).getNom(),
 						String.valueOf(ListAseg.get(i).getIdasseguradora())));
 				cmbAseguradora.insertItemAt(ListAseg.get(i).getNom(), i);
@@ -656,7 +690,13 @@ public class AltaCliente extends JDialog {
 			}
 
 		} catch (Exception ex) {
+			
 			ex.printStackTrace();
+			String titleError = TDSLanguageUtils
+					.getMessage("mensaje.Error");
+			String msgCombo = TDSLanguageUtils
+					.getMessage("mensaje.ErrorCombo");
+			LeerError(msgCombo, titleError);
 		}
 	}
 
@@ -666,7 +706,10 @@ public class AltaCliente extends JDialog {
 
 			if (ImputValues().equals("")) {
 				if (NEW_UPD.equals("NEW"))
+				{
 				getRemoto().getNewClient(getObjectClient());
+				
+				}
 				if (NEW_UPD.equals("UPD"))
 					getRemoto().getUpdClient(getObjectClient());
 				
@@ -675,6 +718,11 @@ public class AltaCliente extends JDialog {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			String titleError = TDSLanguageUtils
+					.getMessage("mensaje.Error");
+			String msgCombo = TDSLanguageUtils
+					.getMessage("mensaje.ErrorCombo");
+			LeerError(msgCombo, titleError);
 		}
 		return strResult;
 	}

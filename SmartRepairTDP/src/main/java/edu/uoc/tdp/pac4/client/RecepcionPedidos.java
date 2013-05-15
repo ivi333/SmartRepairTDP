@@ -113,7 +113,8 @@ public class RecepcionPedidos extends JDialog {
 			btnPedidoNuevo.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 
-				
+					NuevoPedido nuevoPedido = new NuevoPedido();
+					nuevoPedido.setVisible(true);
 
 				}
 			});

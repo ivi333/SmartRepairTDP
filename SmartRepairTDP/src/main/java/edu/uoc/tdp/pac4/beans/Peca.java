@@ -15,7 +15,7 @@ public class Peca implements java.io.Serializable {
 	}
 
 	public Peca(int CodiPeca, String Descripcio, int PVP, int PVD,
-			String Marca, String Model, int IdProveidor) {
+			String Marca, String Model) {
 		this.CodiPeca = CodiPeca;
 		this.Descripcio = Descripcio;
 		this.PVP = PVP;

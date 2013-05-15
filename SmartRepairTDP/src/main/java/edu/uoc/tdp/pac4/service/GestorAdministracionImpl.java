@@ -91,7 +91,13 @@ public class GestorAdministracionImpl extends
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getNewClient(altaCliente);
+		try {
+			return gestorAdministracionDAO.getNewClient(altaCliente);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -2;
 	}
 
 	public int getUpdClient(Client updCliente) throws RemoteException {
@@ -103,7 +109,13 @@ public class GestorAdministracionImpl extends
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getUpdClient(updCliente);
+		try {
+			return gestorAdministracionDAO.getUpdClient(updCliente);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -2;
 	}
 
 	public Client getDadeClient(String strNIF) throws RemoteException {
@@ -115,7 +127,13 @@ public class GestorAdministracionImpl extends
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getDadeClient(strNIF);
+		try {
+			return gestorAdministracionDAO.getDadeClient(strNIF);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public ArrayList<Asseguradora> getAseguradoras() throws RemoteException {
@@ -126,7 +144,13 @@ public class GestorAdministracionImpl extends
 		} catch (GestorAdministracionException e) {
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getAseguradoras();
+		try {
+			return gestorAdministracionDAO.getAseguradoras();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	public ArrayList<Proveidor> getProveedores() throws RemoteException {
 		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
@@ -153,7 +177,13 @@ public class GestorAdministracionImpl extends
 		} catch (GestorAdministracionException e) {
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getReparaciones();
+		try {
+			return gestorAdministracionDAO.getReparaciones();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public Solicitud getSolicitudByCodeReparacion(int codigoReparacion) throws RemoteException {

@@ -53,7 +53,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 				modelos.add(new Peca(rs.getInt("CodiPeca"), rs
 						.getString("Descripcio"), rs.getInt("PVP"), rs
 						.getInt("PVD"), rs.getString("Marca"), rs
-						.getString("Model"), rs.getInt("IdProveidor")));
+						.getString("Model")));
 			}
 			return modelos;
 		} catch (SQLException e) {
@@ -121,6 +121,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			}
 		}
 	}
+	
 	private int getUpdateStock(Comanda comanda)throws DAOException
 	{
 		int iStock=0;
@@ -175,8 +176,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			}
 		}
 	}
-	
-	
+		
 	public ArrayList<Peca> getPiezaByCodeProveedor(int codigoProv)throws DAOException
 	{
 		ArrayList<Peca> piezas = new ArrayList<Peca>();
@@ -227,35 +227,48 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		return "111AUX";
 	}
 
-	public boolean getExistCliente(String strNIF) {
+	/* ******comprobacion del cliente si existe****** */
+	public boolean getExistCliente(String strNIF) throws DAOException{
 		boolean bResult = false;
+		PreparedStatement pstmt =null;
+		ResultSet rs=null;
 		try {
 			String sql = " SELECT * FROM client WHERE nif = ?";
-			PreparedStatement pstmt = cPostgressDB.createPrepareStatment(sql,
+			 pstmt = cPostgressDB.createPrepareStatment(sql,
 					ResultSet.CONCUR_READ_ONLY);
 			pstmt.setString(1, strNIF);
-			ResultSet rs = pstmt.executeQuery();
+			 rs = pstmt.executeQuery();
 			while (rs.next()) {
 				if (rs.getString(("nif").toString().trim()).equals(strNIF))
 					bResult = true;
 				else
-					bResult = true;
+					bResult = false;
 			}
-			
-		} catch (Exception ex) {
-			try {
-				throw new GestorAdministracionException("Server.error.ConBD");
-			} catch (GestorAdministracionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			return bResult;
+		}  catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (pstmt!=null) {
+				try {pstmt.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
 			}
 		}
-		return bResult;
 
 	}
 
-	public int getNewClient(Client altaCliente) {
+	/* ******insertar nuevo cliente****** */
+	public int getNewClient(Client altaCliente)throws DAOException {
 		int iResult = -1;
+		PreparedStatement prep=null;
 		try {
 			String sql = " insert into  client "
 					+ "( nom, cognoms, adreca, nif, poblacio, "
@@ -263,7 +276,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 					+ " marca, tipus, num_chasis, model, matricula, color, anyo )"
 					+ " VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?)";
 
-			PreparedStatement prep = cPostgressDB.createPrepareStatment(sql,
+			 prep = cPostgressDB.createPrepareStatment(sql,
 					ResultSet.CONCUR_UPDATABLE);
 
 			prep.setString(1, altaCliente.getNom().toString().trim());
@@ -289,21 +302,25 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			
 			prep.executeQuery();
 			iResult = 1;
-		} catch (Exception ex) {
-			iResult = -2;
-			try {
-				throw new GestorAdministracionException("Server.error.ConBD");
-			} catch (GestorAdministracionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			return iResult;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (prep!=null) {
+				try {prep.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
 			}
+			
 		}
-
-		return iResult;
+		
 	}
 
-	public int getUpdClient(Client updCliente) {
+	/* ******actualizar el  cliente *******/
+	public int getUpdClient(Client updCliente)throws DAOException {
 		int iResult = -1;
+		PreparedStatement prep =null;
 		try{
 			 
 			String sql = " update   client SET "
@@ -312,7 +329,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 					+ " marca=?, tipus=?, num_chasis=?, model=?, matricula=?, color=?, anyo=? "
 					+" WHERE nif=?";
 
-			PreparedStatement prep = cPostgressDB.createPrepareStatment(sql,
+			 prep = cPostgressDB.createPrepareStatment(sql,
 					ResultSet.CONCUR_UPDATABLE);
 
 			prep.setString(1, updCliente.getNom().toString().trim());
@@ -337,25 +354,37 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			prep.setDate(14, (java.sql.Date) updCliente.getAnyo());
 			
 			prep.setString(15, updCliente.getNif());
-			int ii=prep.executeUpdate();
+			int i=prep.executeUpdate();
 			
 			iResult = 1;
-		
-	}catch(Exception ex)
-	{  ex.printStackTrace();
-	   iResult=-2;
-	}
-	return iResult;
+			return iResult;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);
+		} finally {
+			if (prep != null) {
+				try {
+					prep.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED,
+							e.getMessage(), e);
+				}
+			}
+
+		}
+
 	}
 
-	public Client getDadeClient(String strNIF) {
+	/* ******obtener el cliente por DNI *******/
+	public Client getDadeClient(String strNIF)throws DAOException {
 		Client client = null;
+		PreparedStatement pstmt =null;
+		ResultSet rs =null;
 		try {
 			String sql = "SELECT * FROM client  WHERE nif=?";
-			PreparedStatement pstmt = cPostgressDB.createPrepareStatment(sql,
+			 pstmt = cPostgressDB.createPrepareStatment(sql,
 					ResultSet.CONCUR_UPDATABLE);
 			pstmt.setString(1, strNIF);
-			ResultSet rs = pstmt.executeQuery();
+			 rs = pstmt.executeQuery();
 			while (rs.next()) {
 				client = new Client();
 				client.setNumClient(rs.getInt("numclient"));
@@ -375,13 +404,29 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 				client.setColor(rs.getString("color"));
 				client.setAnyo(rs.getDate("anyo"));
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			return client;
+		}  catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (pstmt!=null) {
+				try {pstmt.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
 		}
-		return client;
+		
 	}
 
-	public ArrayList<Asseguradora> getAseguradoras() {
+	/* ******obtener el lista de aseguradores *******/
+	public ArrayList<Asseguradora> getAseguradoras() throws DAOException{
 		ArrayList<Asseguradora> Aseguradoras = new ArrayList<Asseguradora>();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -400,19 +445,29 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 
 				Aseguradoras.add(aseg);
 			}
-
-		} catch (Exception e) {
-			try {
-				throw new GestorAdministracionException("Server.error.ConBD");
-			} catch (GestorAdministracionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			return Aseguradoras;
+		}  catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (pstmt!=null) {
+				try {pstmt.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
 			}
 		}
-		return Aseguradoras;
+	
 	}
 	
-	public ArrayList<Reparacio> getReparaciones()
+	/* ******obtener lista de reparaciones *******/
+	public ArrayList<Reparacio> getReparaciones()throws DAOException 
 	{
 		ArrayList<Reparacio> Reparaciones = new ArrayList<Reparacio>();
 		PreparedStatement pstmt = null;
@@ -437,11 +492,28 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 				r.setDataFi(rs.getDate("datafi"));
 				Reparaciones.add(r);
 			}
-		} catch (Exception e) {
+			return Reparaciones;
+		}  catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (pstmt!=null) {
+				try {pstmt.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
 		}
-		return Reparaciones;
+		
 	}
 	
+	/* ******obtener ellista de pedidosPeca *******/
 	public ArrayList<String> getPedidosPeca()
 	{    ArrayList<String> list=new ArrayList<String>();
 		
@@ -485,6 +557,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		return list;
 	}
 	
+	/* ******obtener el solicitud*******/
 	public Solicitud getSolicitudByCodeReparacion(int codigoReparacion)
 	{ 
 		Solicitud sol =null;
@@ -613,7 +686,8 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			}
 		}
 			}
-
+	
+	/* ******Cargar pedidos******/
 	public ArrayList<String> getCargarPedidos() throws DAOException {
 		ArrayList<String> list = new ArrayList<String>();
 		PreparedStatement pstmt = null;
