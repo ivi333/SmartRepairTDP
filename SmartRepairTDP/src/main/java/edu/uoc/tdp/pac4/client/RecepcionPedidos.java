@@ -2,6 +2,7 @@ package edu.uoc.tdp.pac4.client;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -114,6 +115,13 @@ public class RecepcionPedidos extends JDialog {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 
 					NuevoPedido nuevoPedido = new NuevoPedido();
+					nuevoPedido.setSize(390, 388);
+					final Toolkit toolkitpedidos = Toolkit.getDefaultToolkit();
+					final Dimension screenSizetoolkitpedidos = toolkitpedidos
+							.getScreenSize();
+					int x = (screenSizetoolkitpedidos.width - nuevoPedido.getWidth()) / 2;
+					int y = (screenSizetoolkitpedidos.height - nuevoPedido.getHeight()) / 2;
+					nuevoPedido.setLocation(x, y);
 					nuevoPedido.setVisible(true);
 
 				}

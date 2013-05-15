@@ -3,6 +3,7 @@ package edu.uoc.tdp.pac4.client;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
@@ -204,14 +205,28 @@ public class MenuGestionAdmin extends JFrame {
 
 	private void OpenFrm_Option(OptionFrame Option) {
 		try {
+			final int x ;
+			final int y; 
 			switch (Option) {
 			case Frm_NewCliente:
 				AltaCliente altaCliente = new AltaCliente("NEW");
+				altaCliente.setSize(422, 781);
+				final Toolkit toolkit = Toolkit.getDefaultToolkit();
+				final Dimension screenSize = toolkit.getScreenSize();
+				x = (screenSize.width - altaCliente.getWidth()) / 2;
+				 y = (screenSize.height - altaCliente.getHeight()) / 2;
+				altaCliente.setLocation(x, y);
 				altaCliente.setVisible(true);
 				
 				break;
 			case Frm_UpdCliente:
 				AltaCliente updCliente = new AltaCliente("UPD");
+				updCliente.setSize(422, 781);
+				final Toolkit toolkit1 = Toolkit.getDefaultToolkit();
+				final Dimension screenSize1 = toolkit1.getScreenSize();
+				x = (screenSize1.width - updCliente.getWidth()) / 2;
+				y= (screenSize1.height - updCliente.getHeight()) / 2;
+				updCliente.setLocation(x, y);
 				updCliente.setVisible(true);
 				break;
 			case Frm_NewSol:
@@ -230,10 +245,24 @@ public class MenuGestionAdmin extends JFrame {
 				break;
 			case Frm_Gestion:
 				GestionAvisos gestion = new GestionAvisos();
+				gestion.setSize(912,250);
+				final Toolkit toolkitgestion = Toolkit.getDefaultToolkit();
+				final Dimension screenSizetoolkitgestion = toolkitgestion
+						.getScreenSize();
+				x = (screenSizetoolkitgestion.width - gestion.getWidth()) / 2;
+				y = (screenSizetoolkitgestion.height - gestion.getHeight()) / 2;
+				gestion.setLocation(x, y);
 				gestion.setVisible(true);
 				break;
 			case Frm_Recepcion:
 				RecepcionPedidos pedidos = new RecepcionPedidos();
+				pedidos.setSize(762, 250);
+				final Toolkit toolkitpedidos = Toolkit.getDefaultToolkit();
+				final Dimension screenSizetoolkitpedidos = toolkitpedidos
+						.getScreenSize();
+				x = (screenSizetoolkitpedidos.width - pedidos.getWidth()) / 2;
+				y = (screenSizetoolkitpedidos.height - pedidos.getHeight()) / 2;
+				pedidos.setLocation(x, y);
 				pedidos.setVisible(true);
 
 				break;

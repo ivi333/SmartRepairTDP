@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -40,7 +41,7 @@ import javax.swing.JSeparator;
 import java.awt.Color;
 import java.awt.Font;
 
-public class NuevoPedido extends JFrame {
+public class NuevoPedido extends JDialog {
 	private static int port = 1444;
 	private static int IDTALLER = 1;
 	private JPanel contentPane;
