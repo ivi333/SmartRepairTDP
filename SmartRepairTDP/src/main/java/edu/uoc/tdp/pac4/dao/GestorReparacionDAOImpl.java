@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Reparacio;
@@ -38,6 +39,12 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 	public static final String QUERY_GET_STOCKPIEZAS = "SELECT * FROM STOCKPECA";
 	public static final String QUERY_GET_PIEZAS = "SELECT * FROM PECA";
 	public static final String QUERY_GET_PIEZA = "SELECT * FROM PECA WHERE CODIPECA = ?";
+	public static final String QUERY_GET_DETALLE_REPARACIONES = "select rep.ordrereparacio, sol.dataalta, rep.comptador, cli.matricula, " +
+															    "cli.marca, cli.model, rep.observacions, rep.acceptada, rep.assignada " +
+															    "from solicitud sol " +
+															    "inner join reparacio rep on sol.numreparacio = rep.ordrereparacio " +
+															    "inner join client cli on sol.client = cli.nif " +
+															    "where sol.finalitzada = false";
 	
 	
 	public GestorReparacionDAOImpl() {
@@ -267,6 +274,38 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 				}
 			}
 		}		
+	}
+
+
+	public List<DetallReparacio> getDetalleReparaciones() throws DAOException {
+		List<DetallReparacio> result = new LinkedList<DetallReparacio>();
+		getConnectionDB();
+		
+		Statement stm = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			rs = stm.executeQuery(QUERY_GET_DETALLE_REPARACIONES);
+			while (rs.next()){
+				result.add(new DetallReparacio(rs.getInt(1), rs.getDate(2), rs.getDouble(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getBoolean(8), rs.getBoolean(9)));
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (stm!=null) {
+				try {stm.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
 	}
 
 }

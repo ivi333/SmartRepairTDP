@@ -305,7 +305,7 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 		if (capacitat.length() > 0)
 			sql += " AND capacitat = " + capacitat;
 		if (idCapTaller.length() > 0)
-			sql += " AND COALESCE(captaller,0) = " + idCapTaller;
+			sql += " AND captaller = " + idCapTaller;
 		getConnectionDB();	
 		
 		Statement stm = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);

@@ -21,7 +21,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
-import edu.uoc.tdp.pac4.beans.PerfilUsuari;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionImpl;
@@ -32,9 +31,11 @@ import edu.uoc.tdp.pac4.service.GestorEstadisticaImpl;
 import edu.uoc.tdp.pac4.service.GestorEstadisticaInterface;
 import edu.uoc.tdp.pac4.service.GestorReparacionImpl;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 
-public class MainGUI extends JFrame {
+public class ReparacionMainMenu extends JFrame {
 
 	/**
 	 * 
@@ -60,6 +61,8 @@ public class MainGUI extends JFrame {
 	private JMenu mnNewMenu_1;
 	private JMenu mnNewMenu_2;
 	private JMenu mnNewMenu_3;
+	private JMenuItem mntmReparacinAsignada;
+	private JMenuItem mntmGestinReparaciones;
 
 	/**
 	 * Launch the application.
@@ -69,7 +72,7 @@ public class MainGUI extends JFrame {
 			public void run() {
 				try {
 					TDSLanguageUtils.setDefaultLanguage("i18n/messages");
-					MainGUI window = new MainGUI();					
+					ReparacionMainMenu window = new ReparacionMainMenu();					
 					window.frmSmartRepairTdp.setVisible(true);
 					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 					window.frmSmartRepairTdp.setSize(500, 300);
@@ -87,7 +90,7 @@ public class MainGUI extends JFrame {
 	/**
 	 * Create the application.
 	 */
-	public MainGUI() {
+	public ReparacionMainMenu() {
 		initialize();
 
 		try{
@@ -131,6 +134,7 @@ public class MainGUI extends JFrame {
 				gestionTalleres.setLocation(dim.width/2-gestionTalleres.getSize().width/2, dim.height/2-gestionTalleres.getSize().height/2);
 				gestionTalleres.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				gestionTalleres.setVisible(true);
+				gestionTalleres.setAlwaysOnTop(true);
 
 			}
 		});
@@ -147,6 +151,7 @@ public class MainGUI extends JFrame {
 				gestionUsuarios.setLocation(dim.width/2-gestionUsuarios.getSize().width/2, dim.height/2-gestionUsuarios.getSize().height/2);
 				gestionUsuarios.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				gestionUsuarios.setVisible(true);
+				gestionUsuarios.setAlwaysOnTop(true);
 
 			}
 		});
@@ -158,6 +163,23 @@ public class MainGUI extends JFrame {
 		mnNewMenu_2 = new JMenu("Reparaciones");
 		mnNewMenu_2.setEnabled(true);
 		menuBar.add(mnNewMenu_2);
+		
+		mntmReparacinAsignada = new JMenuItem("Reparación asignada");
+		mnNewMenu_2.add(mntmReparacinAsignada);
+		
+		mntmGestinReparaciones = new JMenuItem("Gestión reparaciones");
+		mntmGestinReparaciones.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				ReparacionGestion dialog = new ReparacionGestion(gestorReparacion, usuari);
+				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+				dialog.setSize(600, 400);
+				dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+			}
+		});
+		mnNewMenu_2.add(mntmGestinReparaciones);
 		
 		mnNewMenu_3 = new JMenu("Estadísticas");
 		mnNewMenu_3.setEnabled(true);
@@ -207,16 +229,16 @@ public class MainGUI extends JFrame {
 	private void enableMenu (){
 
 		/*Administracion, JefeTaller, Administrador, Mecanic;*/
-		if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.Administrador.toString())){
+		if (usuari.getPerfil().equalsIgnoreCase("Administrador")){
 			mnNewMenu.setEnabled(true);
 			mnNewMenu.setVisible(true);		
-		}else if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.Administracion.toString())){
+		}else if (usuari.getPerfil().equalsIgnoreCase("Administracion")){
 			mnNewMenu_1.setEnabled(true);
 			mnNewMenu_1.setVisible(true);
-		} else if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.JefeTaller.toString())) {
+		} else if (usuari.getPerfil().equalsIgnoreCase("JefeTaller")) {
 			mnNewMenu_2.setEnabled(true);
 			mnNewMenu_2.setVisible(true);
-		} else if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.Mecanic.toString())){
+		} else if (usuari.getPerfil().equalsIgnoreCase("Mecanic")){
 			mnNewMenu_2.setEnabled(true);
 			mnNewMenu_2.setVisible(true);
 		}
