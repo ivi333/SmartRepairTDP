@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Reparacio;
@@ -101,79 +102,17 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 		}
 	}
 
-	/**
-	 * Definir Implementaciones
-	 */
-	
-	/*@Override
-	public List<Reparacio> getReparaciones()
-			throws GestorReparacionException {
+	public List<DetallReparacio> getDetalleReparaciones()
+			throws RemoteException, GestorReparacionException {
 		try {
-			return gestorReparacionDAO.getReparaciones();
+			return gestorReparacionDAO.getDetalleReparaciones();
 		} catch (DAOException e) {
 			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
 		}
 	}
+
 	
-	@Override
-	public Reparacio getReparacio(int ordenReparacion) 
-			throws GestorReparacionException {
-		try {
-			return gestorReparacionDAO.getReparacion(ordenReparacion);
-		} catch (DAOException e) {
-			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
-		}
-	}
 	
-	@Override
-	public List<Mecanic> getMecanicos() 
-			throws GestorReparcionException {
-		try {
-			return gestorReparacionDAO.getMecanicos();
-		} catch (DAOException e) {
-			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
-		}
-	}
-	
-	@Override
-	public Mecanic getMecanico(int idMecanico)
-			throws GestorReparacionException {
-		try {
-			return gestorReparacionDAO.getMecanico(idMecanico);
-		} catch (DAOException e) {
-			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
-		}
-	}
-	
-	@Override
-	public List<Stockpeca> getStockPiezas()
-			throws GestorReparacionException { 
-		try {
-			return gestorReparacionDAO.getStockPiezas();
-		} catch (DAOException e) {
-			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
-		}
-	}
-	
-	@Override
-	public List<Peca> getPiezas()
-			throws GestorReparacionException {
-		try{
-			return gestorReparacionDAO.getPiezas();
-		} catch (DAOException e) {
-			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
-		}
-	}
-	
-	@Override
-	public Peca getPieza(int idPieza) 
-			throws GestorReparacionException {
-		try {
-			return gestorReparacionDAO.getPieza(idPieza);
-		} catch (DAOException e) {
-			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
-		}
-	}*/
 
 	
 

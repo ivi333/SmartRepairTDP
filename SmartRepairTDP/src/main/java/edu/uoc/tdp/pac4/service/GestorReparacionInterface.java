@@ -4,6 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Stockpeca;
@@ -69,6 +70,13 @@ public interface GestorReparacionInterface extends Remote{
 	 * @throws GestorReparacionException
 	 */
 	public Peca getPieza(int idPieza) throws RemoteException, GestorReparacionException;
+	
+	/**
+	 * Obtiene todos los detalles de reparaciones
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public List<DetallReparacio> getDetalleReparaciones() throws RemoteException, GestorReparacionException;
 	
 	
 }

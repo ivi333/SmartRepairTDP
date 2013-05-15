@@ -3,6 +3,7 @@ package edu.uoc.tdp.pac4.dao;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Reparacio;
@@ -71,5 +72,12 @@ public interface GestorReparacionDAO {
 	 * @throws GestorReparacionException
 	 */
 	public Peca getPieza(int idPieza) throws DAOException;
+	
+	/**
+	 * Obtiene todos los detalles de reserva
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public List<DetallReparacio> getDetalleReparaciones() throws DAOException;
 	
 }

@@ -29,10 +29,13 @@ import java.util.List;
 
 import javax.swing.UIManager;
 
+import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ReparacionGestion extends JFrame {
 
@@ -128,6 +131,13 @@ public class ReparacionGestion extends JFrame {
 		JButton btnFinalizar = new JButton("Finalizar");
 		
 		JButton btnSalir = new JButton("Salir");
+		btnSalir.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				dispose();
+				System.exit(0);
+			}
+		});
 		
 		JScrollPane scrollPanel = new JScrollPane();
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -223,10 +233,8 @@ public class ReparacionGestion extends JFrame {
 		try {
 			table.setModel(getTableModel());
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (GestorReparacionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -236,22 +244,19 @@ public class ReparacionGestion extends JFrame {
 	}
 	
 	private TableModel getTableModel () throws RemoteException, GestorReparacionException  {
-		List<Reparacio> list = gestorReparacion.getReparaciones();
-		Object rowData [][] = new Object [list.size()][12];
+		List<DetallReparacio> list = gestorReparacion.getDetalleReparaciones();
+		Object rowData [][] = new Object [list.size()][9];
 		int z=0;
-		for (Reparacio bean : list) {
+		for (DetallReparacio bean : list) {
 			rowData[z][0] = String.valueOf(bean.getOrdreReparacio());
-			rowData[z][1] = String.valueOf(bean.getAcceptada());
-			rowData[z][2] = String.valueOf(bean.getIdMecanic());
-			rowData[z][3] = String.valueOf(bean.getIdMecanic());
-			rowData[z][4] = String.valueOf(bean.getIdMecanic());
-			rowData[z][5] = String.valueOf(bean.getIdMecanic());
-			rowData[z][6] = String.valueOf(bean.getIdMecanic());
-			rowData[z][7] = String.valueOf(bean.getIdMecanic());
-			rowData[z][8] = String.valueOf(bean.getIdMecanic());
-			rowData[z][9] = String.valueOf(bean.getIdMecanic());
-			rowData[z][10] = String.valueOf(bean.getIdMecanic());
-			rowData[z][11] = String.valueOf(bean.getIdMecanic());
+			rowData[z][1] = String.valueOf(bean.getDataEntrada());
+			rowData[z][2] = String.valueOf(bean.getComptador());
+			rowData[z][3] = String.valueOf(bean.getMatricula());
+			rowData[z][4] = String.valueOf(bean.getMarca());
+			rowData[z][5] = String.valueOf(bean.getModel());
+			rowData[z][6] = String.valueOf(bean.getObservacions());
+			rowData[z][7] = String.valueOf(bean.getAcceptada());
+			rowData[z][8] = String.valueOf(bean.getAssignada());
 			z++;
 		}
 		TableModel model = new DefaultTableModel(rowData, columnNames);
