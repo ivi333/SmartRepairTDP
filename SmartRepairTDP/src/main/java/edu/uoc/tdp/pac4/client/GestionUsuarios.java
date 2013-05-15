@@ -370,6 +370,7 @@ public class GestionUsuarios extends JFrame {
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_NUEVO")) {
 			winMantenimiento("x");
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_MODIFICAR")){
+			winMantenimiento("MODIFICAR");
 			System.out.println ("MODIFICAR " + tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_BAJA")){
 			System.out.println ("BAJA = " + tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
@@ -386,9 +387,9 @@ public class GestionUsuarios extends JFrame {
 						txtNombre.getText(), txtApellidos.getText(), cmbPerfil.getSelectedItem().toString());
 			model = new DefaultTableModel((Object[][]) makeTabla(usuaris), columnNames);
 		}  catch (RemoteException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			showError (e.getMessage(),"GESCON.showmessage.error");			
 		} catch (GestorConexionException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			showError (e.getMessage(),"GESCON.showmessage.error");
 		} 
 		
 		
@@ -403,9 +404,9 @@ public class GestionUsuarios extends JFrame {
 		try {
 			usuaris = gestorConexion.getAllUsuaris();
 		} catch (RemoteException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			showError (e.getMessage(),"GESCON.showmessage.error");
 		} catch (GestorConexionException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			showError (e.getMessage(),"GESCON.showmessage.error");
 		}
 		
 		TableModel model = new DefaultTableModel((Object[][]) makeTabla(usuaris), columnNames);
@@ -428,7 +429,13 @@ public class GestionUsuarios extends JFrame {
 	}
 	
 	private void winMantenimiento (String accion) {
-		MntoUsuario mnto = new MntoUsuario();		
+		MntoUsuario mnto;
+		if (accion.equalsIgnoreCase("MODIFICAR") || accion.equalsIgnoreCase("BAIXA")) {
+			mnto = new MntoUsuario(gestorConexion,accion, 
+					Integer.valueOf(tabla.getValueAt(tabla.getSelectedRow(), 0).toString()));
+		} else {
+			mnto = new MntoUsuario(gestorConexion);
+		}
 		mnto.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		mnto.setVisible(true);
 	}
@@ -438,6 +445,25 @@ public class GestionUsuarios extends JFrame {
 		btnBaja.setEnabled(status);
 		
 	}
+	
+	private void showError (String message, String title){		
+		String txtTitle;		
+		txtTitle = TDSLanguageUtils.getMessage(title);
+		showMessage (message, txtTitle,JOptionPane.ERROR_MESSAGE);
+	}
+	
+	private void showInfo (String message, String title){
+		String txtMessage;
+		String txtTitle;		
+		txtMessage = TDSLanguageUtils.getMessage(message);
+		txtTitle = TDSLanguageUtils.getMessage(title);
+		showMessage (txtMessage, txtTitle,JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	private void showMessage (String message, String title, int messageType) {
+		JOptionPane.showMessageDialog(this, message, title, messageType);
+	}
+	
 	public class KeyAdapterNumbersOnly extends KeyAdapter {
 
 		/**

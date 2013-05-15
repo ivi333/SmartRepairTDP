@@ -387,15 +387,12 @@ public class GestionTalleres extends JFrame {
 						cbCapTaller.get(cmbCapTaller.getSelectedIndex()).getAux());
 			model = new DefaultTableModel((Object[][]) makeTabla(talleres), columnNames);
 		}  catch (RemoteException e) {
-			showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);			
+			showError(e.getMessage(),"GESCON.showmessage.error");		
 		} catch (GestorConexionException e) {
-			showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);			
+			showError(e.getMessage(),"GESCON.showmessage.error");			
+		
 		}
-		
-		
 		return model;
-		
-		
 	}
 		
 	private TableModel getAllTallers () {
@@ -404,9 +401,9 @@ public class GestionTalleres extends JFrame {
 		try {
 			tallers = gestorConexion.getAllTallers();
 		} catch (RemoteException e) {
-			showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);			
+			showError(e.getMessage(),"GESCON.showmessage.error");		
 		} catch (GestorConexionException e) {
-			showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);			
+			showError(e.getMessage(),"GESCON.showmessage.error");		
 		}
 		
 		TableModel model = new DefaultTableModel((Object[][]) makeTabla(tallers), columnNames);
@@ -424,11 +421,10 @@ public class GestionTalleres extends JFrame {
 					usuari = gestorConexion.getUsuariById(taller.getCapTaller());
 					rowData[z][4] = String.valueOf(usuari.getNomCognoms());
 				} catch (RemoteException e) {
-					showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
+					showError(e.getMessage(), "GESCON.showmessage.error");
 					rowData[z][4] = String.valueOf(GestorConexionException.ERR_USER_NOTFOUND);
 				} catch (GestorConexionException e) {
-					showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
-					rowData[z][4] = String.valueOf(GestorConexionException.ERR_USER_NOTFOUND);
+					showError(e.getMessage(), "GESCON.showmessage.error");
 				}
 			}
 			rowData[z][0] = String.valueOf(taller.getId());
@@ -446,6 +442,7 @@ public class GestionTalleres extends JFrame {
 			mnto = new MntoTaller(gestorConexion);
 		else
 			mnto = new MntoTaller(gestorConexion, accion, Integer.valueOf(id));
+			
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		mnto.setLocation(dim.width/2-mnto.getSize().width/2, dim.height/2-mnto.getSize().height/2);
 		mnto.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -475,30 +472,31 @@ public class GestionTalleres extends JFrame {
 			cmbCapTaller.setModel(defaultCombo);
 			cmbCapTaller.setSelectedIndex(0);
 		} catch (RemoteException e) {
-			showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
+			showError(e.getMessage(),"GESCON.showmessage.error");
 		} catch (GestorConexionException e) {
-			showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);			
+			showError(e.getMessage(),"GESCON.showmessage.error");			
 		}
 		
 	}
 	
-	private void showMessage (String message, int image){
-		String text;
-		switch  (image) { 
-			case JOptionPane.ERROR_MESSAGE:
-				text = "Error";
-				break;
-			case JOptionPane.INFORMATION_MESSAGE:
-				text = "Informacion";
-				break;
-			case JOptionPane.WARNING_MESSAGE:
-				text = "Atencio";
-				break;
-			default:
-				text = new String();
-		}
-		JOptionPane.showMessageDialog(this, message, text, image);
+	private void showError (String message, String title){		
+		String txtTitle;		
+		txtTitle = TDSLanguageUtils.getMessage(title);
+		showMessage (message, txtTitle,JOptionPane.ERROR_MESSAGE);
 	}
+	
+	private void showInfo (String message, String title){
+		String txtMessage;
+		String txtTitle;		
+		txtMessage = TDSLanguageUtils.getMessage(message);
+		txtTitle = TDSLanguageUtils.getMessage(title);
+		showMessage (txtMessage, txtTitle,JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	private void showMessage (String message, String title, int messageType) {
+		JOptionPane.showMessageDialog(this, message, title, messageType);
+	}
+
 	public class KeyAdapterNumbersOnly extends KeyAdapter {
 
 		/**
