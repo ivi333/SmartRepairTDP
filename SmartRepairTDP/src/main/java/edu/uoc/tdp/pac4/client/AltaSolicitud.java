@@ -7,6 +7,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import javax.swing.JFrame;
@@ -16,6 +18,7 @@ import javax.swing.text.JTextComponent;
 import javax.swing.JLabel;
 
 import edu.uoc.tdp.pac4.beans.Client;
+import edu.uoc.tdp.pac4.beans.Solicitud;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 
@@ -30,13 +33,15 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JSeparator;
+import java.awt.Color;
 
 public class AltaSolicitud extends JDialog {
 	private static int port = 1454;
+	private static boolean B_FINALIZADA=false;
+	private static boolean B_PENDIENTE=true;
 	private JPanel contentPane;
 	private JLabel lblNSolicitud;
 	private JLabel lblInfoSolicitud;
-	
 	private JLabel lblBastidor;
 	private JTextField txtBastidor;
 	private JLabel lblMatricula;
@@ -53,7 +58,11 @@ public class AltaSolicitud extends JDialog {
 	private JTextField txtNIF;
 	private JButton  btnConsultar;
 	private boolean isOkCLiente = false;
-	private JButton btnNewButton;
+	private JLabel lblNewLabel_2;
+	private JTextField txtDia;
+	private JTextField txtMes;
+	private JTextField txtAnyo;
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -80,7 +89,7 @@ public class AltaSolicitud extends JDialog {
 	}
 	
 	private void initialize() {
-		setSize(new Dimension(469, 525));
+		setSize(new Dimension(469, 426));
 	}
 	
 	private void seleccionIdioma() {
@@ -131,6 +140,7 @@ public class AltaSolicitud extends JDialog {
 		contentPane.add(lblBastidor);
 		
 		txtBastidor = new JTextField();
+		txtBastidor.setEnabled(false);
 		txtBastidor.setBounds(125, 78, 208, 20);
 		contentPane.add(txtBastidor);
 		txtBastidor.setColumns(10);
@@ -167,25 +177,18 @@ public class AltaSolicitud extends JDialog {
 		
 		lblComentario = new JLabel();
 		lblComentario.setText(TDSLanguageUtils.getMessage("solicitud.lbl.comentarios"));
-		lblComentario.setBounds(38, 352, 89, 14);
+		lblComentario.setBounds(24, 243, 89, 14);
 		contentPane.add(lblComentario);
 		
 		 textAreaComentario = new JTextArea();
-		textAreaComentario.setBounds(137, 352, 257, 76);
+		textAreaComentario.setBounds(123, 243, 257, 76);
 		contentPane.add(textAreaComentario);
 		
-		btnAlta = new JButton();
-		btnAlta.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnAlta.setText(TDSLanguageUtils.getMessage("solicitud.btn.alta"));
-		btnAlta.setBounds(38, 457, 89, 23);
-		contentPane.add(btnAlta);
+	
+		contentPane.add(getBtnAlta());
 		
 		contentPane.add(getBtnCancelaJ());
 	
-		
 		
 		JSeparator separator = new JSeparator();
 		separator.setBounds(24, 45, 416, 2);
@@ -203,18 +206,153 @@ public class AltaSolicitud extends JDialog {
 		contentPane.add(txtNIF);
 		
 		contentPane.add(getBtnConsultar());
-			
+		
+		JLabel lblNewLabel_1 = new JLabel();
+		lblNewLabel_1.setText("F.de finalización:");
+		lblNewLabel_1.setBounds(24, 207, 106, 14);
+		contentPane.add(lblNewLabel_1);
+		
+		txtDia = new JTextField();
+		txtDia.setBounds(123, 204, 33, 20);
+		txtDia.addKeyListener(new KeyAdapterNumbersOnly());
+		contentPane.add(txtDia);
+		txtDia.setColumns(10);
+		
+		txtMes = new JTextField();
+		txtMes.setBounds(187, 204, 33, 20);
+		txtMes.addKeyListener(new KeyAdapterNumbersOnly());
+		contentPane.add(txtMes);
+		txtMes.setColumns(10);
+		
+		JLabel label = new JLabel("/");
+		label.setBounds(172, 207, 15, 14);
+		contentPane.add(label);
+		
+		JLabel label_1 = new JLabel("/");
+		label_1.setBounds(230, 207, 15, 14);
+		contentPane.add(label_1);
+		
+		txtAnyo = new JTextField();
+		txtAnyo.setBounds(240, 204, 59, 20);
+		txtAnyo.addKeyListener(new KeyAdapterNumbersOnly());
+		contentPane.add(txtAnyo);
+		txtAnyo.setColumns(10);
+		
+		JLabel lblddmmyyy = new JLabel("(dd/mm/yyy)");
+		lblddmmyyy.setBounds(322, 207, 82, 14);
+		contentPane.add(lblddmmyyy);
+		
 	}
 	
 	private JButton getBtnAlta()
 	{
-		
-		return null;
+		if (btnAlta == null) {
+			btnAlta = new JButton();
+			btnAlta.setForeground(new Color(0, 128, 0));
+			btnAlta.setBounds(new Rectangle(24, 341, 89, 23));
+			btnAlta.setText(TDSLanguageUtils.getMessage("solicitud.btn.alta"));
+			btnAlta.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					try{
+						getNuevoPedido();
+					}
+					catch(Exception ex)
+					{
+						ex.printStackTrace();
+					}
+				}
+			});
+		}
+		return btnAlta;
 	}
+	private void getNuevoPedido()
+	{
+		try{
+			
+			if(ImputValues().equals(""))
+			{ 
+				Solicitud sol= new Solicitud();
+				sol.setClient(Integer.valueOf(txtNIF.getText().toString()));
+				sol.setComentaris(textAreaComentario.getText().toString());
+				java.util.Date dt = new java.util.Date();
+				java.sql.Date dateAlta = new java.sql.Date(dt.getTime());
+				sol.setDataalta(dateAlta);
+				sol.setPendent(B_PENDIENTE);
+				sol.setFinalitzada(B_FINALIZADA);
+				
+				String anyo = txtAnyo.getText().toString();
+				String dia = txtDia.getText().toString();
+				String mes = txtMes.getText().toString();
+				String strFecha = dia + "/" + mes + "/" + anyo;
+
+				DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+				java.util.Date dt1 = (java.util.Date) formatter.parse(strFecha);
+				java.sql.Date datafinalitzacio = new java.sql.Date(dt1.getTime());
+				sol.setDatafinalitzacio(datafinalitzacio);
+				
+				if(getRemoto().getNuevoSolicitud(sol)==1)
+				{  String tittle =  TDSLanguageUtils.getMessage("solicitud.new.titulo");
+					MuestraOk( TDSLanguageUtils.getMessage("cliente.msg.ok"), tittle);
+					dispose();
+				}
+					
+			}
+			else
+			{
+				String strMsg=ImputValues();
+				String tittle =  TDSLanguageUtils.getMessage("solicitud.new.titulo");
+				LeerError(strMsg, tittle);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private String ImputValues() {
+		String strResult = "";
+		try {
+			if (txtNIF.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("solicitud.msg.falta.nif");
+				return strResult;
+
+			}
+			if (textAreaComentario.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("solicitud.msg.falta.comentario");
+				return strResult;
+			}
+			if (txtDia.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("solicitud.msg.falta.ffinalizacion");
+				return strResult;
+
+			}
+			if (txtMes.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("solicitud.msg.falta.ffinalizacion");
+				return strResult;
+
+			}
+			if (txtAnyo.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("solicitud.msg.falta.ffinalizacion");
+				return strResult;
+
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return strResult;
+	}
+	
 	private JButton getBtnCancelaJ() {
 		if (btnCancelar == null) {
 			btnCancelar = new JButton();
-			btnCancelar.setBounds(new Rectangle(305, 457, 89, 23));
+			btnCancelar.setForeground(Color.RED);
+			btnCancelar.setBounds(new Rectangle(291, 341, 89, 23));
 			btnCancelar.setText(TDSLanguageUtils.getMessage("solicitud.btn.cancelar"));
 			btnCancelar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -268,9 +406,10 @@ public class AltaSolicitud extends JDialog {
 			Client client=getRemoto().getDadeClient(strNIF);
 			if (client != null)
 					{
-				lblModelo.setText(client.getModel().toString().trim());
-				lblMatricula.setText(client.getMatricula().toString().trim());
-				lblMarca.setText(client.getMarca().toString().trim());
+				lblInfoModelo.setText(client.getModel().toString().trim());
+				lblInfoMatricula.setText(client.getMatricula().toString().trim());
+				lblInfoMarca.setText(client.getMarca().toString().trim());
+				txtBastidor.setText(client.getNum_chasis().toString().trim());
 					}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -305,6 +444,7 @@ public class AltaSolicitud extends JDialog {
 
 		return strResult;
 	}
+
 	 public class KeyAdapterNumbersOnly extends KeyAdapter {
 
 			/**

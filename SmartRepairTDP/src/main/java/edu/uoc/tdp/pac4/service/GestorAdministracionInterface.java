@@ -43,6 +43,8 @@ public ArrayList<Peca> getPiezaByCodeProveedor(int codigoProv)throws RemoteExcep
 public Peca getPiezaByCode(int codigoPieza)throws RemoteException;
 
 public ArrayList<String> getCargarPedidos()throws RemoteException;
+
+public int getNuevoSolicitud(Solicitud solicitud)throws RemoteException;
 }
 
 

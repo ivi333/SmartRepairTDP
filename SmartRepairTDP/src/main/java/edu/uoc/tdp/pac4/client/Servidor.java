@@ -9,7 +9,7 @@ import edu.uoc.tdp.pac4.service.GestorAdministracionImpl;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 
 public class Servidor {
-	private static int port=1444;
+	private static int port=1454;
 	
 	public static void main(String args[]) throws IOException{
 		new Servidor();

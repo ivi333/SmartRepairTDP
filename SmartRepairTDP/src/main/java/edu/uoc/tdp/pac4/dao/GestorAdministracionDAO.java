@@ -47,4 +47,6 @@ public interface  GestorAdministracionDAO {
 	public int getNuevoPedido(Comanda comanda)throws DAOException;
 	
 	public ArrayList<String> getCargarPedidos()throws DAOException;
+	
+	public int getNuevoSolicitud(Solicitud solicitud)throws DAOException;
 }

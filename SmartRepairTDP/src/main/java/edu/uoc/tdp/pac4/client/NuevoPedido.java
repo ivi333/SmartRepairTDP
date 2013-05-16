@@ -425,7 +425,7 @@ public class NuevoPedido extends JDialog {
 			comanda.setEstat(true);
 			comanda.setIdcaptaller(IDTALLER);
 
-			comanda.setOrdrereparacio(0);
+			//comanda.setOrdrereparacio(0);
 			comanda.setTipusreparacio(false);
 			comanda.setCantidad(Integer.valueOf(txtStock.getText()));
 			

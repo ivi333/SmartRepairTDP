@@ -80,8 +80,8 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String sql = "insert into comanda "
-		+ "( estat,dataalta, codipeca,idcaptaller, idproveidor,ordrereparacio, tipusreparacio,cantidad)"
-		+ " VALUES (?,?, ?,?, ?,?, ?,?)";
+		+ "( estat,dataalta, codipeca,idcaptaller, idproveidor, tipusreparacio,cantidad)"
+		+ " VALUES (?,?, ?,?, ?,?,?)";
 		try {
 			 
 			pstmt = cPostgressDB.createPrepareStatment(sql,
@@ -91,10 +91,10 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			pstmt.setInt(3, comanda.getCodipeca());
 			pstmt.setInt(4, comanda.getIdcaptaller());
 			pstmt.setInt(5, comanda.getCodigoProveedor());
-			pstmt.setInt(6, 1);//comanda.getOrdrereparacio());
-			pstmt.setBoolean(7, comanda.isTipusreparacio());
+			//pstmt.setInt(6, 1);//comanda.getOrdrereparacio());
+			pstmt.setBoolean(6, comanda.isTipusreparacio());
+			pstmt.setInt(7, comanda.getCantidad());
 			
-			pstmt.setInt(8, comanda.getCantidad());
 			if(pstmt.executeUpdate()>0)
 			{
 				int ivalue=getUpdateStock(comanda);
@@ -736,6 +736,40 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			}
 		}
 
+	}
+/*****************************nuevo solicitud********************************************************/
+	public int getNuevoSolicitud(Solicitud solicitud) throws DAOException {
+		
+		int iResult = -1;
+		PreparedStatement prep=null;
+		try {
+			
+			String sql = " insert into  solicitud "
+					+ "( comentaris, dataalta,    datafinalitzacio, client,   pendent,finalitzada) "
+					+ " VALUES (?,?,  ?,?,   ?,?)";
+			 prep = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+    		prep.setString(1, solicitud.getComentaris().toString().trim());
+			prep.setDate(2, (java.sql.Date) solicitud.getDataalta());
+			prep.setDate(3, (java.sql.Date) solicitud.getDatafinalitzacio());
+			prep.setInt(4, solicitud.getClient());
+			prep.setBoolean(5, solicitud.isPendent());
+			prep.setBoolean(6, solicitud.isFinalitzada());
+
+			prep.executeQuery();
+			iResult = 1;
+			return iResult;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (prep!=null) {
+				try {prep.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			
+		}
 	}
 
 
