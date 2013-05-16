@@ -49,4 +49,6 @@ public interface  GestorAdministracionDAO {
 	public ArrayList<String> getCargarPedidos()throws DAOException;
 	
 	public int getNuevoSolicitud(Solicitud solicitud)throws DAOException;
+	
+	public Solicitud getConsultarSolicitud(int numsol)throws DAOException;
 }

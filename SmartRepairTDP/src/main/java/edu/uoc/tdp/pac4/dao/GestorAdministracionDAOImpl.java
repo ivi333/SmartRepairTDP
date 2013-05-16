@@ -771,6 +771,49 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			
 		}
 	}
+	
+
+	/*****************************consultar solicitud********************************************************/
+public Solicitud getConsultarSolicitud(int numsol) throws DAOException {
+	Solicitud solicitud = null;
+	PreparedStatement pstmt =null;
+	ResultSet rs =null;
+	try {
+		String sql = "SELECT * FROM solicitud  WHERE numsol=?";
+		 pstmt = cPostgressDB.createPrepareStatment(sql,
+				ResultSet.CONCUR_UPDATABLE);
+		pstmt.setInt(1, numsol);
+		 rs = pstmt.executeQuery();
+		while (rs.next()) {
+			solicitud = new Solicitud();
+			solicitud.setNumsol(rs.getInt("numsol"));
+			solicitud.setClient(rs.getInt("client"));
+			solicitud.setComentaris(rs.getString("comentaris"));
+			solicitud.setDataalta(rs.getDate("dataalta"));
+			solicitud.setDatafinalitzacio(rs.getDate("datafinalitzacio"));
+			solicitud.setPendent(rs.getBoolean("pendent"));
+			solicitud.setFinalitzada(rs.getBoolean("finalitzada"));
+			
+		}		
+		return solicitud;
+	}  catch (SQLException e) {
+		throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+	} finally {
+		if (pstmt!=null) {
+			try {pstmt.close();
+			} catch (SQLException e) {
+				throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+			}
+		}
+		if (rs!=null) {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+			}
+		}
+	}
+}
 
 
 
