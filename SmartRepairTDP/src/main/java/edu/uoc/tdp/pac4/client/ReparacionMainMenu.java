@@ -173,7 +173,7 @@ public class ReparacionMainMenu extends JFrame {
 			public void mousePressed(MouseEvent e) {
 				ReparacionGestion dialog = new ReparacionGestion(gestorReparacion, usuari);
 				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-				dialog.setSize(600, 400);
+				dialog.setSize(1000, 500);
 				dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
 				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				dialog.setVisible(true);

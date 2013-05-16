@@ -17,6 +17,14 @@ import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import edu.uoc.tdp.pac4.beans.DetallReparacio;
+import edu.uoc.tdp.pac4.beans.Usuari;
+import edu.uoc.tdp.pac4.exception.GestorReparacionException;
+import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.rmi.RemoteException;
+
 public class ReparacionAsignarMecanico extends JFrame {
 
 	private JPanel contentPane;
@@ -32,6 +40,9 @@ public class ReparacionAsignarMecanico extends JFrame {
 	private JButton btnBuscar;
 	private JButton btnAsignar;
 	private JButton btnSalir;
+	
+	private static ReparacionGestion reparacionGestion;
+	private GestorReparacionInterface gestorReparacion;
 
 	/**
 	 * Launch the application.
@@ -40,7 +51,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ReparacionAsignarMecanico frame = new ReparacionAsignarMecanico();
+					ReparacionAsignarMecanico frame = new ReparacionAsignarMecanico(null,null,-1);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -52,7 +63,9 @@ public class ReparacionAsignarMecanico extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ReparacionAsignarMecanico() {
+	public ReparacionAsignarMecanico(GestorReparacionInterface conexion, final Usuari usuario, int ordenReparacion) {
+		this.gestorReparacion = conexion;
+		
 		setTitle("Asignación mecánico");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 665, 366);
@@ -130,6 +143,12 @@ public class ReparacionAsignarMecanico extends JFrame {
 		btnAsignar = new JButton("Asignar");
 		
 		btnSalir = new JButton("Salir");
+		btnSalir.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				dispose();
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -213,7 +232,25 @@ public class ReparacionAsignarMecanico extends JFrame {
 					.addComponent(btnSalir)
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
+		
+		initCampos(ordenReparacion);
+		
 		contentPane.setLayout(gl_contentPane);
 	}
 
+	private void initCampos(int ordenReparacion) {
+		try {
+			DetallReparacio datosReparacion = gestorReparacion.getDetalleReparacion(ordenReparacion);
+			this.txtOrdenReparacion.setText(String.valueOf(datosReparacion.getOrdreReparacio()));
+			this.txtMatricula.setText(datosReparacion.getMatricula());
+			this.txtMarca.setText(datosReparacion.getMarca());
+			this.txtModelo.setText(datosReparacion.getModel());
+
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (GestorReparacionException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }
