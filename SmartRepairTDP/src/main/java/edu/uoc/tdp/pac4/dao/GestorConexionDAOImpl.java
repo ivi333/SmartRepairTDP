@@ -252,7 +252,36 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			
 	public Taller getTallerById (int id) throws DAOException {
 		Taller result = null;
-		return result;
+		getConnectionDB();	
+		PreparedStatement ps = createPrepareStatment(QUERY_TALLER_BY_ID, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try{
+			ps.setInt(1, id);	
+			rs = ps.executeQuery();
+			if (rs.next()){
+				result = new Taller(rs.getInt("id"), rs.getString("cif"), rs.getString("adreca"), rs.getInt("capacitat"), 
+						rs.getInt("capTaller"), rs.getString("telefon"), rs.getString("web"), rs.getBoolean("actiu"), 
+						rs.getDate("dataApertura"), rs.getDate("dataModificacio"), rs.getDate("dataBaixa"));				
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);
+		} finally {
+			if (ps != null){
+				try {
+					ps.close();
+				} catch (SQLException e){
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}	
 		
 	}
 		
