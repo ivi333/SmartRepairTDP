@@ -7,7 +7,9 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 import javax.swing.JDialog;
@@ -27,6 +29,7 @@ import edu.uoc.tdp.pac4.beans.Solicitud;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 import javax.swing.ScrollPaneConstants;
+import java.awt.Color;
 
 public class GestionAvisos extends JDialog {
 	private static int port = 1444;
@@ -100,7 +103,8 @@ public class GestionAvisos extends JDialog {
 	private void LeerError(String paramString1, String paramString2) {
 		JOptionPane.showMessageDialog(this, paramString1, paramString2, 0);
 	}
-	 private void MuestraOk(String paramString1, String paramString2) {
+	
+   private void MuestraOk(String paramString1, String paramString2) {
 	        JOptionPane.showMessageDialog(this, paramString1, paramString2, 1);
 	    }
 
@@ -121,7 +125,17 @@ public class GestionAvisos extends JDialog {
 				.getBorder("ComboBox.border"));
 		scrollPaneResultado.setBounds(new Rectangle(25, 11, 869, 150));
 		this.jTableResultado.setModel(new GruposTableModel());
-
+		
+		jTableResultado.getColumnModel().getColumn(0).setPreferredWidth(40);
+		jTableResultado.getColumnModel().getColumn(1).setPreferredWidth(60);
+		jTableResultado.getColumnModel().getColumn(2).setPreferredWidth(60);
+		jTableResultado.getColumnModel().getColumn(3).setPreferredWidth(60);
+		jTableResultado.getColumnModel().getColumn(4).setPreferredWidth(80);
+		jTableResultado.getColumnModel().getColumn(5).setPreferredWidth(45);
+		jTableResultado.getColumnModel().getColumn(6).setPreferredWidth(65);
+		jTableResultado.getColumnModel().getColumn(7).setPreferredWidth(80);
+		jTableResultado.getColumnModel().getColumn(8).setPreferredWidth(80);
+		jTableResultado.getColumnModel().getColumn(9).setPreferredWidth(80);
 		scrollPaneResultado.setViewportView(jTableResultado);
 		getContentPane().add(this.scrollPaneResultado, null);
 
@@ -130,6 +144,7 @@ public class GestionAvisos extends JDialog {
 	private JButton getbtnSalirJ() {
 		if (btnSalir == null) {
 			btnSalir = new JButton();
+			btnSalir.setForeground(Color.RED);
 			btnSalir.setBounds(new Rectangle(764, 172, 89, 23));
 			btnSalir.setText(TDSLanguageUtils.getMessage("aviso.btn.salir"));
 			btnSalir.addActionListener(new java.awt.event.ActionListener() {
@@ -145,6 +160,7 @@ public class GestionAvisos extends JDialog {
 	private JButton getbtnGestionar() {
 		if (btnGestionar == null) {
 			btnGestionar = new JButton();
+			btnGestionar.setForeground(new Color(0, 128, 0));
 			btnGestionar.setBounds(new Rectangle(35, 172, 89, 23));
 			btnGestionar.setText(TDSLanguageUtils
 					.getMessage("aviso.btn.gestionar"));
@@ -161,6 +177,15 @@ public class GestionAvisos extends JDialog {
 	private void getDadesGestion()
 	{
 		try{
+			
+			GruposTableModel gtm1 = (GruposTableModel) jTableResultado.getModel();
+			if (gtm1.getRowCount() > 0) {
+			    for (int i = gtm1.getRowCount() - 1; i > -1; i--) {
+			    	gtm1.removeRow(i);
+			    }
+			}
+
+			
 			GruposTableModel gtm = (GruposTableModel) jTableResultado.getModel();
 			ArrayList<Reparacio>Reparaciones = getRemoto().getReparaciones();
 			
@@ -194,7 +219,12 @@ public class GestionAvisos extends JDialog {
 					}
 				}
 				
-				gtm.addRow(new Object[] {numsol,bPendiente,bFinalizada,nom,Cognom,nif,r.getObservacions(),r.getDataAssignacio(),r.getDataInici(),r.getDataFi()});
+				String strDateAsig=strDate(r.getDataAssignacio().toString());
+				String strDateIni=strDate(r.getDataInici().toString());
+				String strDateFin=strDate(r.getDataFi().toString());
+				
+				
+				gtm.addRow(new Object[] {numsol,bPendiente,bFinalizada,nom,Cognom,nif,r.getObservacions(),strDateAsig,strDateIni,strDateFin});
 			}
 		
 			}
@@ -205,6 +235,20 @@ public class GestionAvisos extends JDialog {
 		}
 		
 	}
+	private String strDate(String strDate)
+	{
+		String str="";
+		try{
+			String dateString1 = strDate;
+			Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString1);
+			str = new SimpleDateFormat("dd-MM-yyyy").format(date);
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+			str=strDate;
+		}
+		return str;
+	}
 
 	private static class GruposTableModel extends DefaultTableModel {
 
@@ -212,7 +256,7 @@ public class GestionAvisos extends JDialog {
 		
 		public GruposTableModel() {
 			super(new String[] {
-					TDSLanguageUtils.getMessage("aviso.lbl.solicitud"), //
+					"Núm.", //
 					TDSLanguageUtils.getMessage("aviso.lbl.estadoPendiente"), //
 					TDSLanguageUtils.getMessage("aviso.lbl.estadoFinalizado"), //
 					//TDSLanguageUtils.getMessage("aviso.lbl.poliza"),

@@ -13,10 +13,11 @@ public class Comanda implements java.io.Serializable {
 	private Date dataalta;
 	private int codipeca;
 	private int idcaptaller;
+	private int codigoProveedor;
 	private Proveidor idproveidor;
 	private int ordrereparacio;
 	private boolean tipusreparacio;
-	
+	private int cantidad;
 	
 	public Comanda (int numcom, boolean estat, Date dataalta, int codipeca, int idcaptaller,
 			Proveidor idproveidor){
@@ -27,6 +28,11 @@ public class Comanda implements java.io.Serializable {
 		this.codipeca = codipeca;
 		this.idcaptaller = idcaptaller;
 		this.idproveidor = idproveidor;
+	}
+
+
+	public Comanda() {
+		// TODO Auto-generated constructor stub
 	}
 
 
@@ -107,6 +113,26 @@ public class Comanda implements java.io.Serializable {
 
 	public void setTipusreparacio(boolean tipusreparacio) {
 		this.tipusreparacio = tipusreparacio;
+	}
+
+
+	public int getCodigoProveedor() {
+		return codigoProveedor;
+	}
+
+
+	public void setCodigoProveedor(int codigoProveedor) {
+		this.codigoProveedor = codigoProveedor;
+	}
+
+
+	public int getCantidad() {
+		return cantidad;
+	}
+
+
+	public void setCantidad(int cantidad) {
+		this.cantidad = cantidad;
 	}
 	
 	

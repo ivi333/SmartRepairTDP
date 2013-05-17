@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
+import edu.uoc.tdp.pac4.beans.Comanda;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
@@ -44,7 +45,13 @@ public class GestorAdministracionImpl extends
 		} catch (GestorAdministracionException e) {
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getMarcas();
+		try {
+			return gestorAdministracionDAO.getMarcas();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public boolean getExistCliente(String strNIF) throws RemoteException {
@@ -84,7 +91,13 @@ public class GestorAdministracionImpl extends
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getNewClient(altaCliente);
+		try {
+			return gestorAdministracionDAO.getNewClient(altaCliente);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -2;
 	}
 
 	public int getUpdClient(Client updCliente) throws RemoteException {
@@ -96,7 +109,13 @@ public class GestorAdministracionImpl extends
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getUpdClient(updCliente);
+		try {
+			return gestorAdministracionDAO.getUpdClient(updCliente);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -2;
 	}
 
 	public Client getDadeClient(String strNIF) throws RemoteException {
@@ -108,7 +127,13 @@ public class GestorAdministracionImpl extends
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getDadeClient(strNIF);
+		try {
+			return gestorAdministracionDAO.getDadeClient(strNIF);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public ArrayList<Asseguradora> getAseguradoras() throws RemoteException {
@@ -119,7 +144,13 @@ public class GestorAdministracionImpl extends
 		} catch (GestorAdministracionException e) {
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getAseguradoras();
+		try {
+			return gestorAdministracionDAO.getAseguradoras();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	public ArrayList<Proveidor> getProveedores() throws RemoteException {
 		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
@@ -129,7 +160,13 @@ public class GestorAdministracionImpl extends
 		} catch (GestorAdministracionException e) {
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getProveedores();
+		try {
+			return gestorAdministracionDAO.getProveedores();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public ArrayList<Reparacio> getReparaciones() throws RemoteException {
@@ -140,18 +177,13 @@ public class GestorAdministracionImpl extends
 		} catch (GestorAdministracionException e) {
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getReparaciones();
-	}
-
-	public ArrayList<String> getPedidosPeca() throws RemoteException {
-		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
 		try {
-			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
-					cPostgressDB);
-		} catch (GestorAdministracionException e) {
+			return gestorAdministracionDAO.getReparaciones();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return gestorAdministracionDAO.getPedidosPeca();
+		return null;
 	}
 
 	public Solicitud getSolicitudByCodeReparacion(int codigoReparacion) throws RemoteException {
@@ -165,5 +197,108 @@ public class GestorAdministracionImpl extends
 		}
 		return gestorAdministracionDAO.getSolicitudByCodeReparacion(codigoReparacion);
 	}
+	
+	public ArrayList<Peca> getPiezaByCodeProveedor(int codigoProv)
+	{GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+	try {
+		gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+				cPostgressDB);
+	} catch (GestorAdministracionException e) {
+		e.printStackTrace();
+	}
+	try {
+		return gestorAdministracionDAO.getPiezaByCodeProveedor(codigoProv);
+	} catch (DAOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return null;
+	}
 
+	public Peca getPiezaByCode(int codigoPieza) throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			e.printStackTrace();
+		}
+		try {
+			return gestorAdministracionDAO.getPiezaByCode(codigoPieza);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		}
+
+	public int getNuevoPedido(Comanda comanda) throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			return gestorAdministracionDAO.getNuevoPedido(comanda);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public ArrayList<String> getCargarPedidos() {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			e.printStackTrace();
+		}
+		try {
+			return gestorAdministracionDAO.getCargarPedidos();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public int  getNuevoSolicitud(Solicitud solicitud) throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			return gestorAdministracionDAO.getNuevoSolicitud(solicitud);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public Solicitud getConsultarSolicitud(int numsol) throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			e.printStackTrace();
+		}
+		try {
+			return gestorAdministracionDAO.getConsultarSolicitud(numsol);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
