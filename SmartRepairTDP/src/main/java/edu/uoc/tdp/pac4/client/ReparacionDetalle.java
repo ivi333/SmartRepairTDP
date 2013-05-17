@@ -24,6 +24,7 @@ import javax.swing.JButton;
 
 import edu.uoc.tdp.pac4.beans.DetallPeca;
 import edu.uoc.tdp.pac4.beans.DetallReparacio;
+import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
@@ -143,8 +144,10 @@ public class ReparacionDetalle extends JFrame {
 		txtFechaAsignacion.setColumns(10);
 		
 		JButton btnFechaInicio = new JButton("Fecha inicio");
+		btnFechaInicio.setEnabled(false);
 		
 		JButton btnFechaFin = new JButton("Fecha Fin");
+		btnFechaFin.setEnabled(false);
 		
 		txtFechaInicio = new JTextField();
 		txtFechaInicio.setColumns(10);
@@ -343,12 +346,22 @@ public class ReparacionDetalle extends JFrame {
 	
 	private void initCampos(int ordenReparacion) {
 		try {
-			DetallReparacio datosReparacion = gestorReparacion.getDetalleReparacion(ordenReparacion);
-			this.txtOrdenReparacion.setText(String.valueOf(datosReparacion.getOrdreReparacio()));
-			this.txtMatricula.setText(datosReparacion.getMatricula());
-			this.txtMarca.setText(datosReparacion.getMarca());
-			this.txtModelo.setText(datosReparacion.getModel());
-			this.txtObservaciones.setText(datosReparacion.getObservacions());
+			DetallReparacio datosDetalleReparacion = gestorReparacion.getDetalleReparacion(ordenReparacion);
+			this.txtOrdenReparacion.setText(String.valueOf(datosDetalleReparacion.getOrdreReparacio()));
+			this.txtMatricula.setText(datosDetalleReparacion.getMatricula());
+			this.txtMarca.setText(datosDetalleReparacion.getMarca());
+			this.txtModelo.setText(datosDetalleReparacion.getModel());
+			this.txtObservaciones.setText(datosDetalleReparacion.getObservacions());
+			
+			Usuari datosUsuario = gestorReparacion.getUsuario(datosDetalleReparacion.getIdMecanic());
+			this.txtId.setText(String.valueOf(datosUsuario.getId()));
+			this.txtNombreMecanico.setText(datosUsuario.getNom());
+			this.txtApellido.setText(datosUsuario.getCognoms());
+			
+			Reparacio datosReparacion = gestorReparacion.getReparacion(datosDetalleReparacion.getOrdreReparacio());
+			this.txtFechaAsignacion.setText(String.valueOf(datosReparacion.getDataAssignacio()));
+			this.txtFechaInicio.setText(String.valueOf(datosReparacion.getDataInici()));
+			this.txtFechaFin.setText(String.valueOf(datosReparacion.getDataFi()));
 			
 			scrollPane.setViewportView(table);
 			table.setModel(getTableModel(datosReparacion.getOrdreReparacio()));
