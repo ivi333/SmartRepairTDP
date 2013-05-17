@@ -2,6 +2,7 @@ package edu.uoc.tdp.pac4.client;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -13,6 +14,7 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import java.awt.Color;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -74,11 +76,9 @@ public class ReparacionGestion extends JFrame {
 	 * Create the frame.
 	 */
 	
-	public ReparacionGestion(GestorReparacionInterface conexion, Usuari usuario) {
+	public ReparacionGestion(GestorReparacionInterface conexion, final Usuari usuario) {
 		this.gestorReparacion = conexion;
-		
-		JOptionPane.showMessageDialog(reparacionGestion, usuario.getCognoms(), "ALERTA", JOptionPane.INFORMATION_MESSAGE);
-		
+	
 		setSize(new Dimension(580, 380));
 		setTitle("Gestión de reparaciones");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -117,25 +117,103 @@ public class ReparacionGestion extends JFrame {
 		
 		
 		JButton btnActualizar = new JButton("Actualizar");
+		btnActualizar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				try {
+					table.setModel(getTableModel());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (GestorReparacionException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		btnActualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
 		
 		JButton btnDetalle = new JButton("Detalle");
+		btnDetalle.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ReparacionDetalle dialog;
+				try {
+					dialog = new ReparacionDetalle(gestorReparacion, usuario, getFilaSeleccionada());
+					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+					dialog.setSize(1000, 500);
+					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
+				} catch (GestorReparacionException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		JButton btnAceptar = new JButton("Aceptar");
+		btnAceptar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				ReparacionPiezas dialog;
+				try {
+					dialog = new ReparacionPiezas(gestorReparacion, usuario, getFilaSeleccionada());
+					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+					dialog.setSize(1000, 500);
+					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (GestorReparacionException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		
 		JButton btnAsignar = new JButton("Asignar");
+		btnAsignar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ReparacionAsignarMecanico dialog;
+				try {
+					dialog = new ReparacionAsignarMecanico(gestorReparacion, usuario, getFilaSeleccionada());
+					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+					dialog.setSize(1000, 500);
+					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
+				} catch (GestorReparacionException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		JButton btnFinalizar = new JButton("Finalizar");
+		btnFinalizar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					gestorReparacion.setReparacionFinalizada(getFilaSeleccionada());
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
+				} catch (GestorReparacionException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		JButton btnSalir = new JButton("Salir");
 		btnSalir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				dispose();
-				System.exit(0);
 			}
 		});
 		
@@ -263,6 +341,9 @@ public class ReparacionGestion extends JFrame {
 		return model;
 	}
 	
+	private int getFilaSeleccionada () throws RemoteException, GestorReparacionException {
+		return Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
+	}
 
 	
 }

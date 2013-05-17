@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import edu.uoc.tdp.pac4.beans.DetallPeca;
 import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Peca;
@@ -110,10 +111,32 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
 		}
 	}
-
 	
-	
+	public DetallReparacio getDetalleReparacion(int ordenReparacion)
+			throws RemoteException, GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getDetalleReparacion(ordenReparacion);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
 
-	
+	public void setReparacionFinalizada(int ordenReparacion)
+			throws RemoteException, GestorReparacionException {
+		try {
+			gestorReparacionDAO.setReparacionFinalizada(ordenReparacion);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
 
+	public List<DetallPeca> getPiezasReparacion(int ordenReparacion)
+			throws RemoteException, GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getPiezasReparacion(ordenReparacion);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+	
 }

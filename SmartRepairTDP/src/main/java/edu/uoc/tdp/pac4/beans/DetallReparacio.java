@@ -2,7 +2,7 @@ package edu.uoc.tdp.pac4.beans;
 
 import java.util.Date;
 
-public class DetallReparacio {
+public class DetallReparacio implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private int ordreReparacio;

@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.uoc.tdp.pac4.beans.DetallPeca;
 import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Peca;
@@ -44,7 +45,22 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 															    "from solicitud sol " +
 															    "inner join reparacio rep on sol.numreparacio = rep.ordrereparacio " +
 															    "inner join client cli on sol.client = cli.nif " +
-															    "where sol.finalitzada = false";
+															    "where sol.finalitzada = false " +
+															    "order by rep.ordrereparacio";
+	public static final String QUERY_GET_DETALLE_REPARACION = "select rep.ordrereparacio, sol.dataalta, rep.comptador, cli.matricula, " +
+		    												  "cli.marca, cli.model, rep.observacions, rep.acceptada, rep.assignada " +
+		    												  "from solicitud sol " +
+		    												  "inner join reparacio rep on sol.numreparacio = rep.ordrereparacio " +
+		    												  "inner join client cli on sol.client = cli.nif " +
+		    												  "where sol.numreparacio = ?";
+	public static final String QUERY_SET_REPARACION_FINALIZADA = "update solicitud set finalitzada = true where numreparacio = ?";
+	public static final String QUERY_GET_PIEZAS_REPARACION = "select com.codipeca, pec.descripcio, sto.stock, com.cantidad " +
+															 "from comanda com " +
+															 "inner join peca pec on com.codipeca = pec.codipeca " +
+															 "inner join stockpeca sto on com.codipeca = sto.codipeca " +
+															 "where com.ordrereparacio = ";
+	
+	
 	
 	
 	public GestorReparacionDAOImpl() {
@@ -276,7 +292,6 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 		}		
 	}
 
-
 	public List<DetallReparacio> getDetalleReparaciones() throws DAOException {
 		List<DetallReparacio> result = new LinkedList<DetallReparacio>();
 		getConnectionDB();
@@ -307,5 +322,99 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			}
 		}
 	}
+
+	public DetallReparacio getDetalleReparacion(int ordenReparacion)
+			throws DAOException {
+		getConnectionDB();
+		DetallReparacio result = null;
+		PreparedStatement ps = createPrepareStatment(QUERY_GET_DETALLE_REPARACION, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			ps.setLong(1, ordenReparacion);
+			rs = ps.executeQuery();
+			if (rs.next()){
+				result = new DetallReparacio(rs.getInt(1), rs.getDate(2), rs.getDouble(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getBoolean(8), rs.getBoolean(9));
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}	
+	}
+	
+	public void setReparacionFinalizada(int ordenReparacion) throws DAOException {
+		getConnectionDB();
+		PreparedStatement ps = createPrepareStatment(QUERY_SET_REPARACION_FINALIZADA, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			ps.setLong(1, ordenReparacion);
+			rs = ps.executeQuery();
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+
+	public List<DetallPeca>  getPiezasReparacion(int ordenReparacion) throws DAOException {
+		List<DetallPeca> result = new LinkedList<DetallPeca>();
+		getConnectionDB();
+		
+		Statement stm = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			String Query = QUERY_GET_PIEZAS_REPARACION + String.valueOf(ordenReparacion);
+			rs = stm.executeQuery(Query);
+			while (rs.next()){
+				result.add(new DetallPeca(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4)));
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (stm!=null) {
+				try {stm.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+
+
 
 }
