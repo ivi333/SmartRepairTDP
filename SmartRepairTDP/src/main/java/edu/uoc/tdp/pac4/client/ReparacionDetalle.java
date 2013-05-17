@@ -11,12 +11,26 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Font;
+import java.rmi.RemoteException;
+import java.util.List;
+
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.JButton;
+
+import edu.uoc.tdp.pac4.beans.DetallPeca;
+import edu.uoc.tdp.pac4.beans.DetallReparacio;
+import edu.uoc.tdp.pac4.beans.Reparacio;
+import edu.uoc.tdp.pac4.beans.Usuari;
+import edu.uoc.tdp.pac4.exception.GestorReparacionException;
+import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JScrollPane;
 
 public class ReparacionDetalle extends JFrame {
 
@@ -28,10 +42,19 @@ public class ReparacionDetalle extends JFrame {
 	private JTextField txtMatricula;
 	private JTextField txtMarca;
 	private JTextField txtModelo;
-	private JTable tblPiezasAsignadas;
 	private JTextField txtFechaAsignacion;
 	private JTextField txtFechaInicio;
 	private JTextField txtFechaFin;
+	
+	private static ReparacionGestion reparacionGestion;
+	private GestorReparacionInterface gestorReparacion;
+	private JTextArea txtObservaciones;
+	private JTable table;
+	
+	private static final Object columnNames[] = {
+		"C\u00F3digo", "Descripci\u00F3n", "Unidades", "Disponible"
+	};
+	private JScrollPane scrollPane;
 
 	/**
 	 * Launch the application.
@@ -40,7 +63,7 @@ public class ReparacionDetalle extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ReparacionDetalle frame = new ReparacionDetalle();
+					ReparacionDetalle frame = new ReparacionDetalle(null,null,-1);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -52,7 +75,9 @@ public class ReparacionDetalle extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ReparacionDetalle() {
+	public ReparacionDetalle(GestorReparacionInterface conexion, final Usuari usuario, int ordenReparacion) {
+		this.gestorReparacion = conexion;
+		
 		setTitle("Detalle reparación asignada");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 668, 446);
@@ -101,7 +126,7 @@ public class ReparacionDetalle extends JFrame {
 		
 		JLabel lblObservaciones = new JLabel("Observaciones para la reparación");
 		
-		JTextArea txtObservaciones = new JTextArea();
+		txtObservaciones = new JTextArea();
 		
 		JLabel lblPiezasAsignadas = new JLabel("Piezas asignadas a la reparación");
 		
@@ -110,22 +135,6 @@ public class ReparacionDetalle extends JFrame {
 		
 		JLabel lblContador = new JLabel("Contador");
 		lblContador.setHorizontalAlignment(SwingConstants.CENTER);
-		
-		tblPiezasAsignadas = new JTable();
-		tblPiezasAsignadas.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-			},
-			new String[] {
-				"New column", "New column"
-			}
-		));
 		
 		JLabel lblFechaAsignacion = new JLabel("Fecha Asignación");
 		lblFechaAsignacion.setHorizontalAlignment(SwingConstants.CENTER);
@@ -153,23 +162,31 @@ public class ReparacionDetalle extends JFrame {
 		JButton btnStop = new JButton("Stop");
 		
 		JButton btnSalir = new JButton("Salir");
+		btnSalir.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				dispose();
+			}
+		});
+		
+		scrollPane = new JScrollPane();
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+									.addGroup(gl_contentPane.createSequentialGroup()
+										.addComponent(lblId)
+										.addPreferredGap(ComponentPlacement.UNRELATED)
+										.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+										.addComponent(lblDetalleReparacionAsignada, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 										.addGroup(gl_contentPane.createSequentialGroup()
-											.addComponent(lblId)
-											.addPreferredGap(ComponentPlacement.UNRELATED)
-											.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-											.addComponent(lblDetalleReparacionAsignada, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-											.addGroup(gl_contentPane.createSequentialGroup()
+											.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 												.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 													.addGroup(gl_contentPane.createSequentialGroup()
 														.addComponent(lblNombreMecanico)
@@ -191,50 +208,49 @@ public class ReparacionDetalle extends JFrame {
 														.addComponent(lblMarca)
 														.addPreferredGap(ComponentPlacement.UNRELATED)
 														.addComponent(txtMarca, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-												.addGap(18)
-												.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-													.addGroup(gl_contentPane.createSequentialGroup()
-														.addComponent(lblModelo)
-														.addPreferredGap(ComponentPlacement.UNRELATED)
-														.addComponent(txtModelo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-													.addGroup(gl_contentPane.createSequentialGroup()
-														.addGap(2)
-														.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-															.addComponent(btnStop, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-															.addComponent(btnPause, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-															.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-																.addPreferredGap(ComponentPlacement.RELATED)
-																.addComponent(btnPlay, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-															.addComponent(lblMinutos, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
-															.addComponent(lblContador, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)))))))
-									.addComponent(lblObservaciones)
-									.addComponent(txtObservaciones))
-								.addContainerGap(1, Short.MAX_VALUE))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-									.addComponent(lblPiezasAsignadas)
-									.addComponent(tblPiezasAsignadas, GroupLayout.PREFERRED_SIZE, 235, GroupLayout.PREFERRED_SIZE))
-								.addGap(22)
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-									.addGroup(gl_contentPane.createSequentialGroup()
-										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-											.addComponent(lblFechaAsignacion, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-											.addComponent(txtFechaAsignacion, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-											.addGroup(gl_contentPane.createSequentialGroup()
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
-													.addComponent(txtFechaFin)
-													.addComponent(txtFechaInicio))
-												.addPreferredGap(ComponentPlacement.RELATED)
-												.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-													.addComponent(btnFechaFin, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-													.addComponent(btnFechaInicio, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))))
-										.addGap(66))
-									.addGroup(gl_contentPane.createSequentialGroup()
-										.addComponent(lblFechas, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(ComponentPlacement.RELATED)))
-								.addGap(96)))
-						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+												.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 246, GroupLayout.PREFERRED_SIZE))
+											.addGap(18)
+											.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+												.addGroup(gl_contentPane.createSequentialGroup()
+													.addComponent(lblModelo)
+													.addPreferredGap(ComponentPlacement.UNRELATED)
+													.addComponent(txtModelo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+												.addGroup(gl_contentPane.createSequentialGroup()
+													.addGap(2)
+													.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+														.addComponent(btnStop, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+														.addComponent(btnPause, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+														.addGroup(gl_contentPane.createSequentialGroup()
+															.addPreferredGap(ComponentPlacement.RELATED)
+															.addComponent(btnPlay, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+														.addComponent(lblMinutos, GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+														.addComponent(lblContador, GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)))))))
+								.addComponent(lblObservaciones)
+								.addComponent(txtObservaciones, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+							.addContainerGap(1, Short.MAX_VALUE))
+						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+							.addComponent(lblPiezasAsignadas)
+							.addGap(102)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(lblFechaAsignacion, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+										.addComponent(txtFechaAsignacion, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+										.addGroup(gl_contentPane.createSequentialGroup()
+											.addPreferredGap(ComponentPlacement.RELATED)
+											.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+												.addComponent(txtFechaFin)
+												.addComponent(txtFechaInicio))
+											.addPreferredGap(ComponentPlacement.RELATED)
+											.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+												.addComponent(btnFechaFin, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+												.addComponent(btnFechaInicio, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))))
+									.addGap(66))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(lblFechas, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)))
+							.addGap(96))
+						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(btnSalir)
 							.addContainerGap())))
 		);
@@ -271,8 +287,7 @@ public class ReparacionDetalle extends JFrame {
 						.addComponent(lblFechas)
 						.addComponent(lblContador))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(tblPiezasAsignadas, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(lblFechaAsignacion)
@@ -290,12 +305,59 @@ public class ReparacionDetalle extends JFrame {
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(btnFechaFin)
 								.addComponent(txtFechaFin, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnStop))))
-					.addGap(18)
-					.addComponent(btnSalir)
-					.addContainerGap(28, Short.MAX_VALUE))
+								.addComponent(btnStop))
+							.addGap(18)
+							.addComponent(btnSalir))
+						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		
+		initCampos(ordenReparacion);
+		
 		contentPane.setLayout(gl_contentPane);
+	
+		
 	}
 
+	private TableModel getTableModel (int ordenReparacion) throws RemoteException, GestorReparacionException  {
+		List<DetallPeca> list = gestorReparacion.getPiezasReparacion(ordenReparacion);
+		Object rowData [][] = new Object [list.size()][4];
+		int z=0;
+		for (DetallPeca bean : list) {
+			rowData[z][0] = String.valueOf(bean.getCodiPeca());
+			rowData[z][1] = String.valueOf(bean.getDescipcio());
+			rowData[z][2] = String.valueOf(bean.getCantidad());
+			if (bean.getCantidad() <= bean.getStock()) {
+				rowData[z][3] = "Si";
+			} else {
+				rowData[z][3] = "No";
+			}
+			z++;
+		}
+		TableModel model = new DefaultTableModel(rowData, columnNames);
+		return model;
+	}
+	
+	private void initCampos(int ordenReparacion) {
+		try {
+			DetallReparacio datosReparacion = gestorReparacion.getDetalleReparacion(ordenReparacion);
+			this.txtOrdenReparacion.setText(String.valueOf(datosReparacion.getOrdreReparacio()));
+			this.txtMatricula.setText(datosReparacion.getMatricula());
+			this.txtMarca.setText(datosReparacion.getMarca());
+			this.txtModelo.setText(datosReparacion.getModel());
+			this.txtObservaciones.setText(datosReparacion.getObservacions());
+			
+			scrollPane.setViewportView(table);
+			table.setModel(getTableModel(datosReparacion.getOrdreReparacio()));
+			
+			
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (GestorReparacionException e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -1,13 +1,16 @@
 package edu.uoc.tdp.pac4.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Font;
@@ -18,6 +21,14 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 
+import edu.uoc.tdp.pac4.beans.DetallReparacio;
+import edu.uoc.tdp.pac4.beans.Usuari;
+import edu.uoc.tdp.pac4.exception.GestorReparacionException;
+import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.rmi.RemoteException;
+
 public class ReparacionPiezas extends JFrame {
 
 	private JPanel contentPane;
@@ -27,6 +38,10 @@ public class ReparacionPiezas extends JFrame {
 	private JTextField txtModelo;
 	private JTable tblPiezas;
 	private JTextField txtCrearPieza;
+	
+	private static ReparacionGestion reparacionGestion;
+	private GestorReparacionInterface gestorReparacion;
+	private JTextArea txtObservaciones;
 
 	/**
 	 * Launch the application.
@@ -35,7 +50,7 @@ public class ReparacionPiezas extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ReparacionPiezas frame = new ReparacionPiezas();
+					ReparacionPiezas frame = new ReparacionPiezas(null,null,-1);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -47,7 +62,9 @@ public class ReparacionPiezas extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ReparacionPiezas() {
+	public ReparacionPiezas(GestorReparacionInterface conexion, final Usuari usuario, final int ordenReparacion) {
+		this.gestorReparacion = conexion;
+		
 		setTitle("Piezas reparación");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 680, 424);
@@ -81,7 +98,7 @@ public class ReparacionPiezas extends JFrame {
 		
 		JLabel lblObservaciones = new JLabel("Observaciones para la reparación");
 		
-		JTextArea txtObservaciones = new JTextArea();
+		txtObservaciones = new JTextArea();
 		
 		tblPiezas = new JTable();
 		tblPiezas.setModel(new DefaultTableModel(
@@ -112,8 +129,25 @@ public class ReparacionPiezas extends JFrame {
 		JButton btnRealizarPedido = new JButton("Realizar pedido");
 		
 		JButton btnAsignarMecanico = new JButton("Asignar mecánico");
+		btnAsignarMecanico.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ReparacionAsignarMecanico dialog = new ReparacionAsignarMecanico(gestorReparacion, usuario, ordenReparacion);
+				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+				dialog.setSize(1000, 500);
+				dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+			}
+		});
 		
 		JButton btnSalir = new JButton("Salir");
+		btnSalir.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				dispose();
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -193,6 +227,26 @@ public class ReparacionPiezas extends JFrame {
 						.addComponent(btnAsignarMecanico)
 						.addComponent(btnSalir)))
 		);
+		
+		initCampos(ordenReparacion);
+		
 		contentPane.setLayout(gl_contentPane);
 	}
+	
+	private void initCampos(int ordenReparacion) {
+		try {
+			DetallReparacio datosReparacion = gestorReparacion.getDetalleReparacion(ordenReparacion);
+			this.txtOrdenReparacion.setText(String.valueOf(datosReparacion.getOrdreReparacio()));
+			this.txtMatricula.setText(datosReparacion.getMatricula());
+			this.txtMarca.setText(datosReparacion.getMarca());
+			this.txtModelo.setText(datosReparacion.getModel());
+			this.txtObservaciones.setText(datosReparacion.getObservacions());
+
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (GestorReparacionException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

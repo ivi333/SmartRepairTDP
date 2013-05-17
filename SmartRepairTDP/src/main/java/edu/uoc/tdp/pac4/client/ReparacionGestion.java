@@ -2,6 +2,7 @@ package edu.uoc.tdp.pac4.client;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -13,15 +14,30 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import java.awt.Color;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
+import java.rmi.RemoteException;
+import java.util.List;
+
 import javax.swing.UIManager;
+
+import edu.uoc.tdp.pac4.beans.DetallReparacio;
+import edu.uoc.tdp.pac4.beans.Reparacio;
+import edu.uoc.tdp.pac4.beans.Usuari;
+import edu.uoc.tdp.pac4.exception.GestorReparacionException;
+import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ReparacionGestion extends JFrame {
 
@@ -30,7 +46,15 @@ public class ReparacionGestion extends JFrame {
 	private JTextField txtHasta;
 	private JTextField txtNombreCliente;
 	private JTextField txtApellidoCliente;
-	private JTable tblReparaciones;
+	
+	private static ReparacionGestion reparacionGestion;
+	private GestorReparacionInterface gestorReparacion;
+	private static final Object columnNames[] = {
+		"Orden Reparaci\u00F3n", "Fecha Entrada", "Contador Min", "Matr\u00EDcula", "Marca", "Modelo", "Observaciones", "Aceptada", "Asignada"
+	};
+	
+	private JTable table;
+	
 
 	/**
 	 * Launch the application.
@@ -39,7 +63,7 @@ public class ReparacionGestion extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ReparacionGestion frame = new ReparacionGestion();
+					ReparacionGestion frame = new ReparacionGestion(null,null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -51,7 +75,10 @@ public class ReparacionGestion extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ReparacionGestion() {
+	
+	public ReparacionGestion(GestorReparacionInterface conexion, final Usuari usuario) {
+		this.gestorReparacion = conexion;
+	
 		setSize(new Dimension(580, 380));
 		setTitle("Gestión de reparaciones");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -88,50 +115,118 @@ public class ReparacionGestion extends JFrame {
 		txtApellidoCliente = new JTextField();
 		txtApellidoCliente.setColumns(10);
 		
-		tblReparaciones = new JTable();
-		tblReparaciones.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-			},
-			new String[] {
-				"a", "b"
-			}
-		));
-		tblReparaciones.setToolTipText("");
 		
 		JButton btnActualizar = new JButton("Actualizar");
+		btnActualizar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				try {
+					table.setModel(getTableModel());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (GestorReparacionException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		btnActualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
 		
 		JButton btnDetalle = new JButton("Detalle");
+		btnDetalle.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ReparacionDetalle dialog;
+				try {
+					dialog = new ReparacionDetalle(gestorReparacion, usuario, getFilaSeleccionada());
+					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+					dialog.setSize(1000, 500);
+					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
+				} catch (GestorReparacionException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		JButton btnAceptar = new JButton("Aceptar");
+		btnAceptar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				ReparacionPiezas dialog;
+				try {
+					dialog = new ReparacionPiezas(gestorReparacion, usuario, getFilaSeleccionada());
+					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+					dialog.setSize(1000, 500);
+					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (GestorReparacionException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		
 		JButton btnAsignar = new JButton("Asignar");
+		btnAsignar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ReparacionAsignarMecanico dialog;
+				try {
+					dialog = new ReparacionAsignarMecanico(gestorReparacion, usuario, getFilaSeleccionada());
+					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+					dialog.setSize(1000, 500);
+					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
+				} catch (GestorReparacionException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		JButton btnFinalizar = new JButton("Finalizar");
+		btnFinalizar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					gestorReparacion.setReparacionFinalizada(getFilaSeleccionada());
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
+				} catch (GestorReparacionException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		JButton btnSalir = new JButton("Salir");
+		btnSalir.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				dispose();
+			}
+		});
+		
+		JScrollPane scrollPanel = new JScrollPane();
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(scrollPanel, GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+							.addContainerGap())
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_contentPane.createSequentialGroup()
@@ -147,17 +242,16 @@ public class ReparacionGestion extends JFrame {
 											.addGap(18)
 											.addComponent(txtHasta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 									.addPreferredGap(ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-										.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+										.addGroup(gl_contentPane.createSequentialGroup()
 											.addComponent(lblNombreCliente)
 											.addGap(18)
 											.addComponent(txtNombreCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-										.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+										.addGroup(gl_contentPane.createSequentialGroup()
 											.addComponent(lblApellidoCliente)
 											.addGap(18)
 											.addComponent(txtApellidoCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 									.addPreferredGap(ComponentPlacement.RELATED))
-								.addComponent(tblReparaciones, GroupLayout.PREFERRED_SIZE, 536, GroupLayout.PREFERRED_SIZE)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(btnActualizar)
 									.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -197,9 +291,9 @@ public class ReparacionGestion extends JFrame {
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(txtApellidoCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(lblApellidoCliente)))
-					.addGap(30)
-					.addComponent(tblReparaciones, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(scrollPanel, GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnActualizar)
 						.addComponent(btnSalir)
@@ -209,6 +303,47 @@ public class ReparacionGestion extends JFrame {
 						.addComponent(btnFinalizar))
 					.addGap(29))
 		);
+		
+		table = new JTable();
+		
+		scrollPanel.setViewportView(table);
+		
+		try {
+			table.setModel(getTableModel());
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (GestorReparacionException e) {
+			e.printStackTrace();
+		}
+		
+	
+		
 		contentPane.setLayout(gl_contentPane);
 	}
+	
+	private TableModel getTableModel () throws RemoteException, GestorReparacionException  {
+		List<DetallReparacio> list = gestorReparacion.getDetalleReparaciones();
+		Object rowData [][] = new Object [list.size()][9];
+		int z=0;
+		for (DetallReparacio bean : list) {
+			rowData[z][0] = String.valueOf(bean.getOrdreReparacio());
+			rowData[z][1] = String.valueOf(bean.getDataEntrada());
+			rowData[z][2] = String.valueOf(bean.getComptador());
+			rowData[z][3] = String.valueOf(bean.getMatricula());
+			rowData[z][4] = String.valueOf(bean.getMarca());
+			rowData[z][5] = String.valueOf(bean.getModel());
+			rowData[z][6] = String.valueOf(bean.getObservacions());
+			rowData[z][7] = String.valueOf(bean.getAcceptada());
+			rowData[z][8] = String.valueOf(bean.getAssignada());
+			z++;
+		}
+		TableModel model = new DefaultTableModel(rowData, columnNames);
+		return model;
+	}
+	
+	private int getFilaSeleccionada () throws RemoteException, GestorReparacionException {
+		return Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
+	}
+
+	
 }
