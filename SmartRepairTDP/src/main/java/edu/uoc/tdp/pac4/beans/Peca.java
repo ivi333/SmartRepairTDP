@@ -6,19 +6,23 @@ public class Peca implements java.io.Serializable {
 	private int CodiPeca;
 	private String Descripcio;
 	private int PVP;
-	private int PVPD;
+	private int PVD;
 	private String Marca;
 	private String Model;
 	
+	public Peca() {
 
-	public Peca(int CodiPeca, String Descripcio, int PVP, int PVPD,
+	}
+
+	public Peca(int CodiPeca, String Descripcio, int PVP, int PVD,
 			String Marca, String Model) {
 		this.CodiPeca = CodiPeca;
 		this.Descripcio = Descripcio;
 		this.PVP = PVP;
-		this.PVPD = PVPD;
+		this.PVD = PVD;
 		this.Marca = Marca;
 		this.Model = Model;
+		
 	}
 
 	public int getCodiPeca() {
@@ -46,11 +50,11 @@ public class Peca implements java.io.Serializable {
 	}
 
 	public int getPVPD() {
-		return PVPD;
+		return PVD;
 	}
 
 	public void setPVPD(int pVPD) {
-		PVPD = pVPD;
+		PVD = pVPD;
 	}
 
 	public String getMarca() {
@@ -68,6 +72,7 @@ public class Peca implements java.io.Serializable {
 	public void setModel(String model) {
 		Model = model;
 	}
+
 
 
 }
