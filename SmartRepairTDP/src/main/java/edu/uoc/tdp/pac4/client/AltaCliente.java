@@ -12,6 +12,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +21,10 @@ import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.PlainDocument;
 import javax.swing.JLabel;
 
 import edu.uoc.tdp.pac4.beans.Asseguradora;
@@ -30,7 +34,9 @@ import edu.uoc.tdp.pac4.common.ItemCombo;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 
+import javax.swing.InputVerifier;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
@@ -40,7 +46,8 @@ import javax.swing.JComboBox;
 import java.awt.Color;
 
 public class AltaCliente extends JDialog {
-	private static int port = 1444;
+	private static int port = 1099;
+	 private final static String urlRMIAdmin = new String("rmi://localhost/GestorAdministracion");
 	private JPanel contentPanel;
 	private JLabel lblCliente;
 	private JLabel lblNif;
@@ -125,7 +132,7 @@ public class AltaCliente extends JDialog {
 
 			if (conexionRemota == null) {
 
-				Registry registry = LocateRegistry.getRegistry("localhost",
+				Registry registry = LocateRegistry.getRegistry(urlRMIAdmin,
 						port);
 				conexionRemota = (GestorAdministracionInterface) registry
 						.lookup("PAC4");
@@ -156,7 +163,7 @@ public class AltaCliente extends JDialog {
 			seleccionIdioma();
 			initialize();
 			CargarControles();
-			CargarCmbMarca();
+		CargarCmbMarca();
 			CargarCmbAseg();
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -456,23 +463,27 @@ public class AltaCliente extends JDialog {
 		lblNewLabel.setBounds(274, 650, 106, 14);
 
 		contentPanel.add(lblNewLabel);
-
+		
 		txtDia = new JTextField();
 		txtDia.setBounds(115, 647, 33, 20);
 		contentPanel.add(txtDia);
+		txtDia.setDocument(new JTextFieldLimit(2));
 		txtDia.setColumns(10);
+		
 		txtDia.addKeyListener(new KeyAdapterNumbersOnly());
 
 		txtMes = new JTextField();
 		txtMes.setBounds(166, 647, 33, 20);
 		contentPanel.add(txtMes);
 		txtMes.setColumns(10);
+		txtMes.setDocument(new JTextFieldLimit(2));
 		txtMes.addKeyListener(new KeyAdapterNumbersOnly());
 
 		txtAnyo = new JTextField();
 		txtAnyo.setBounds(209, 647, 41, 20);
 		contentPanel.add(txtAnyo);
 		txtAnyo.setColumns(10);
+		txtAnyo.setDocument(new JTextFieldLimit(4));
 		txtAnyo.addKeyListener(new KeyAdapterNumbersOnly());
 
 		JLabel label = new JLabel("/");
@@ -786,6 +797,57 @@ public class AltaCliente extends JDialog {
 						.getMessage("cliente.msg.falta.anyo");
 				return strResult;
 			}
+			else
+			{
+				String n=txtAnyo.getText().toString();
+					
+				if (n.length()<5)
+				{
+					strResult = TDSLanguageUtils
+							.getMessage("cliente.msg.falta.anyo");
+					return strResult;	
+				}
+			}
+			
+			
+			if (txtDia.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.msg.falta.anyo");
+				return strResult;
+			}
+			else
+			{
+				String n=txtDia.getText().toString();
+				if (n.length()<3)
+				{
+					strResult = TDSLanguageUtils
+							.getMessage("cliente.msg.falta.anyo");
+					return strResult;	
+				}
+			}
+			
+			if (txtMes.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("cliente.msg.falta.anyo");
+				return strResult;
+			}
+			else
+			{
+				String n=txtMes.getText().toString();
+				if (n.length()==1)
+				{
+					n="0"+n;
+				}
+				
+				if (n.length()<3)
+				{
+					strResult = TDSLanguageUtils
+							.getMessage("cliente.msg.falta.anyo");
+					return strResult;	
+				}
+			}
+				
+			
 			if (txtTipo.getText().toString().equals("")) {
 				strResult = TDSLanguageUtils
 						.getMessage("cliente.msg.falta.tipo");
@@ -872,4 +934,25 @@ public class AltaCliente extends JDialog {
 			((JTextComponent) e.getSource()).setText(curText);
 		}
 	}
+	class JTextFieldLimit extends PlainDocument {
+		  private int limit;
+		  JTextFieldLimit(int limit) {
+		    super();
+		    this.limit = limit;
+		  }
+
+		  JTextFieldLimit(int limit, boolean upper) {
+		    super();
+		    this.limit = limit;
+		  }
+
+		  public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+		    if (str == null)
+		      return;
+
+		    if ((getLength() + str.length()) <= limit) {
+		      super.insertString(offset, str, attr);
+		    }
+		  }
+		}
 }

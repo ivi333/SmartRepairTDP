@@ -32,7 +32,8 @@ import javax.swing.ScrollPaneConstants;
 import java.awt.Color;
 
 public class GestionAvisos extends JDialog {
-	private static int port = 1444;
+	private static int port = 1099;
+	 private final static String urlRMIAdmin = new String("rmi://localhost/GestorAdministracion");
 	private JPanel contentPane;
 	private JButton btnSalir;
 	private JButton btnGestionar;
@@ -89,7 +90,7 @@ public class GestionAvisos extends JDialog {
 
 			if (conexionRemota == null) {
 
-				Registry registry = LocateRegistry.getRegistry("localhost",
+				Registry registry = LocateRegistry.getRegistry(urlRMIAdmin,
 						port);
 				conexionRemota = (GestorAdministracionInterface) registry
 						.lookup("PAC4");
