@@ -6,12 +6,14 @@ public class DetallPeca implements java.io.Serializable {
 	private String descripcio;
 	private int stock;
 	private int cantidad;
+	private double pvp;
 	
-	public DetallPeca(int codiPeca, String descripcio, int stock, int cantidad) {
+	public DetallPeca(int codiPeca, String descripcio, int stock, int cantidad, double pvp) {
 		this.codiPeca = codiPeca;
 		this.descripcio = descripcio;
 		this.stock = stock;
 		this.cantidad = cantidad;
+		this.pvp = pvp;
 	}
 	
 	public int getCodiPeca() {
@@ -44,5 +46,13 @@ public class DetallPeca implements java.io.Serializable {
 	
 	public void setCantidad(int cantidad) {
 		this.cantidad = cantidad;
+	}
+	
+	public double getPvp() {
+		return pvp;
+	}
+	
+	public void setPvp(double pvp) {
+		this.pvp = pvp;
 	}
 }

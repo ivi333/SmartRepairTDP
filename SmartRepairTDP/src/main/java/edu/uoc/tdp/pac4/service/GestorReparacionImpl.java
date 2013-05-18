@@ -10,6 +10,7 @@ import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Stockpeca;
+import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.dao.GestorReparacionDAO;
 import edu.uoc.tdp.pac4.dao.GestorReparacionDAOImpl;
@@ -138,5 +139,24 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
 		}
 	}
+	
+	public List<DetallPeca> getDetallePiezas(String nombrePieza)
+			throws RemoteException, GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getDetallePiezas(nombrePieza);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public Usuari getUsuario(int idUsuario) throws RemoteException,
+			GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getUsuario(idUsuario);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
 	
 }

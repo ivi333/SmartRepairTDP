@@ -9,6 +9,7 @@ import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Stockpeca;
+import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.exception.DAOException;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 
@@ -96,10 +97,25 @@ public interface GestorReparacionDAO {
 	public void setReparacionFinalizada(int ordenReparacion) throws DAOException;
 	
 	/**
-	 * Obtiene una lista con todas las piezas asignadas a una reparación
+	 * Obtiene una lista con todas las piezas asignadas a una reparación.
 	 * @return
 	 * @throws GestorReparacionException
 	 */
 	public List<DetallPeca> getPiezasReparacion(int ordenReparacion) throws DAOException;
+	
+	/**
+	 * Obtiene una lista con todos los detalles de las piezas. Se puede filtrar por nombre.
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public List<DetallPeca> getDetallePiezas(String nombrePieza) throws DAOException;
+	
+	/**
+	 * Obtiene un Usuario dado un id de Usuario
+	 * @param idUsuario
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public Usuari getUsuario(int idUsuario)throws DAOException;
 	
 }

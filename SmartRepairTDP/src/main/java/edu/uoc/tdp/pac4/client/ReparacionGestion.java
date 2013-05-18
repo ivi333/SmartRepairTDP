@@ -54,6 +54,10 @@ public class ReparacionGestion extends JFrame {
 	};
 	
 	private JTable table;
+	private JButton btnDetalle;
+	private JButton btnAceptar;
+	private JButton btnAsignar;
+	private JButton btnFinalizar;
 	
 
 	/**
@@ -134,18 +138,25 @@ public class ReparacionGestion extends JFrame {
 			}
 		});
 		
-		JButton btnDetalle = new JButton("Detalle");
+		btnDetalle = new JButton("Detalle");
+		btnDetalle.setEnabled(false);
 		btnDetalle.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				ReparacionDetalle dialog;
 				try {
-					dialog = new ReparacionDetalle(gestorReparacion, usuario, getFilaSeleccionada());
-					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-					dialog.setSize(1000, 500);
-					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
-					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-					dialog.setVisible(true);
+					int idFilaSeleccionada = getFilaSeleccionada();
+					if (idFilaSeleccionada >= 0) {
+						dialog = new ReparacionDetalle(gestorReparacion, usuario, idFilaSeleccionada);
+						Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+						dialog.setSize(1000, 500);
+						dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+						dialog.setVisible(true);
+					} else {
+						JOptionPane.showMessageDialog(reparacionGestion, "Debe seleccionar una fila para poder ver el detalle de la reparación", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					
 				} catch (RemoteException e1) {
 					e1.printStackTrace();
 				} catch (GestorReparacionException e1) {
@@ -154,18 +165,24 @@ public class ReparacionGestion extends JFrame {
 			}
 		});
 		
-		JButton btnAceptar = new JButton("Aceptar");
+		btnAceptar = new JButton("Aceptar");
+		btnAceptar.setEnabled(false);
 		btnAceptar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				ReparacionPiezas dialog;
 				try {
-					dialog = new ReparacionPiezas(gestorReparacion, usuario, getFilaSeleccionada());
-					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-					dialog.setSize(1000, 500);
-					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
-					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-					dialog.setVisible(true);
+					int idFilaSeleccionada = getFilaSeleccionada();
+					if (idFilaSeleccionada >= 0) {
+						dialog = new ReparacionPiezas(gestorReparacion, usuario, getFilaSeleccionada());
+						Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+						dialog.setSize(1000, 500);
+						dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+						dialog.setVisible(true);
+					} else {
+						JOptionPane.showMessageDialog(reparacionGestion, "Debe seleccionar una fila para poder ver el detalle de la reparación", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				} catch (GestorReparacionException e) {
@@ -174,19 +191,24 @@ public class ReparacionGestion extends JFrame {
 			}
 		});
 		
-		JButton btnAsignar = new JButton("Asignar");
+		btnAsignar = new JButton("Asignar");
+		btnAsignar.setEnabled(false);
 		btnAsignar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				ReparacionAsignarMecanico dialog;
 				try {
-					dialog = new ReparacionAsignarMecanico(gestorReparacion, usuario, getFilaSeleccionada());
-					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-					dialog.setSize(1000, 500);
-					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
-					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-					dialog.setVisible(true);
-				
+					int idFilaSeleccionada = getFilaSeleccionada();
+					if (idFilaSeleccionada >= 0) {
+						dialog = new ReparacionAsignarMecanico(gestorReparacion, usuario, getFilaSeleccionada());
+						Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+						dialog.setSize(1000, 500);
+						dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+						dialog.setVisible(true);
+					} else {
+						JOptionPane.showMessageDialog(reparacionGestion, "Debe seleccionar una fila para poder ver el detalle de la reparación", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				} catch (RemoteException e1) {
 					e1.printStackTrace();
 				} catch (GestorReparacionException e1) {
@@ -195,12 +217,18 @@ public class ReparacionGestion extends JFrame {
 			}
 		});
 		
-		JButton btnFinalizar = new JButton("Finalizar");
+		btnFinalizar = new JButton("Finalizar");
+		btnFinalizar.setEnabled(false);
 		btnFinalizar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
-					gestorReparacion.setReparacionFinalizada(getFilaSeleccionada());
+					int idFilaSeleccionada = getFilaSeleccionada();
+					if (idFilaSeleccionada >= 0) {
+						gestorReparacion.setReparacionFinalizada(getFilaSeleccionada());
+					} else {
+						JOptionPane.showMessageDialog(reparacionGestion, "Debe seleccionar una fila para poder ver el detalle de la reparación", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				} catch (RemoteException e1) {
 					e1.printStackTrace();
 				} catch (GestorReparacionException e1) {
@@ -306,6 +334,34 @@ public class ReparacionGestion extends JFrame {
 		
 		table = new JTable();
 		
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				try {
+					int ordenReparacion = getFilaSeleccionada();
+					Reparacio datosReparacion = gestorReparacion.getReparacion(ordenReparacion);
+					
+					btnDetalle.setEnabled(true);
+					
+					if (!datosReparacion.getAcceptada()) {
+						btnAceptar.setEnabled(true);
+					} else {
+						if (!datosReparacion.getAssignada()) {
+							btnAsignar.setEnabled(true);
+						} else {
+							btnFinalizar.setEnabled(true);
+						}
+					}
+					
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (GestorReparacionException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
+		
 		scrollPanel.setViewportView(table);
 		
 		try {
@@ -342,7 +398,11 @@ public class ReparacionGestion extends JFrame {
 	}
 	
 	private int getFilaSeleccionada () throws RemoteException, GestorReparacionException {
-		return Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
+		if (table.getSelectedRow() >= 0) {
+			return Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
+		} else {
+			return -1;
+		}
 	}
 
 	

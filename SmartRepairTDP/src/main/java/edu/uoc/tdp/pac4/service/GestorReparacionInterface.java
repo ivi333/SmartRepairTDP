@@ -10,6 +10,7 @@ import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Stockpeca;
 import edu.uoc.tdp.pac4.beans.Peca;
+import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.exception.DAOException;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 
@@ -97,13 +98,28 @@ public interface GestorReparacionInterface extends Remote{
 	public void setReparacionFinalizada(int ordenReparacion) throws RemoteException, GestorReparacionException;
 	
 	/**
-	 * Obtiene el detalle de las piezas de una reparación
+	 * Obtiene el detalle de las piezas de una reparación.
 	 * @param ordenReparacion
 	 * @return
 	 * @throws GestorReparacionException
 	 */
 	public List<DetallPeca> getPiezasReparacion(int ordenReparacion) throws RemoteException, GestorReparacionException;
 	
+	/**
+	 * Obtiene una lista con todos los detalles de las piezas. Se puede filtrar por nombre.
+	 * @param nombrePieza
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public List<DetallPeca> getDetallePiezas(String nombrePieza) throws RemoteException, GestorReparacionException;
+	
+	/**
+	 * Obtiene un Usuario dado un id de Usuario
+	 * @param idUsuario
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public Usuari getUsuario(int idUsuario)throws RemoteException, GestorReparacionException;
 }
 
 
