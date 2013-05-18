@@ -14,7 +14,10 @@ import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.PlainDocument;
 import javax.swing.JLabel;
 
 import edu.uoc.tdp.pac4.beans.Client;
@@ -36,7 +39,8 @@ import javax.swing.JSeparator;
 import java.awt.Color;
 
 public class AltaSolicitud extends JDialog {
-	private static int port = 1454;
+	private static int port = 1099;
+	 private final static String urlRMIAdmin = new String("rmi://localhost/GestorAdministracion");
 	private static boolean B_FINALIZADA=false;
 	private static boolean B_PENDIENTE=true;
 	private JPanel contentPane;
@@ -103,7 +107,7 @@ public class AltaSolicitud extends JDialog {
 	    	   
 		   if(conexionRemota == null) {
 	           
-			   Registry registry = LocateRegistry.getRegistry("localhost",
+			   Registry registry = LocateRegistry.getRegistry(urlRMIAdmin,
 						port);
 				conexionRemota = (GestorAdministracionInterface) registry
 						.lookup("PAC4");
@@ -217,13 +221,13 @@ public class AltaSolicitud extends JDialog {
 		txtDia.addKeyListener(new KeyAdapterNumbersOnly());
 		contentPane.add(txtDia);
 		txtDia.setColumns(10);
-		
+		txtDia.setDocument(new JTextFieldLimit(2));
 		txtMes = new JTextField();
 		txtMes.setBounds(187, 204, 33, 20);
 		txtMes.addKeyListener(new KeyAdapterNumbersOnly());
 		contentPane.add(txtMes);
 		txtMes.setColumns(10);
-		
+		txtMes.setDocument(new JTextFieldLimit(2));
 		JLabel label = new JLabel("/");
 		label.setBounds(172, 207, 15, 14);
 		contentPane.add(label);
@@ -237,7 +241,7 @@ public class AltaSolicitud extends JDialog {
 		txtAnyo.addKeyListener(new KeyAdapterNumbersOnly());
 		contentPane.add(txtAnyo);
 		txtAnyo.setColumns(10);
-		
+		txtAnyo.setDocument(new JTextFieldLimit(4));
 		JLabel lblddmmyyy = new JLabel("(dd/mm/yyy)");
 		lblddmmyyy.setBounds(322, 207, 82, 14);
 		contentPane.add(lblddmmyyy);
@@ -462,4 +466,25 @@ public class AltaSolicitud extends JDialog {
 				((JTextComponent) e.getSource()).setText(curText);
 			}
 		}
+		class JTextFieldLimit extends PlainDocument {
+			  private int limit;
+			  JTextFieldLimit(int limit) {
+			    super();
+			    this.limit = limit;
+			  }
+
+			  JTextFieldLimit(int limit, boolean upper) {
+			    super();
+			    this.limit = limit;
+			  }
+
+			  public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+			    if (str == null)
+			      return;
+
+			    if ((getLength() + str.length()) <= limit) {
+			      super.insertString(offset, str, attr);
+			    }
+			  }
+			}
 }

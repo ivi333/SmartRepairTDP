@@ -42,7 +42,8 @@ import java.awt.Color;
 import java.awt.Font;
 
 public class NuevoPedido extends JDialog {
-	private static int port = 1444;
+	private static int port = 1099;
+	 private final static String urlRMIAdmin = new String("rmi://localhost/GestorAdministracion");
 	private static int IDTALLER = 1;
 	private JPanel contentPane;
 	private JLabel lblDescripcion;
@@ -96,7 +97,7 @@ public class NuevoPedido extends JDialog {
 
 			if (conexionRemota == null) {
 
-				Registry registry = LocateRegistry.getRegistry("localhost",
+				Registry registry = LocateRegistry.getRegistry(urlRMIAdmin,
 						port);
 				conexionRemota = (GestorAdministracionInterface) registry
 						.lookup("PAC4");
