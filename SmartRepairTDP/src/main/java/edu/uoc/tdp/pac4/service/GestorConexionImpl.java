@@ -89,6 +89,19 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 		}
 		return usuari;
 	}
+	
+	public Usuari getUsuariByNif (String nif)
+			throws RemoteException, GestorConexionException {
+		Usuari usuari = null;
+		try {
+			usuari = gestorConexionDAO.getUsuariByNif(nif);
+			if (usuari == null)
+				throw new GestorConexionException(GestorConexionException.ERR_USER_NOTFOUND);
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		}
+		return usuari;
+	}
 
 	public List<Usuari> getAllUsuaris() throws RemoteException,
 			GestorConexionException {
@@ -115,7 +128,51 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
 		}
 	}
+	
+	public void disableUser(int idUsuari)
+			throws RemoteException, GestorConexionException {
+		try {
+			Usuari usuari = gestorConexionDAO.getUsuariById(idUsuari);
+			if (usuari.getReparacionsAssignades() == 0) {
+				gestorConexionDAO.disableUser(idUsuari);
+			} else {
+				throw new GestorConexionException(GestorConexionException.ERR_USER_REPARACIONES);
+			}
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		}
+	}
+	
+	public void altaUsuari(Usuari usuari)
+			throws RemoteException, GestorConexionException {
 
+		try {
+			if (!gestorConexionDAO.usuariExist(usuari.getNif(),usuari.getUsuari())) {
+				gestorConexionDAO.altaUsuari(usuari);
+			} else {
+				throw new GestorConexionException(GestorConexionException.ERR_USER_EXIST);
+			}
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		} 
+	}
+	
+	public void modificarUsuari(Usuari usuari)
+			throws RemoteException, GestorConexionException {
+		try {
+			Usuari usuariOld = gestorConexionDAO.getUsuariById(usuari.getId());
+			if (usuariOld.getReparacionsAssignades() > 0 && usuariOld.getTaller() != usuari.getTaller())
+				throw new GestorConexionException(GestorConexionException.ERR_USER_REP_TALLER);
+			if (!gestorConexionDAO.usuariExist(usuari.getNif(), usuari.getUsuari(), usuari.getId())){
+				gestorConexionDAO.modificarUsuari(usuari);
+			} else {
+				throw new GestorConexionException(GestorConexionException.ERR_USER_EXIST);
+			}
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		}
+	}
+	
 	public List<Taller> getAllTallers () throws RemoteException, GestorConexionException {
 		try {
 			return gestorConexionDAO.getAllTallers();
@@ -140,5 +197,26 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
 		}	
 	}
+	
+	public Taller altaTaller (Taller taller) 
+		throws RemoteException, GestorConexionException {
+		try {
+			//gestorConexionDAO.insertTaller(taller);		
+			return gestorConexionDAO.getTallerByCif(taller.getCif());
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		}
+	}
+	
+	public Taller modificarTaller (Taller taller) 
+		throws RemoteException, GestorConexionException {
+		try {
+			gestorConexionDAO.updateTaller(taller);
+			return gestorConexionDAO.getTallerById(taller.getId());
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		}
+	}
+	
 
 }

@@ -373,6 +373,7 @@ public class GestionUsuarios extends JFrame {
 			winMantenimiento("MODIFICAR");
 			System.out.println ("MODIFICAR " + tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_BAJA")){
+			winMantenimiento("BAJA");
 			System.out.println ("BAJA = " + tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_SALIR")){
 			dispose ();
@@ -430,7 +431,7 @@ public class GestionUsuarios extends JFrame {
 	
 	private void winMantenimiento (String accion) {
 		MntoUsuario mnto;
-		if (accion.equalsIgnoreCase("MODIFICAR") || accion.equalsIgnoreCase("BAIXA")) {
+		if (accion.equalsIgnoreCase("MODIFICAR") || accion.equalsIgnoreCase("BAJA")) {
 			mnto = new MntoUsuario(gestorConexion,accion, 
 					Integer.valueOf(tabla.getValueAt(tabla.getSelectedRow(), 0).toString()));
 		} else {

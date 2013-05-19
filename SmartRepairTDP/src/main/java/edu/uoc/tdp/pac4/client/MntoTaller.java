@@ -12,6 +12,7 @@ import javax.swing.border.EmptyBorder;
 import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.ItemCombo;
+import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.exception.GestorConexionException;
 import edu.uoc.tdp.pac4.service.GestorConexionInterface;
 
@@ -20,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.GroupLayout;
@@ -28,6 +30,7 @@ import javax.swing.GroupLayout.Alignment;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
@@ -103,7 +106,8 @@ public class MntoTaller extends JFrame {
 		this.accion = accion;
 		initialize ();
 		cargarCmbJefeTaller();
-		cargarTaller();
+		leerTaller ();
+		mostrarTaller ();
 		cargarAccion ();
 	}
 	
@@ -370,7 +374,7 @@ public class MntoTaller extends JFrame {
 		DefaultComboBoxModel defaultCombo = new DefaultComboBoxModel();
 		try {
 			List<Usuari> jefesTaller = gestorConexion.getUsuarisCapTaller();
-			cbJefeTaller.add(new ItemCombo(-1,"","0"));
+			cbJefeTaller.add(new ItemCombo(0,"","0"));
 			for (int i = 0; i < jefesTaller.size(); i++) {				
 				Usuari jefeTaller = jefesTaller.get(i);
 				cbJefeTaller.add(new ItemCombo(i+1, jefeTaller.getNomCognoms(), 
@@ -380,7 +384,7 @@ public class MntoTaller extends JFrame {
 			for (int i = 0; i < cbJefeTaller.size(); i++)
 				defaultCombo.insertElementAt(cbJefeTaller.get(i).getValue(), i);
 			cmbJefeTaller.setModel(defaultCombo);
-			cmbJefeTaller.setSelectedItem(-1);
+			cmbJefeTaller.setSelectedItem("");
 			
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -390,80 +394,112 @@ public class MntoTaller extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	private void leerTaller () {
+		try {
+			taller = gestorConexion.getTallerById(idTaller);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (GestorConexionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
-	private void cargarTaller (){
-		if (Integer.valueOf(idTaller) == null)
-			taller = new Taller ();
-		else {
-			try {
-				taller = gestorConexion.getTallerById(idTaller);
-				txtId.setText(String.valueOf(taller.getId()));
-				txtCif.setText(taller.getCif());
-				txtDireccion.setText(taller.getAdreca());
-				txtCapacidad.setText(String.valueOf(taller.getCapacitat()));
-				txtTelefono.setText(taller.getTelefon());
-				txtWeb.setText(taller.getWeb());
-				chkActivo.setSelected(taller.isActiu());			
-				for (int i = 0; i < cbJefeTaller.size(); i ++){
-					if (Integer.valueOf(cbJefeTaller.get(i).getAux()) == taller.getCapTaller()) {
-						cmbJefeTaller.setSelectedItem(cbJefeTaller.get(i).getValue());
-						break;
-					}
-				}
-				
-				txtFalta.setText(taller.getDataApertura().toString());
-				if (taller.getDataModificacio()!= null)
-					txtFmodificacion.setText(taller.getDataModificacio().toString());
-				if (taller.getDataBaixa()!= null)
-					txtFbaja.setText(taller.getDataBaixa().toString());
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (GestorConexionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	private void mostrarTaller (){
+		txtId.setText(String.valueOf(taller.getId()));
+		txtCif.setText(taller.getCif());
+		txtDireccion.setText(taller.getAdreca());
+		txtCapacidad.setText(String.valueOf(taller.getCapacitat()));
+		txtTelefono.setText(taller.getTelefon());
+		txtWeb.setText(taller.getWeb());
+		chkActivo.setSelected(taller.isActiu());			
+		for (int i = 0; i < cbJefeTaller.size(); i ++){
+			if (Integer.valueOf(cbJefeTaller.get(i).getAux()) == taller.getCapTaller()) {
+				cmbJefeTaller.setSelectedItem(cbJefeTaller.get(i).getValue());
+				break;
 			}
 		}
 		
+		txtFalta.setText(taller.getDataApertura().toString());
+		if (taller.getDataModificacio()!= null)
+			txtFmodificacion.setText(taller.getDataModificacio().toString());
+		if (taller.getDataBaixa()!= null)
+			txtFbaja.setText(taller.getDataBaixa().toString());
+
+		
 	}
 	private void cargarAccion () {
-		if (accion.toString().equalsIgnoreCase("MODIFICAR")) {
-			txtCif.setEnabled(true);
-			txtDireccion.setEnabled(true);
-			txtCapacidad.setEnabled(true);
-			cmbJefeTaller.setEnabled(true);
-			txtTelefono.setEnabled(true);
-			txtWeb.setEnabled(true);
-			if (chkActivo.isSelected())
-				chkActivo.setEnabled(false);
-		} else if (accion.toString().equalsIgnoreCase("BAJA")){
-			txtCif.setEnabled(false);
-			txtDireccion.setEnabled(false);
-			txtCapacidad.setEnabled(false);
-			cmbJefeTaller.setEnabled(false);
-			txtTelefono.setEnabled(false);
-			txtWeb.setEnabled(false);
-			if (!(chkActivo.isSelected()))
-				chkActivo.setEnabled(false);
-		} else {
-			txtCif.setEnabled(true);
-			txtDireccion.setEnabled(true);
-			txtCapacidad.setEnabled(true);
-			cmbJefeTaller.setEnabled(true);
-			txtTelefono.setEnabled(true);
-			txtWeb.setEnabled(true);
-			chkActivo.setEnabled(true);
+		
+	}
+	
+	private void altaTaller () {
+		taller = new Taller ();
+		taller.setCif(this.txtCif.getText());
+		taller.setAdreca(this.txtDireccion.getText());
+		taller.setCapacitat(Integer.valueOf(txtCapacidad.getText()));
+		taller.setTelefon(txtTelefono.getText());
+		taller.setWeb(txtWeb.getText());
+		taller.setActiu(chkActivo.isSelected());
+		try {
+			taller = gestorConexion.altaTaller(taller);
+			mostrarTaller();
+		} catch (RemoteException e) {
+			showError(e.getMessage(), "GESCON.showmessage.error");
+		} catch (GestorConexionException e) {
+			showError(e.getMessage(), "GESCON.showmessage.error");
 		}
 		
 	}
+	
+	private void modificarTaller () {
+		taller.setCif(this.txtCif.getText());
+		taller.setAdreca(this.txtDireccion.getText());
+		taller.setCapacitat(Integer.valueOf(txtCapacidad.getText()));
+		taller.setTelefon(txtTelefono.getText());
+		taller.setWeb(txtWeb.getText());
+		taller.setActiu(chkActivo.isSelected());
+		taller.setDataModificacio(new Date());
+		try {
+			taller = gestorConexion.modificarTaller(taller);
+			mostrarTaller();
+		} catch (RemoteException e) {
+			showError(e.getMessage(), "GESCON.showmessage.error");
+		} catch (GestorConexionException e) {
+			showError(e.getMessage(), "GESCON.showmessage.error");
+		}
+	}
+		
 	private void actions (ActionEvent action){
 		if (action.getActionCommand().toString().equals("BTN_SALIR")) {
 			dispose ();
 		} else if (action.getActionCommand().toString().equals("BTN_ACEPTAR")) {
-			
+			if (accion.equalsIgnoreCase("NUEVO")) {
+				altaTaller ();
+			} else if (accion.equalsIgnoreCase("MODIFICAR")){
+				modificarTaller ();
+			}
 		} else if (action.getActionCommand().toString().equals("BTN_CANCELAR")) {
-			cargarTaller();
+			mostrarTaller();
 			cargarAccion();
 		}
+	}
+	
+	private void showError (String message, String title){		
+		String txtTitle;		
+		txtTitle = TDSLanguageUtils.getMessage(title);
+		showMessage (message, txtTitle,JOptionPane.ERROR_MESSAGE);
+	}
+	
+	private void showInfo (String message, String title){
+		String txtMessage;
+		String txtTitle;		
+		txtMessage = TDSLanguageUtils.getMessage(message);
+		txtTitle = TDSLanguageUtils.getMessage(title);
+		showMessage (txtMessage, txtTitle,JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	private void showMessage (String message, String title, int messageType) {
+		JOptionPane.showMessageDialog(this, message, title, messageType);
 	}
 }

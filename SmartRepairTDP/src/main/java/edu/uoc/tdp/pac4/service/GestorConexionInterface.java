@@ -28,6 +28,9 @@ public interface GestorConexionInterface extends Remote{
 	public Usuari getUsuariByUsuari (String username)
 		throws RemoteException, GestorConexionException;
 	
+	public Usuari getUsuariByNif (String nif)
+			throws RemoteException, GestorConexionException;
+	
 	public List<Usuari> getAllUsuaris ()
 		throws RemoteException, GestorConexionException;
 	
@@ -37,6 +40,15 @@ public interface GestorConexionInterface extends Remote{
 	public List<Usuari> getUsuarisCapTaller () 
 		throws RemoteException, GestorConexionException;
 	
+	public void disableUser(int idUsuari)
+		throws RemoteException, GestorConexionException;
+	
+	public void altaUsuari(Usuari usuari)
+		throws RemoteException, GestorConexionException;
+	
+	public void modificarUsuari(Usuari usuari)
+			throws RemoteException, GestorConexionException;
+	
 	public List<Taller> getAllTallers ()
 		throws RemoteException, GestorConexionException;
 	
@@ -44,6 +56,12 @@ public interface GestorConexionInterface extends Remote{
 		throws RemoteException, GestorConexionException;
 	
 	public List<Taller> getTallersByFilter (String id, String cif, String adreca, String capacitat, String idCapTaller)
+		throws RemoteException, GestorConexionException;
+	
+	public Taller altaTaller (Taller taller)
+		throws RemoteException, GestorConexionException;
+	
+	public Taller modificarTaller  (Taller taller)
 		throws RemoteException, GestorConexionException;
 }
 
