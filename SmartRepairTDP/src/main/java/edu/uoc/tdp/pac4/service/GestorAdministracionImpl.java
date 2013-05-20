@@ -301,4 +301,22 @@ public class GestorAdministracionImpl extends
 		}
 		return null;
 	}
+
+	public int getActualizarSolicitud(Solicitud sol) throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			e.printStackTrace();
+		}
+		try {
+			return gestorAdministracionDAO.getActualizarSolicitud(sol);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -2;
+		
+	}
 }

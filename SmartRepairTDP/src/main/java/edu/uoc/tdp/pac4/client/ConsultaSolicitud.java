@@ -7,6 +7,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import javax.swing.JButton;
@@ -35,19 +37,20 @@ import java.awt.event.KeyEvent;
 
 public class ConsultaSolicitud extends JDialog {
 
-	private static int port = 1444;
-	private JPanel contentPane;
+	private static int port = 1044;
+	 private final static String urlRMIAdmin ="localhost";// new String("rmi://localhost/GestorAdministracion");
+private JPanel contentPane;
 	private JLabel lblNSolicitud;
 	private JLabel lblInfoSolicitud;
 	
 	private JLabel lblBastidor;
-	private JLabel lblInfoBastidor;
+	private JTextField lblInfoBastidor;
 	private JLabel lblMatricula;
-	private JLabel lblInfoMatricula;
+	private JTextField lblInfoMatricula;
 	private JLabel lblMarca;
-	private JLabel lblInfoMarca;
+	private JTextField lblInfoMarca;
 	private JLabel lblModelo;
-	private JLabel lblInfoModelo;
+	private JTextField lblInfoModelo;
 	private JLabel lblComentario;
 	private JTextArea textAreaComentario; 
 	private JButton btnGuardar;
@@ -88,7 +91,7 @@ public class ConsultaSolicitud extends JDialog {
 
 			if (conexionRemota == null) {
 
-				Registry registry = LocateRegistry.getRegistry("localhost",
+				Registry registry = LocateRegistry.getRegistry(urlRMIAdmin,
 						port);
 				conexionRemota = (GestorAdministracionInterface) registry
 						.lookup("PAC4");
@@ -142,8 +145,8 @@ public class ConsultaSolicitud extends JDialog {
 		lblBastidor.setBounds(26, 116, 89, 14);
 		contentPane.add(lblBastidor);
 		
-		lblInfoBastidor = new JLabel();
-		lblInfoBastidor.setBounds(127, 116, 132, 14);
+		lblInfoBastidor = new JTextField();
+		lblInfoBastidor.setBounds(127, 116, 132, 20);
 		contentPane.add(lblInfoBastidor);
 		
 		lblMatricula = new JLabel();
@@ -151,8 +154,8 @@ public class ConsultaSolicitud extends JDialog {
 		lblMatricula.setBounds(26, 150, 89, 14);
 		contentPane.add(lblMatricula);
 		
-		lblInfoMatricula= new JLabel();
-		lblInfoMatricula.setBounds(125, 144, 112, 20);
+		lblInfoMatricula= new JTextField();
+		lblInfoMatricula.setBounds(125, 144, 134, 20);
 		contentPane.add(lblInfoMatricula);
 		
 		lblMarca = new JLabel();
@@ -160,8 +163,8 @@ public class ConsultaSolicitud extends JDialog {
 		lblMarca.setBounds(26, 177, 89, 14);
 		contentPane.add(lblMarca);
 		
-		lblInfoMarca = new JLabel();
-		lblInfoMarca.setBounds(125, 177, 112, 14);
+		lblInfoMarca = new JTextField();
+		lblInfoMarca.setBounds(125, 175, 134, 20);
 		contentPane.add(lblInfoMarca);
 		
 		lblModelo = new JLabel();
@@ -169,8 +172,8 @@ public class ConsultaSolicitud extends JDialog {
 		lblModelo.setBounds(26, 211, 89, 14);
 		contentPane.add(lblModelo);
 		
-		lblInfoModelo = new JLabel();
-		lblInfoModelo.setBounds(125, 211, 99, 14);
+		lblInfoModelo = new JTextField();
+		lblInfoModelo.setBounds(125, 211, 134, 20);
 		contentPane.add(lblInfoModelo);
 		
 		lblComentario = new JLabel();
@@ -211,14 +214,13 @@ public class ConsultaSolicitud extends JDialog {
 		
 		lblEstado = new JLabel();
 		lblEstado.setText(TDSLanguageUtils.getMessage("solicitud.lbl.estado"));
-		lblEstado.setBounds(143, 60, 94, 14);
+		lblEstado.setBounds(161, 60, 76, 14);
 		contentPane.add(lblEstado);
 		
 		lblEstadoInfo = new JLabel();
-		lblEstadoInfo.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblEstadoInfo.setFont(new Font("Tahoma", Font.BOLD, 12));
 		lblEstadoInfo.setForeground(new Color(0, 128, 0));
-		lblEstadoInfo.setText("lblEstadoInfo");
-		lblEstadoInfo.setBounds(265, 62, 79, 14);
+		lblEstadoInfo.setBounds(265, 60, 101, 16);
 		contentPane.add(lblEstadoInfo);
 		
 		lblNewLabel = new JLabel("F.de finalización:");
@@ -325,8 +327,17 @@ public class ConsultaSolicitud extends JDialog {
 					txtMes.setText(arrayAnyo[1]);
 					txtDia.setText(arrayAnyo[2]);
 				}
-				
-			}else
+				if(sol.isFinalitzada()){
+				lblEstadoInfo.setText("Finalizado");
+				lblEstadoInfo.setForeground(Color.red);
+				Imput(false);
+				}
+				if(sol.isPendent())
+				{	lblEstadoInfo.setText("Pendiente");
+				Imput(true);
+				}
+			}
+			else
 			{
 				String title = TDSLanguageUtils
 						.getMessage("solicitud.upd.titulo");
@@ -339,6 +350,19 @@ public class ConsultaSolicitud extends JDialog {
 			ex.printStackTrace();
 		}
 	}
+
+	private void Imput(boolean b) {
+		lblInfoSolicitud.setEnabled(b);
+		lblInfoModelo.setEnabled(b);
+		lblInfoMatricula.setEnabled(b);
+		lblInfoMarca.setEnabled(b);
+		lblInfoBastidor.setEnabled(b);
+		btnGuardar.setEnabled(b);
+		textAreaComentario.setEnabled(b);
+		txtAnyo.setEnabled(b);
+		txtMes.setEnabled(b);
+		txtDia.setEnabled(b);
+	}
 	
 	private JButton getBtnGuardar()
 	{	if (btnGuardar == null) {
@@ -348,15 +372,77 @@ public class ConsultaSolicitud extends JDialog {
 		btnGuardar.setText(TDSLanguageUtils.getMessage("solicitud.btn.guardar"));
 		btnGuardar.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
-				dispose();
-				
+					try {
+						if (ImputValues().equals(""))
+						{
+							Solicitud sol= new Solicitud();
+							sol.setNumsol(Integer.parseInt(txtNumSol.getText().toString()));
+							sol.setComentaris(textAreaComentario.getText().toString());
+							
+							String anyo = txtAnyo.getText().toString();
+							String dia = txtDia.getText().toString();
+							String mes = txtMes.getText().toString();
+							String strFecha = dia + "/" + mes + "/" + anyo;
+
+							DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+							java.util.Date dt1 = (java.util.Date) formatter.parse(strFecha);
+							java.sql.Date datafinalitzacio = new java.sql.Date(dt1.getTime());
+							sol.setDatafinalitzacio(datafinalitzacio);
+							
+							getRemoto().getActualizarSolicitud(sol);
+							String tittle =  TDSLanguageUtils.getMessage("solicitud.upd.titulo");
+							MuestraOk( TDSLanguageUtils.getMessage("cliente.msg.ok"), tittle);
+							dispose();
+						} else {
+							String strMsg = ImputValues();
+							String tittle = TDSLanguageUtils
+									.getMessage("solicitud.upd.titulo");
+							LeerError(strMsg, tittle);
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 			}
 		});
 	}
 	return btnGuardar;
 	
 	}
-	
+
+	private String ImputValues() {
+		String strResult = "";
+		try {
+			
+			if (textAreaComentario.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("solicitud.msg.falta.comentario");
+				return strResult;
+			}
+			if (txtDia.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("solicitud.msg.falta.ffinalizacion");
+				return strResult;
+
+			}
+			if (txtMes.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("solicitud.msg.falta.ffinalizacion");
+				return strResult;
+
+			}
+			if (txtAnyo.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils
+						.getMessage("solicitud.msg.falta.ffinalizacion");
+				return strResult;
+
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return strResult;
+	}
+
 	private JButton getBtnCancelaJ() {
 		if (btnCancelar == null) {
 			btnCancelar = new JButton();

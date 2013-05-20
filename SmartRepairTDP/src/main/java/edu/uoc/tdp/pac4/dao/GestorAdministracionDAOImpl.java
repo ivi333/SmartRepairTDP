@@ -815,6 +815,43 @@ public Solicitud getConsultarSolicitud(int numsol) throws DAOException {
 	}
 }
 
+/*****************************actualizar solicitud********************************************************/
+	public int getActualizarSolicitud(Solicitud sol) throws DAOException {
+		int iResult = -1;
+		PreparedStatement prep =null;
+		try{
+			 
+			String sql = " update   client solicitud "
+					+ " comentaris=?, datafinalitzacio=? "
+					
+					+" WHERE numsol=?";
+
+			 prep = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+
+			prep.setString(1, sol.getComentaris().toString().trim());
+			prep.setDate(2, (java.sql.Date) sol.getDatafinalitzacio());
+			prep.setInt(3,sol.getNumsol());
+			
+			int i=prep.executeUpdate();
+			
+			iResult = 1;
+			return iResult;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);
+		} finally {
+			if (prep != null) {
+				try {
+					prep.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED,
+							e.getMessage(), e);
+				}
+			}
+
+		}
+	}
+
 
 
 
