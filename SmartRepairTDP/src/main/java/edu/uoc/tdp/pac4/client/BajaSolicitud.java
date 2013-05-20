@@ -33,8 +33,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class BajaSolicitud extends JDialog {
-	private static int port = 1044;
-	 private final static String urlRMIAdmin ="localhost";// new String("rmi://localhost/GestorAdministracion");
+	private static int port = 1099;
+	 private final static String urlRMIAdmin =new String("rmi://localhost/GestorAdministracion");
 
 	private JPanel contentPane;
 	private JLabel lblNSolicitud;
@@ -50,7 +50,7 @@ public class BajaSolicitud extends JDialog {
 	private JLabel lblInfoModelo;
 	private JLabel lblComentario;
 	private JTextArea textAreaComentario; 
-	private JButton btnDenegar;
+	private JButton btnAceptar;
 	private JButton btnFacturar;
 	private JButton btnCerrar;
 	private JSeparator separator;
@@ -61,6 +61,7 @@ public class BajaSolicitud extends JDialog {
 	private JLabel lblEstado;
 	private JLabel lblEstadoInfo;
 	JLabel lblInfofechafin ;
+	private boolean bEstadoPendiente=false;
 	private static GestorAdministracionInterface conexionRemota;
 	
 	public static void main(String[] args) {
@@ -180,7 +181,7 @@ public class BajaSolicitud extends JDialog {
 	textAreaComentario.setBounds(132, 271, 212, 76);
 	contentPane.add(textAreaComentario);
 	
-	contentPane.add(getBtnDenegar());
+	contentPane.add(getBtnAceptar());
 	
 	contentPane.add(getBtnFacturar());
 	
@@ -236,8 +237,15 @@ public class BajaSolicitud extends JDialog {
 			btnFacturar.setText(TDSLanguageUtils.getMessage("solicitud.btn.facturar"));
 			btnFacturar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					
-				dispose();
+					if (ImputValues().equals("")) {	
+					}else
+					{
+						String title = TDSLanguageUtils
+								.getMessage("solicitud.baja.titulo");
+						String strMsg = TDSLanguageUtils
+								.getMessage("solicitud.msg.falta.num");
+						LeerError(strMsg, title);
+					}
 					
 				}
 			});
@@ -245,22 +253,58 @@ public class BajaSolicitud extends JDialog {
 			return btnFacturar;
 	}
 
-	private JButton getBtnDenegar()
+	private JButton getBtnAceptar()
 	{
-		if (btnDenegar == null) {
-			btnDenegar = new JButton();
-			btnDenegar.setForeground(new Color(0, 0, 255));
-			btnDenegar.setBounds(new Rectangle(33, 417, 89, 23));
-			btnDenegar.setText(TDSLanguageUtils.getMessage("solicitud.btn.denega"));
-			btnDenegar.addActionListener(new java.awt.event.ActionListener() {
+		if (btnAceptar == null) {
+			btnAceptar = new JButton();
+			btnAceptar.setForeground(new Color(0, 0, 255));
+			btnAceptar.setBounds(new Rectangle(33, 417, 89, 23));
+			btnAceptar.setText(TDSLanguageUtils.getMessage("solicitud.btn.aceptar"));
+			btnAceptar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-				dispose();
+				try{
+						if (ImputValues().equals("")) {
+							if (bEstadoPendiente) {
+
+							} else {
+								String title = TDSLanguageUtils
+										.getMessage("solicitud.baja.titulo");
+								String strMsg = TDSLanguageUtils
+										.getMessage("solicitud.msg.baja.solicitud.estadoP");
+								LeerError(strMsg, title);
+							}
+						} else {
+							String title = TDSLanguageUtils
+									.getMessage("solicitud.baja.titulo");
+							String strMsg = TDSLanguageUtils
+									.getMessage("solicitud.msg.falta.num");
+							LeerError(strMsg, title);
+						}
+				}catch(Exception ex)
+				{
+					ex.printStackTrace();
+				}
 					
 				}
 			});
 		}
-			return btnDenegar;
+			
+		return btnAceptar;
+	}
+	private String ImputValues() {
+		String strResult = "";
+		try {
+			if(txtNumSol.getText().toString().equals(""))
+			{
+				strResult=TDSLanguageUtils
+						.getMessage("solicitud.msg.falta.num");
+				return strResult;
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return strResult;
 	}
 	
 	private  JButton getBtnCerrar()	
@@ -295,7 +339,7 @@ public class BajaSolicitud extends JDialog {
 							getConsultarSolicitud();
 						} else {
 							String title = TDSLanguageUtils
-									.getMessage("solicitud.upd.titulo");
+									.getMessage("solicitud.baja.titulo");
 							String strMsg = TDSLanguageUtils
 									.getMessage("solicitud.msg.falta.num");
 							LeerError(strMsg, title);
@@ -354,20 +398,22 @@ public class BajaSolicitud extends JDialog {
 					lblInfofechafin.setText(dia+"/"+mes+"/" +anyo);
 				}
 				
-				
+				bEstadoPendiente=false;
 				if(sol.isFinalitzada()){
 				lblEstadoInfo.setText("Finalizado");
 				lblEstadoInfo.setForeground(Color.red);
+				bEstadoPendiente=false;
 				}
 				if(sol.isPendent())
-				{	lblEstadoInfo.setText("Pendiente");
-				lblEstadoInfo.setForeground(Color.GREEN);
+				{bEstadoPendiente=true;
+					lblEstadoInfo.setText("Pendiente");
+				    lblEstadoInfo.setForeground(Color.GREEN);
 				}
 			}
 			else
 			{
 				String title = TDSLanguageUtils
-						.getMessage("solicitud.upd.titulo");
+						.getMessage("solicitud.baja.titulo");
 				String strMsg = TDSLanguageUtils
 						.getMessage("mensaje.ErrorCombo");
 				LeerError(strMsg, title);

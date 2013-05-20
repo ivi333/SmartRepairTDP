@@ -39,8 +39,8 @@ import javax.swing.JSeparator;
 import java.awt.Color;
 
 public class AltaSolicitud extends JDialog {
-	private static int port = 1044;
-	 private final static String urlRMIAdmin ="localhost";// new String("rmi://localhost/GestorAdministracion");
+	private static int port = 1099;
+	 private final static String urlRMIAdmin = new String("rmi://localhost/GestorAdministracion");
 	private static boolean B_FINALIZADA=false;
 	private static boolean B_PENDIENTE=true;
 	private JPanel contentPane;

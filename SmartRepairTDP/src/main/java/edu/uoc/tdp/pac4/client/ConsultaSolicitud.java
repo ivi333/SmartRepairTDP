@@ -37,8 +37,8 @@ import java.awt.event.KeyEvent;
 
 public class ConsultaSolicitud extends JDialog {
 
-	private static int port = 1044;
-	 private final static String urlRMIAdmin ="localhost";// new String("rmi://localhost/GestorAdministracion");
+	private static int port = 1099;
+	 private final static String urlRMIAdmin = new String("rmi://localhost/GestorAdministracion");
 private JPanel contentPane;
 	private JLabel lblNSolicitud;
 	private JLabel lblInfoSolicitud;
