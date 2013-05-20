@@ -9,5 +9,5 @@ public enum PerfilUsuari {
 	Administracion,  //Perfil de administracion 
 	JefeTaller,		//Jefe de Taller 
 	Administrador,  //Perfil Administrador 
-	Mecanic;		//Mecánico
+	Mecanico;		//Mecánico
 }
