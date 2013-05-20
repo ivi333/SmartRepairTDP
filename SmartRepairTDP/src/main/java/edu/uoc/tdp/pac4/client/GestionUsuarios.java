@@ -2,10 +2,12 @@ package edu.uoc.tdp.pac4.client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Panel;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -113,8 +115,9 @@ public class GestionUsuarios extends JFrame {
 	}
 	
 	private void initialize (){
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 821, 408);
+		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setTitle(TDSLanguageUtils.getMessage("gestionusuarios.titulo.ventana"));
+		setBounds(100, 100, 850, 450);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -437,6 +440,11 @@ public class GestionUsuarios extends JFrame {
 		} else {
 			mnto = new MntoUsuario(gestorConexion);
 		}
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		mnto.setLocation(dim.width/2-mnto.getSize().width/2, dim.height/2-mnto.getSize().height/2);
+		mnto.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		mnto.setVisible(true);
+
 		mnto.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		mnto.setVisible(true);
 	}

@@ -13,7 +13,7 @@ import edu.uoc.tdp.pac4.exception.GestorConexionException;
 import edu.uoc.tdp.pac4.service.GestorConexionInterface;
 
 
-public class Login extends JDialog {
+public class ChangePassword extends JDialog {
 
 	/**
 	 * 
@@ -22,18 +22,18 @@ public class Login extends JDialog {
 	
 	protected GestorConexionInterface gestorConexion = null;
 	protected Usuari usuari = null;
-	private JTextField txtUsername = new JTextField();
-	private JPasswordField txtPassword = new JPasswordField();
-	private JCheckBox chkPassword;
+	private JPasswordField txtPassword;
+	private JPasswordField txtRepeat;
 	
-	public Login() {
+	public ChangePassword() {
 		initialize ();
 
 	}
 	
-	public Login (Frame frame, GestorConexionInterface gestorConexion){
-		super(frame,TDSLanguageUtils.getMessage("login.titulo.ventana"),true);
+	public ChangePassword ( GestorConexionInterface gestorConexion, Usuari usuari){
+		this.setTitle(TDSLanguageUtils.getMessage("changepassword.titulo.ventana"));
 		this.gestorConexion = gestorConexion;
+		this.usuari = usuari;
 		initialize();
 		
 	}
@@ -57,7 +57,7 @@ public class Login extends JDialog {
 		Panel panel = new Panel();
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER));
 		{
-			JButton btnAceptar = new JButton(TDSLanguageUtils.getMessage("login.boton.aceptar"));
+			JButton btnAceptar = new JButton(TDSLanguageUtils.getMessage("changepassword.boton.aceptar"));
 			btnAceptar.setActionCommand("BTN_ACEPTAR");
 			btnAceptar.addActionListener(new ActionListener() {
 				
@@ -70,7 +70,7 @@ public class Login extends JDialog {
 			getRootPane().setDefaultButton(btnAceptar);
 		}
 		{
-			JButton btnCancelar = new JButton(TDSLanguageUtils.getMessage("login.boton.cancelar"));
+			JButton btnCancelar = new JButton(TDSLanguageUtils.getMessage("changepassword.boton.cancelar"));
 			btnCancelar.setActionCommand("BTN_CANCELAR");
 			btnCancelar.addActionListener(new ActionListener() {
 				
@@ -89,51 +89,43 @@ public class Login extends JDialog {
 	private Panel panelCenter () {
 		Panel panel = new Panel();		
 
-		JLabel lblUsername = new JLabel(TDSLanguageUtils.getMessage("login.label.usuario"));
+		JLabel lblUsername = new JLabel(TDSLanguageUtils.getMessage("changepassword.label.password"));
 		lblUsername.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		JLabel lblPassword = new JLabel(TDSLanguageUtils.getMessage("login.label.password"));
+		JLabel lblPassword = new JLabel(TDSLanguageUtils.getMessage("changepassword.label.repeatpass"));
 		lblPassword.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		txtUsername = new JTextField();
-		txtUsername.setColumns(10);
-
 		txtPassword = new JPasswordField();
+
+		txtRepeat = new JPasswordField();
 		
 		getContentPane().add(panel, BorderLayout.CENTER);
-		chkPassword = new JCheckBox(TDSLanguageUtils.getMessage("login.label.changepass"));
 		GroupLayout groupLayout = new GroupLayout(panel);
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.CENTER)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(48)
-					.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(lblUsername, GroupLayout.PREFERRED_SIZE, 127, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblPassword, GroupLayout.PREFERRED_SIZE, 127, Short.MAX_VALUE))
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
+						.addComponent(lblPassword, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(lblUsername, GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(chkPassword)
-						.addComponent(txtPassword, 142, 142, 142))
+					.addGroup(groupLayout.createParallelGroup(Alignment.CENTER, false)
+						.addComponent(txtRepeat)
+						.addComponent(txtPassword, GroupLayout.PREFERRED_SIZE, 142, GroupLayout.PREFERRED_SIZE))
 					.addGap(134))
-				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
-					.addGap(187)
-					.addComponent(txtUsername, GroupLayout.PREFERRED_SIZE, 142, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(134, Short.MAX_VALUE))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(59)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(txtUsername, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtPassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblUsername))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblPassword)
-						.addComponent(txtPassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(34)
-					.addComponent(chkPassword)
-					.addContainerGap(51, Short.MAX_VALUE))
+						.addComponent(txtRepeat, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(108, Short.MAX_VALUE))
 		);
 		panel.setLayout(groupLayout);
 
@@ -153,7 +145,7 @@ public class Login extends JDialog {
 	
 	private JPanel panelNorth (){
 		JPanel panel = new JPanel();					
-		JLabel lblTitulo = new JLabel(TDSLanguageUtils.getMessage("login.titulo"));
+		JLabel lblTitulo = new JLabel(TDSLanguageUtils.getMessage("changepassword.titulo"));
 		lblTitulo.setVerticalAlignment(SwingConstants.BOTTOM);
 		lblTitulo.setFont(new Font("Serif", Font.BOLD, 16));
 		panel.add(lblTitulo);
@@ -162,26 +154,27 @@ public class Login extends JDialog {
 	
 	private void actions (ActionEvent actionEvent){
 		if (actionEvent.getActionCommand().equals("BTN_ACEPTAR")){
-			try {
-				this.usuari = gestorConexion.doLogin(txtUsername.getText().toUpperCase(), String.valueOf(txtPassword.getPassword()));
-				JOptionPane.showMessageDialog(this, TDSLanguageUtils.getMessage("login.accion.OK"), 
-						this.getTitle(), JOptionPane.INFORMATION_MESSAGE);
-				dispose ();
-				if (chkPassword.isSelected()){
-					ChangePassword changePassword = new ChangePassword(gestorConexion, usuari);
-					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-					changePassword.setSize(450, 300);
-					changePassword.setLocation(dim.width/2-changePassword.getSize().width/2, dim.height/2-changePassword.getSize().height/2);
-					changePassword.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-					changePassword.setModal(true);
-					changePassword.setVisible(true);
-					changePassword.setAlwaysOnTop(true);
+			if ((new String(txtPassword.getPassword()).length() > 0) && (new String(txtRepeat.getPassword()).length() > 0)){
+				if (new String(txtPassword.getPassword()).equals(new String(txtRepeat.getPassword()))) {
+					try {
+						gestorConexion.changePassword(usuari, new String(txtPassword.getPassword()));	
+						JOptionPane.showMessageDialog(this, TDSLanguageUtils.getMessage("changepassword.accion.OK"), 
+								this.getTitle(), JOptionPane.INFORMATION_MESSAGE);
+						dispose ();
+					} catch (RemoteException e) {
+						JOptionPane.showMessageDialog(this, e.getMessage(), this.getTitle(), JOptionPane.ERROR_MESSAGE);				
+					} catch (GestorConexionException e) {
+						JOptionPane.showMessageDialog(this, e.getMessage(), this.getTitle(), JOptionPane.ERROR_MESSAGE);				
+					}
+				} else {
+					JOptionPane.showMessageDialog(this, TDSLanguageUtils.getMessage("changepassword.valida.repeatpass"), 
+							this.getTitle(), JOptionPane.WARNING_MESSAGE);
 				}
-			} catch (RemoteException e) {
-				JOptionPane.showMessageDialog(this, e.getMessage(), this.getTitle(), JOptionPane.ERROR_MESSAGE);				
-			} catch (GestorConexionException e) {
-				JOptionPane.showMessageDialog(this, e.getMessage(), this.getTitle(), JOptionPane.ERROR_MESSAGE);				
+			}else {
+				JOptionPane.showMessageDialog(this, TDSLanguageUtils.getMessage("changepassword.valida.password"),
+						this.getTitle(), JOptionPane.WARNING_MESSAGE);
 			}
+			
 		}
 		if (actionEvent.getActionCommand().equals("BTN_CANCELAR")){
 				dispose();
@@ -189,11 +182,4 @@ public class Login extends JDialog {
 		}
 	}
 	
-	public Usuari getUsuari () {
-		return this.usuari;
-	}
-	
-	public boolean isLogin () {
-		return (this.usuari!=null);
-	}
 }

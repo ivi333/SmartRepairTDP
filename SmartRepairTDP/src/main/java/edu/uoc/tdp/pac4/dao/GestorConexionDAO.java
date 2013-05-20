@@ -43,6 +43,9 @@ public interface GestorConexionDAO {
 	public void modificarUsuari (Usuari usuari)
 		throws DAOException;
 
+	public void changePassword (Usuari usuari, String password)
+		throws DAOException;
+	
 	public Taller getTallerById(int id) throws DAOException;
 	
 	public Taller getTallerByCif(String cif) throws DAOException;

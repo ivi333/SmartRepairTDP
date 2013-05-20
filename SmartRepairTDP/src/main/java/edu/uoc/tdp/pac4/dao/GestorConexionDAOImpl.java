@@ -40,6 +40,8 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			" values (?,?,?,?,?,?,?,?)";
 	private static final String UPDATE_USUARI = "UPDATE USUARI SET nif=?, nom=?, cognoms=?, taller=?, usuari=?, " + 
 			" contrasenya=?, datamodificacio=now(), actiu= ? WHERE id=?";
+	private static final String CHANGE_PASSWORD = "UPDATE usuari SET contrasenya=?, datamodificacio=now() " + 
+			"WHERE ID=?";
 	
 	private static final String QUERY_ALL_TALLERS = "SELECT * FROM TALLER";
 	private static final String QUERY_TALLER_BY_ID = "SELECT * FROM TALLER WHERE ID = ?";
@@ -424,6 +426,28 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			ps.setString(6,usuari.getContrasenya());
 			ps.setBoolean(7, usuari.isActiu());
 			ps.setInt(8,usuari.getId());
+			ps.execute();
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);				
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+	
+	public void changePassword (Usuari usuari, String password)
+			throws DAOException {
+		getConnectionDB();
+		PreparedStatement ps = createPrepareStatment(CHANGE_PASSWORD,ResultSet.CONCUR_UPDATABLE);
+
+		try {
+			ps.setString(1, password);
+			ps.setInt(2, usuari.getId());
 			ps.execute();
 		} catch (SQLException e) {
 			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);				

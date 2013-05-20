@@ -22,6 +22,9 @@ public interface GestorConexionInterface extends Remote{
 	public Usuari doLogin (String username, String contrasenya) 
 		throws RemoteException, GestorConexionException;
 	
+	public void changePassword (Usuari usuari, String password)
+		throws RemoteException, GestorConexionException;
+	
 	public Usuari getUsuariById (int id)
 		throws RemoteException, GestorConexionException;
 	

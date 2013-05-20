@@ -64,6 +64,15 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 		
 	}
 	
+	public void changePassword (Usuari usuari, String password)
+			throws RemoteException, GestorConexionException {
+		try {
+			gestorConexionDAO.changePassword(usuari, password);
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO +  e.getMessage());
+		}
+	}
+	
 	public Usuari getUsuariById (int id) throws RemoteException, GestorConexionException {
 		Usuari usuari = null;
 		try {
