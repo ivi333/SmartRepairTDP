@@ -2,6 +2,7 @@ package edu.uoc.tdp.pac4.service;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.List;
 
 import edu.uoc.tdp.pac4.beans.DetallPeca;
@@ -120,6 +121,34 @@ public interface GestorReparacionInterface extends Remote{
 	 * @throws GestorReparacionException
 	 */
 	public Usuari getUsuario(int idUsuario)throws RemoteException, GestorReparacionException;
+	
+	/**
+	 * Inserta una pieza a la comanda
+	 * @param codigoPieza, idUsuario, ordenReparacion, cantidad
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void setPiezaComanda(int codigoPieza, int idUsuario, int ordenReparacion, int cantidad)
+			throws RemoteException, GestorReparacionException;
+	
+	/**
+	 * Elimina una pieza a la comanda
+	 * @param codigoPieza, ordenReparación
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void deletePiezaComanda(int codigoPieza, int ordenReparacion) 
+			throws RemoteException, GestorReparacionException;
+
+
+	/**
+	 * Obtiene una lista con todos los detalles de las piezas de un taller.
+	 * @param idTaller, nombrePieza
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public List<DetallPeca> getDetallePiezasTaller(int idTaller, String nombrePieza)
+			throws RemoteException, GestorReparacionException;
 }
 
 

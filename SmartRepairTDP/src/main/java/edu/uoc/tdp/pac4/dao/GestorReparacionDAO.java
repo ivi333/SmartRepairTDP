@@ -1,6 +1,7 @@
 package edu.uoc.tdp.pac4.dao;
 
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.List;
 
 import edu.uoc.tdp.pac4.beans.DetallPeca;
@@ -117,5 +118,31 @@ public interface GestorReparacionDAO {
 	 * @throws GestorReparacionException
 	 */
 	public Usuari getUsuario(int idUsuario)throws DAOException;
+	
+	/**
+	 * Inserta una pieza a la comanda
+	 * @param codigoPieza, idUsuario, ordenReparacion, cantidad
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void setPiezaComanda(int codigoPieza, int idUsuario, int ordenReparacion, int cantidad)
+			throws DAOException;
+	
+	/**
+	 * Elimina una pieza a la comanda
+	 * @param codigoPieza, ordenReparación
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void deletePiezaComanda(int codigoPieza, int ordenReparacion)
+			throws DAOException;
+	
+	/**
+	 * Obtiene una lista con todos los detalles de las piezas de un taller.
+	 * @param idTaller, nombrePieza
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public List<DetallPeca> getDetallePiezasTaller(int idTaller, String nombrePieza) throws DAOException;
 	
 }
