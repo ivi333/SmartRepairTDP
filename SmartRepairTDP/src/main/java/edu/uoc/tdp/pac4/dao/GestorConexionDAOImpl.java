@@ -224,13 +224,13 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 		if (id.length() > 0)
 			sql += " AND id = " + id;
 		if (nif.length() > 0)
-			sql += " AND nif = '" + nif +"'";
+			sql += " AND UPPER(nif) like '" + nif.replace("*", "%").toUpperCase() +"'";
 		if ((nombre.length() > 0))
-			sql += " AND nom = '" + nombre +"'";
+			sql += " AND UPPER(nom) like '" + nombre.replace("*", "%").toUpperCase() +"'";
 		if (apellidos.length() > 0)
-			sql += " AND cognoms = '" + apellidos +"'";
+			sql += " AND UPPER(cognoms) like '" + apellidos.replace("*", "%").toUpperCase() +"'";
 		if (perfil.length() > 0)
-			sql += " AND perfil = '" + perfil +"'";
+			sql += " AND perfil like '%" + perfil +"%'";
 		getConnectionDB();	
 		
 		Statement stm = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
