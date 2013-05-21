@@ -1,6 +1,7 @@
 package edu.uoc.tdp.pac4.client;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -56,10 +57,14 @@ public class MainGUI extends JFrame {
 	
 	private Login login;
 	
-	private JMenu mnNewMenu;
-	private JMenu mnNewMenu_1;
-	private JMenu mnNewMenu_2;
-	private JMenu mnNewMenu_3;
+	private JMenu mnMantenimiento;
+	private JMenu mnAdministracion;
+	private JMenu mnReparacion;
+	private JMenu mnEstadistica;
+	private JMenuItem mntmSalir;
+	private JMenuBar menuBar;
+	
+	private String perfiles[];
 
 	/**
 	 * Launch the application.
@@ -95,7 +100,7 @@ public class MainGUI extends JFrame {
 			winLogin();
 			doLogin();		
 			disableMenu();
-			if (usuari!= null){
+			if (usuari!= null){				
 				enableMenu ();
 			}
 		}catch (Exception e){
@@ -114,16 +119,16 @@ public class MainGUI extends JFrame {
 		frmSmartRepairTdp.setTitle("Smart Repair TDP 2013 - FiveCoreDumped");
 		frmSmartRepairTdp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JMenuBar menuBar = new JMenuBar();
+		menuBar = new JMenuBar();
 		frmSmartRepairTdp.setJMenuBar(menuBar);
 		
-		mnNewMenu = new JMenu("Mantenimiento");
-		mnNewMenu.setEnabled(true);
-		menuBar.add(mnNewMenu);
+		mnMantenimiento = new JMenu("Mantenimiento");
+		mnMantenimiento.setEnabled(true);
+		menuBar.add(mnMantenimiento);
 		
-		JMenuItem mntmNewMenuItem = new JMenuItem("Gestión de Talleres");		
-		mnNewMenu.add(mntmNewMenuItem);
-		mntmNewMenuItem.addActionListener(new ActionListener() {
+		JMenuItem mntmMantTaller = new JMenuItem("Gestión de Talleres");		
+		mnMantenimiento.add(mntmMantTaller);
+		mntmMantTaller.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
 				GestionTalleres gestionTalleres = new GestionTalleres (gestorConexion);								
@@ -135,13 +140,14 @@ public class MainGUI extends JFrame {
 			}
 		});
 		
-		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Gestión de Usuarios");
-		mntmNewMenuItem.setEnabled(true);
-		mnNewMenu.add(mntmNewMenuItem_1);
+		JMenuItem mntmMantUsuario = new JMenuItem("Gestión de Usuarios");
+		mntmMantUsuario.setEnabled(true);
+		mnMantenimiento.add(mntmMantUsuario);
 		
-		mntmNewMenuItem_1.addActionListener(new ActionListener() {
+		mntmMantUsuario.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("ENTRA");
 				GestionUsuarios gestionUsuarios = new GestionUsuarios (gestorConexion);				
 				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 				gestionUsuarios.setLocation(dim.width/2-gestionUsuarios.getSize().width/2, dim.height/2-gestionUsuarios.getSize().height/2);
@@ -151,26 +157,26 @@ public class MainGUI extends JFrame {
 			}
 		});
 		
-		mnNewMenu_1 = new JMenu("Administración");
-		mnNewMenu_1.setEnabled(true);
-		menuBar.add(mnNewMenu_1);
+		mnAdministracion = new JMenu("Administración");
+		mnAdministracion.setEnabled(true);
+		menuBar.add(mnAdministracion);
 		
-		mnNewMenu_2 = new JMenu("Reparaciones");
-		mnNewMenu_2.setEnabled(true);
-		menuBar.add(mnNewMenu_2);
+		mnReparacion = new JMenu("Reparaciones");
+		mnReparacion.setEnabled(true);
+		menuBar.add(mnReparacion);
 		
-		mnNewMenu_3 = new JMenu("Estadísticas");
-		mnNewMenu_3.setEnabled(true);
-		menuBar.add(mnNewMenu_3);
+		mnEstadistica = new JMenu("Estadísticas");
+		mnEstadistica.setEnabled(true);
+		menuBar.add(mnEstadistica);
 		
-		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Salir");
-		mntmNewMenuItem_2.addActionListener(new ActionListener() {
+		mntmSalir = new JMenuItem("Salir");
+		mntmSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frmSmartRepairTdp.dispose();
 				System.exit(0);
 			}
 		});
-		menuBar.add(mntmNewMenuItem_2);
+		menuBar.add(mntmSalir);
 		
 		JLabel jLabel = new JLabel("Menu Principal Smart Repair", SwingConstants.CENTER);
 		jLabel.setFont(new Font("Serif", Font.BOLD, 24));
@@ -200,38 +206,65 @@ public class MainGUI extends JFrame {
 	}
 	
 	private void doLogin (){
-		if (login.isLogin()) 
-			usuari = login.getUsuari();			
+		if (login.isLogin()) {
+			usuari = login.getUsuari();
+			perfiles = usuari.getPerfil().split(";");
+		}
 	}
 
 	private void enableMenu (){
-
-		/*Administracion, JefeTaller, Administrador, Mecanic;*/
-		if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.Administrador.toString())){
-			mnNewMenu.setEnabled(true);
-			mnNewMenu.setVisible(true);		
-		}else if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.Administracion.toString())){
-			mnNewMenu_1.setEnabled(true);
-			mnNewMenu_1.setVisible(true);
-		} else if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.JefeTaller.toString())) {
-			mnNewMenu_2.setEnabled(true);
-			mnNewMenu_2.setVisible(true);
-		} else if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.Mecanico.toString())){
-			mnNewMenu_2.setEnabled(true);
-			mnNewMenu_2.setVisible(true);
+		// TODO Pendiente montar menus segun perfil
+		for (String a : perfiles){
+			if (a.equals(PerfilUsuari.Administrador.toString())) {
+				for (Component i : mnMantenimiento.getComponents()) {
+					i.setEnabled(true);
+					i.setVisible(true);
+				}
+				mnMantenimiento.setEnabled(true);
+				mnMantenimiento.setVisible(true);
+			} else if (a.equals(PerfilUsuari.Administracion.toString())) {
+				mnAdministracion.setEnabled(true);
+				mnAdministracion.setVisible(true);
+				
+			} else if (a.equals(PerfilUsuari.JefeTaller.toString())) {
+				mnReparacion.setEnabled(true);
+				mnReparacion.setVisible(true);
+				
+			} else if (a.equals(PerfilUsuari.Mecanico.toString())) {
+				mnReparacion.setEnabled(true);
+				mnReparacion.setVisible(true);
+				
+			}
 		}
-		mnNewMenu_3.setEnabled(true);
-		mnNewMenu_3.setVisible(true);
 	}
 	
 	private void disableMenu () {
-		mnNewMenu.setEnabled(false);
-		mnNewMenu.setVisible(false);
-		mnNewMenu_1.setEnabled(false);
-		mnNewMenu_1.setVisible(false);
-		mnNewMenu_2.setEnabled(false);
-		mnNewMenu_2.setVisible(false);
-		mnNewMenu_3.setEnabled(false);
-		mnNewMenu_3.setVisible(false);
+		
+		for (Component i : mnMantenimiento.getComponents()) {
+			i.setEnabled(false);
+			i.setVisible(false);
+		}
+		for (Component i : mnAdministracion.getComponents()) {
+			i.setEnabled(false);
+			i.setVisible(false);
+		}	
+		for (Component i : mnReparacion.getComponents()) {
+			i.setEnabled(false);
+			i.setVisible(false);
+		}
+		for (Component i : mnEstadistica.getComponents()) {
+			i.setEnabled(false);
+			i.setVisible(false);
+		}
+		
+		mnMantenimiento.setEnabled(false);
+		mnMantenimiento.setVisible(false);
+		mnAdministracion.setEnabled(false);
+		mnAdministracion.setVisible(false);
+		mnReparacion.setEnabled(false);
+		mnReparacion.setVisible(false);
+		mnEstadistica.setEnabled(false);
+		mnEstadistica.setVisible(false);
+	
 	}
 }

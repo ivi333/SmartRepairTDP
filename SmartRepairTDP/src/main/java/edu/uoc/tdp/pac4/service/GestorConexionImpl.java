@@ -5,6 +5,8 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 
+import edu.uoc.tdp.pac4.beans.Mecanic;
+import edu.uoc.tdp.pac4.beans.PerfilUsuari;
 import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
@@ -138,17 +140,34 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 		}
 	}
 	
-	public void disableUser(int idUsuari)
-			throws RemoteException, GestorConexionException {
+	public void disableUser(int idUsuari) throws RemoteException,
+			GestorConexionException {
 		try {
 			Usuari usuari = gestorConexionDAO.getUsuariById(idUsuari);
-			if (usuari.getReparacionsAssignades() == 0) {
-				gestorConexionDAO.disableUser(idUsuari);
+			Mecanic mecanic = null;
+			String perfiles[] = usuari.getPerfil().split(";");
+			for (String m : perfiles) {
+				if (m.equals(PerfilUsuari.Mecanico.toString())) {
+					mecanic = gestorConexionDAO.getMecanicById(idUsuari);
+					break;
+				}
+			}
+
+			if (mecanic != null) {
+				if (usuari.getReparacionsAssignades() == 0
+						&& mecanic.getIdrep1() == 0 && mecanic.getIdrep2() == 0) {
+					gestorConexionDAO.disableUser(idUsuari);
+					gestorConexionDAO.disableMecanic(idUsuari);
+				} else {
+					throw new GestorConexionException(
+							GestorConexionException.ERR_USER_REPARACIONES);
+				}
 			} else {
-				throw new GestorConexionException(GestorConexionException.ERR_USER_REPARACIONES);
+				gestorConexionDAO.disableUser(idUsuari);
 			}
 		} catch (DAOException e) {
-			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+			throw new GestorConexionException(GestorConexionException.ERR_DAO
+					+ e.getMessage());
 		}
 	}
 	
@@ -156,8 +175,17 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 			throws RemoteException, GestorConexionException {
 
 		try {
-			if (!gestorConexionDAO.usuariExist(usuari.getNif(),usuari.getUsuari())) {
+			if (!gestorConexionDAO.usuariExist(usuari.getNif(),usuari.getUsuari())) {				
 				gestorConexionDAO.altaUsuari(usuari);
+				String perfiles [] = usuari.getPerfil().split(";");
+				for (String perfil : perfiles) {
+					if (perfil.equals(PerfilUsuari.Mecanico.toString())) {
+						Usuari mecanic = getUsuariByUsuari(usuari.getUsuari());
+						gestorConexionDAO.altaMecanic(new Mecanic(mecanic.getId(), mecanic.isActiu(), 0, 0));
+						break;
+					}
+				}
+					
 			} else {
 				throw new GestorConexionException(GestorConexionException.ERR_USER_EXIST);
 			}
@@ -174,6 +202,15 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 				throw new GestorConexionException(GestorConexionException.ERR_USER_REP_TALLER);
 			if (!gestorConexionDAO.usuariExist(usuari.getNif(), usuari.getUsuari(), usuari.getId())){
 				gestorConexionDAO.modificarUsuari(usuari);
+				if (usuari.isActiu()) {
+					Mecanic mecanic = gestorConexionDAO.getMecanicById(usuari.getId());
+					if (mecanic != null) {
+						if (!(mecanic.isDisponible()) && (mecanic.getIdrep1() == 0) && (mecanic.getIdrep2()==0)){
+							gestorConexionDAO.enableMecanic(mecanic.getIdmecanic());
+						}
+					}
+				}
+					
 			} else {
 				throw new GestorConexionException(GestorConexionException.ERR_USER_EXIST);
 			}
@@ -207,23 +244,42 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 		}	
 	}
 	
-	public Taller altaTaller (Taller taller) 
-		throws RemoteException, GestorConexionException {
+	public Taller altaTaller(Taller taller) throws RemoteException,
+			GestorConexionException {
 		try {
-			//gestorConexionDAO.insertTaller(taller);		
-			return gestorConexionDAO.getTallerByCif(taller.getCif());
+
+			if (((taller.isActiu()) && (gestorConexionDAO
+					.getTallersByCapTaller(taller.getCapTaller()) == null))
+					|| !(taller.isActiu())) {
+				// gestorConexionDAO.insertTaller(taller);
+				return gestorConexionDAO.getTallerByCif(taller.getCif());
+			} else {
+				throw new GestorConexionException(
+						GestorConexionException.ERR_JEFETALLER_ASIGN);
+			}
+
 		} catch (DAOException e) {
-			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+			throw new GestorConexionException(GestorConexionException.ERR_DAO
+					+ e.getMessage());
 		}
 	}
 	
-	public Taller modificarTaller (Taller taller) 
-		throws RemoteException, GestorConexionException {
+	public Taller modificarTaller(Taller taller) throws RemoteException,
+			GestorConexionException {
 		try {
-			gestorConexionDAO.updateTaller(taller);
-			return gestorConexionDAO.getTallerById(taller.getId());
+			if (((taller.isActiu()) && (gestorConexionDAO
+					.getTallersByCapTaller(taller.getCapTaller(),
+							taller.getId()) == null))
+					|| !(taller.isActiu())) {
+				gestorConexionDAO.updateTaller(taller);
+				return gestorConexionDAO.getTallerById(taller.getId());
+			} else {
+				throw new GestorConexionException(
+						GestorConexionException.ERR_JEFETALLER_ASIGN);
+			}
 		} catch (DAOException e) {
-			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+			throw new GestorConexionException(GestorConexionException.ERR_DAO
+					+ e.getMessage());
 		}
 	}
 	

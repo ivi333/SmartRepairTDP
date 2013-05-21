@@ -22,7 +22,8 @@ public class GestorConexionException extends Exception {
 	public static final String ERR_USER_NOTFOUND = TDSLanguageUtils.getMessage("ERR_USER_NOTFOUND");
 	public static final String ERR_USER_REPARACIONES = TDSLanguageUtils.getMessage("ERR_USER_REPARACIONES");
 	public static final String ERR_USER_EXIST = TDSLanguageUtils.getMessage("ERR_USER_EXIST");
-	public static final String ERR_USER_REP_TALLER = TDSLanguageUtils.getMessage("ERR_USER_REP_TALLER");	
+	public static final String ERR_USER_REP_TALLER = TDSLanguageUtils.getMessage("ERR_USER_REP_TALLER");
+	public static final String ERR_JEFETALLER_ASIGN = TDSLanguageUtils.getMessage("ERR_CAPTALLER_ASIGN");
 
 
 

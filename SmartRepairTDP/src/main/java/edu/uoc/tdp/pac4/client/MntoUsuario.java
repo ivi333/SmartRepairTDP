@@ -26,7 +26,6 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -385,7 +384,7 @@ public class MntoUsuario extends JFrame {
 			cmbTaller.setSelectedIndex(0);
 
 		} catch (Exception e) {
-			showError(e.getMessage(),"GESCON.showmessage.error");
+			showError(e.getMessage(),"");
 		} 
 		
 	}
@@ -443,7 +442,7 @@ public class MntoUsuario extends JFrame {
 		try {
 			usuari = gestorConexion.getUsuariById(idUsuari);
 		} catch (Exception e) {
-			showError(e.getMessage(), "GESCON.showmessage.error");
+			showError(e.getMessage(), "");
 		} 
 	}
 	
@@ -452,7 +451,7 @@ public class MntoUsuario extends JFrame {
 			usuari = gestorConexion.getUsuariByNif(txtNif.getText().toUpperCase());
 			idUsuari = usuari.getId();
 		} catch (Exception e) {
-			showError(e.getMessage(), "GESCON.showmessage.error");
+			showError(e.getMessage(),"");
 		} 
 	}
 
@@ -523,15 +522,16 @@ public class MntoUsuario extends JFrame {
 				
 					try {
 						gestorConexion.altaUsuari(usuari);
+						showInfo(TDSLanguageUtils.getMessage("mntousuario.alta.ok"), lblTitle.getText());
 						this.accion = "MODIFICAR";
 						leerUsuariByNif();
 						cargarOperacion();
 						mostrarUsuari();					
 					} catch (Exception e) {
-						showError(e.getMessage(),this.lblTitle.getText());
+						showError(e.getMessage(),lblTitle.getText());
 					}
 				} else {
-					showInfo(msg, "GESCON.showmessage.valida");
+					showWarning(TDSLanguageUtils.getMessage(msg), lblTitle.getText());
 				}
 				
 				
@@ -547,20 +547,24 @@ public class MntoUsuario extends JFrame {
 				if (msg.equals("")) {
 					try {
 						gestorConexion.modificarUsuari(usuari);
+						showInfo(TDSLanguageUtils.getMessage("mntousuario.modif.ok"), lblTitle.getText());
 						leerUsuariById();
 						mostrarUsuari();
 					} catch (Exception e) {
-						showError(e.getMessage(), this.lblTitle.getText());
+						showError(e.getMessage(),lblTitle.getText());
 					}
 				} else {
-					showInfo(msg, "GESCON.showmessage.valida");
+					showWarning(TDSLanguageUtils.getMessage(msg), lblTitle.getText());
 				}
 			} else {
-				if (JOptionPane.showConfirmDialog(this, "Realmente desea salir de Hola Swing?", "Confirmar salida", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {					
+				if (JOptionPane.showConfirmDialog(this, 
+						TDSLanguageUtils.getMessage("mntousuario.confimar.desactivar") + " " + usuari.getUsuari(), 
+						TDSLanguageUtils.getMessage("mntousuario.atencion"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {					
 					try {					
 						gestorConexion.disableUser(usuari.getId());
+						showInfo(TDSLanguageUtils.getMessage("mntousuario.baja.ok"), lblTitle.getText());
 					} catch (Exception e ) {
-						showError(e.getMessage(), this.lblTitle.getText());
+						showError(e.getMessage(),lblTitle.getText());
 					}				
 				}
 				leerUsuariById();
@@ -599,7 +603,8 @@ public class MntoUsuario extends JFrame {
 			return "mntousuario.valida.password";
 		if (!(new String(txtPassword.getPassword()).equals(new String(txtRepeatPass.getPassword()))))
 			return "mntousuario.valida.repeatpass";
-		
+		if (listPerfil.getSelectedValues().length == 0)
+			return "mntousuario.valida.perfil";
 		for (Object perfil : listPerfil.getSelectedValues())
 			if (perfil.toString().equals(PerfilUsuari.Administrador.toString())) {
 				if (cmbTaller.getSelectedIndex() != 0) {
@@ -614,18 +619,18 @@ public class MntoUsuario extends JFrame {
 		return msg;
 	}
 	
-	private void showError (String message, String title){		
-		String txtTitle;		
-		txtTitle = TDSLanguageUtils.getMessage(title);
-		showMessage (message, txtTitle,JOptionPane.ERROR_MESSAGE);
+	private void showError (String message, String title){
+		String titulo = TDSLanguageUtils.getMessage("GESCON.showmessage.error") + " - " +title; 
+		showMessage (message, titulo, JOptionPane.ERROR_MESSAGE);
 	}
 	
-	private void showInfo (String message, String title){
-		String txtMessage;
-		String txtTitle;		
-		txtMessage = TDSLanguageUtils.getMessage(message);
-		txtTitle = TDSLanguageUtils.getMessage(title);
-		showMessage (txtMessage, txtTitle,JOptionPane.INFORMATION_MESSAGE);
+	private void showWarning (String message, String title) {
+		String titulo = TDSLanguageUtils.getMessage("GESCON.showmessage.aviso") + " - " + title;
+		showMessage(message, titulo, JOptionPane.WARNING_MESSAGE);
+	}
+	
+	private void showInfo (String message, String title){		
+		showMessage (message, title, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	private void showMessage (String message, String title, int messageType) {

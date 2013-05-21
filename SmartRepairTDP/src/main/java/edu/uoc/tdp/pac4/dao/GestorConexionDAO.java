@@ -2,6 +2,7 @@ package edu.uoc.tdp.pac4.dao;
 
 import java.util.List;
 
+import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.exception.DAOException;
@@ -38,13 +39,24 @@ public interface GestorConexionDAO {
 			throws DAOException;	
 	
 	public void altaUsuari (Usuari usuari)
-		throws DAOException;	
+		throws DAOException;
 	
 	public void modificarUsuari (Usuari usuari)
 		throws DAOException;
 
 	public void changePassword (Usuari usuari, String password)
 		throws DAOException;
+	
+	
+	public Mecanic getMecanicById (int idMecanic)
+		throws DAOException;
+	
+	public void altaMecanic (Mecanic mecanic)
+		throws DAOException;
+	
+	public void disableMecanic (int id) throws DAOException;
+	
+	public void enableMecanic (int id) throws DAOException;
 	
 	public Taller getTallerById(int id) throws DAOException;
 	
@@ -54,6 +66,12 @@ public interface GestorConexionDAO {
 
 	public List<Taller> getTallersByFilter(String id, String cif,
 			String adreca, String capacitat, String idCapTaller)
+			throws DAOException;
+	
+	public Taller getTallersByCapTaller (int idUsuari)
+		throws DAOException;
+	
+	public Taller getTallersByCapTaller (int idUsuari, int idTaller)
 			throws DAOException;
 	
 	public void altaTaller (Taller taller) throws DAOException;
