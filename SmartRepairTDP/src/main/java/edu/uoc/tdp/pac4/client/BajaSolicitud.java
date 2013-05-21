@@ -26,15 +26,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.JTextComponent;
 
 import edu.uoc.tdp.pac4.beans.Client;
+import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Solicitud;
+import edu.uoc.tdp.pac4.beans.TipusReparacio;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class BajaSolicitud extends JDialog {
-	private static int port = 1099;
-	 private final static String urlRMIAdmin =new String("rmi://localhost/GestorAdministracion");
 
 	private JPanel contentPane;
 	private JLabel lblNSolicitud;
@@ -60,7 +60,9 @@ public class BajaSolicitud extends JDialog {
 	private JButton btnConsulta;
 	private JLabel lblEstado;
 	private JLabel lblEstadoInfo;
-	JLabel lblInfofechafin ;
+	private JLabel lblInfofechafin ;
+	private JLabel lblComentarioF;
+	private JTextArea txtAreaComentarioF;
 	private boolean bEstadoPendiente=false;
 	private static GestorAdministracionInterface conexionRemota;
 	
@@ -78,26 +80,10 @@ public class BajaSolicitud extends JDialog {
 		});
 	}
 
-	public static GestorAdministracionInterface getRemoto()
-			throws RemoteException, NotBoundException {
-		try {
-
-			if (conexionRemota == null) {
-
-				Registry registry = LocateRegistry.getRegistry(urlRMIAdmin,
-						port);
-				conexionRemota = (GestorAdministracionInterface) registry
-						.lookup("PAC4");
-
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return conexionRemota;
-	}
+	
 	
 	private void initialize() {
-		setSize(new Dimension(398, 485));
+		setSize(new Dimension(398, 526));
 	}
 
 	private void seleccionIdioma() {
@@ -106,18 +92,31 @@ public class BajaSolicitud extends JDialog {
 	}
 	
 	public BajaSolicitud() {
+		
 		try{
 			initialize();
+		
 			seleccionIdioma();
 			CargarControles();
 		}catch(Exception ex)
 		{
 			ex.printStackTrace();
 		}
-		
 	}
 
 	
+	public BajaSolicitud(GestorAdministracionInterface remoto) {
+		try{
+			initialize();
+			conexionRemota=remoto;
+			seleccionIdioma();
+			CargarControles();
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+	}
+
 	private void CargarControles()
   {
     setTitle(TDSLanguageUtils.getMessage("solicitud.baja.titulo"));
@@ -174,11 +173,11 @@ public class BajaSolicitud extends JDialog {
 	
 	lblComentario = new JLabel();
 	lblComentario.setText(TDSLanguageUtils.getMessage("solicitud.lbl.comentarios"));
-	lblComentario.setBounds(33, 271, 89, 14);
+	lblComentario.setBounds(26, 252, 89, 14);
 	contentPane.add(lblComentario);
 	
 	 textAreaComentario = new JTextArea();
-	textAreaComentario.setBounds(132, 271, 212, 76);
+	textAreaComentario.setBounds(132, 252, 212, 61);
 	contentPane.add(textAreaComentario);
 	
 	contentPane.add(getBtnAceptar());
@@ -227,17 +226,46 @@ public class BajaSolicitud extends JDialog {
 	lblInfofechafin = new JLabel();
 	lblInfofechafin.setBounds(135, 227, 134, 14);
 	contentPane.add(lblInfofechafin);
+	
+	 lblComentarioF = new JLabel("New label");
+	lblComentarioF.setBounds(26, 334, 211, 14);
+	lblComentarioF.setText(TDSLanguageUtils.getMessage("solicitud.lbl.comentario.fac"));
+	
+	contentPane.add(lblComentarioF);
+	
+	txtAreaComentarioF = new JTextArea();
+	txtAreaComentarioF.setBounds(145, 359, 199, 71);
+	contentPane.add(txtAreaComentarioF);
 }
 	private JButton getBtnFacturar()
 	{
 		if (btnFacturar == null) {
 			btnFacturar = new JButton();
 			btnFacturar.setForeground(new Color(0, 128, 0));
-			btnFacturar.setBounds(new Rectangle(145, 417, 89, 23));
+			btnFacturar.setBounds(new Rectangle(178, 458, 89, 23));
 			btnFacturar.setText(TDSLanguageUtils.getMessage("solicitud.btn.facturar"));
 			btnFacturar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if (ImputValues().equals("")) {	
+						if(!txtAreaComentarioF.getText().toString().trim().equals(""))
+						{
+							getFacturar();
+							String title = TDSLanguageUtils
+									.getMessage("solicitud.baja.titulo");
+							String strMsg = TDSLanguageUtils
+									.getMessage("solicitud.msg.facturacion");
+							MuestraOk(strMsg, title);
+							dispose();
+						}
+						else
+						{
+							String title = TDSLanguageUtils
+									.getMessage("solicitud.baja.titulo");
+							String strMsg = TDSLanguageUtils
+									.getMessage("solicitud.msg.falta.fac");
+							LeerError(strMsg, title);
+						}
+						
 					}else
 					{
 						String title = TDSLanguageUtils
@@ -252,14 +280,31 @@ public class BajaSolicitud extends JDialog {
 		}
 			return btnFacturar;
 	}
+	
+	private void getFacturar()
+	{ Solicitud sol = new Solicitud();
+	
+		try{
+			
+			sol.setComentaris(textAreaComentario.getText());
+			sol.setFinalitzada(true);
+			sol.setNumsol(Integer.valueOf(txtNumSol.getText()));
+			String txtFactura=txtAreaComentarioF.getText().toString();
+			int value=conexionRemota.getFacturarSolicitud(sol,txtFactura);
+			
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+	}
 
 	private JButton getBtnAceptar()
 	{
 		if (btnAceptar == null) {
 			btnAceptar = new JButton();
 			btnAceptar.setForeground(new Color(0, 0, 255));
-			btnAceptar.setBounds(new Rectangle(33, 417, 89, 23));
-			btnAceptar.setText(TDSLanguageUtils.getMessage("solicitud.btn.aceptar"));
+			btnAceptar.setBounds(new Rectangle(33, 458, 127, 23));
+			btnAceptar.setText(TDSLanguageUtils.getMessage("solicitud.btn.baja"));
 			btnAceptar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
@@ -292,6 +337,7 @@ public class BajaSolicitud extends JDialog {
 			
 		return btnAceptar;
 	}
+	
 	private String ImputValues() {
 		String strResult = "";
 		try {
@@ -311,7 +357,7 @@ public class BajaSolicitud extends JDialog {
 	{if (btnCerrar == null) {
 		btnCerrar = new JButton();
 		btnCerrar.setForeground(Color.RED);
-		btnCerrar.setBounds(new Rectangle(255, 417, 89, 23));
+		btnCerrar.setBounds(new Rectangle(277, 458, 89, 23));
 		btnCerrar.setText(TDSLanguageUtils.getMessage("solicitud.btn.cerrar"));
 		btnCerrar.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -360,7 +406,7 @@ public class BajaSolicitud extends JDialog {
 	{
 		try{
 			int numsol=Integer.valueOf(txtNumSol.getText().toString());
-			Solicitud sol=getRemoto().getConsultarSolicitud(numsol);
+			Solicitud sol=conexionRemota.getConsultarSolicitud(numsol);
 		
 			if(sol!=null)
 			{
@@ -369,7 +415,7 @@ public class BajaSolicitud extends JDialog {
 				
 				textAreaComentario.setText(sol.getComentaris());
 				String NIF = String.valueOf(sol.getClient());
-				Client client = getRemoto().getDadeClient(NIF);
+				Client client = conexionRemota.getDadeClient(NIF);
 				
 				if (client != null) {
 				
@@ -397,18 +443,27 @@ public class BajaSolicitud extends JDialog {
 					
 					lblInfofechafin.setText(dia+"/"+mes+"/" +anyo);
 				}
+				int numreparacio=sol.getNumreparacio();
 				
-				bEstadoPendiente=false;
-				if(sol.isFinalitzada()){
-				lblEstadoInfo.setText("Finalizado");
-				lblEstadoInfo.setForeground(Color.red);
-				bEstadoPendiente=false;
+				Reparacio r= conexionRemota.getReparacionByCodeReparacion(numreparacio);
+				String strEstado="";
+				if(r!=null){
+				if(!r.getAssignada() && !sol.isFinalitzada())
+				{
+					strEstado= TipusReparacio.EnEspera.toString();
+					lblEstadoInfo.setText(strEstado);
 				}
-				if(sol.isPendent())
-				{bEstadoPendiente=true;
-					lblEstadoInfo.setText("Pendiente");
-				    lblEstadoInfo.setForeground(Color.GREEN);
+				if(!r.getAcceptada() && !r.getAssignada())
+				{
+					strEstado= TipusReparacio.EnCurs.toString();
+					lblEstadoInfo.setText(strEstado);
 				}
+				
+				}
+				//EnCurs, EnEspera, Rebudes,Finalitzades, 
+				//acceptada boolean NOT NULL DEFAULT false,
+				 //assignada boolean NOT NULL DEFAULT false,
+				
 			}
 			else
 			{

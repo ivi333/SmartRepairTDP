@@ -51,4 +51,9 @@ public interface  GestorAdministracionDAO {
 	public int getNuevoSolicitud(Solicitud solicitud)throws DAOException;
 	
 	public Solicitud getConsultarSolicitud(int numsol)throws DAOException;
+	
+	public Reparacio getReparacionByCodeReparacion(int numreparacio)throws DAOException;
+
+	public int getFacturarSolicitud(Solicitud solicitud, String txtFactura)throws DAOException;
+
 }

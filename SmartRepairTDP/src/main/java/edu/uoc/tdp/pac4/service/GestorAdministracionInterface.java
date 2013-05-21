@@ -49,6 +49,10 @@ public int getNuevoSolicitud(Solicitud solicitud)throws RemoteException;
 public Solicitud getConsultarSolicitud(int numsol)throws RemoteException;
 
 public int getActualizarSolicitud(Solicitud sol)throws RemoteException;
+
+public Reparacio getReparacionByCodeReparacion(int numreparacio)throws RemoteException;
+
+public int getFacturarSolicitud(Solicitud sol, String txtFactura)throws RemoteException;
 }
 
 

@@ -319,4 +319,40 @@ public class GestorAdministracionImpl extends
 		return -2;
 		
 	}
+
+	public Reparacio getReparacionByCodeReparacion(int numreparacio)
+			throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			e.printStackTrace();
+		}
+		try {
+			return gestorAdministracionDAO.getReparacionByCodeReparacion(numreparacio);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public int getFacturarSolicitud(Solicitud solicitud, String txtFactura)
+			throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			e.printStackTrace();
+		}
+		try {
+			return gestorAdministracionDAO.getFacturarSolicitud(solicitud,txtFactura);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -2;
+	}
 }
