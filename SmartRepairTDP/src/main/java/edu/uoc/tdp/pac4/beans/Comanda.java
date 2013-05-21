@@ -32,6 +32,11 @@ public class Comanda implements java.io.Serializable {
 	}
 
 
+	public Comanda() {
+		// TODO Auto-generated constructor stub
+	}
+
+
 	public int getNumcom() {
 		return numcom;
 	}
