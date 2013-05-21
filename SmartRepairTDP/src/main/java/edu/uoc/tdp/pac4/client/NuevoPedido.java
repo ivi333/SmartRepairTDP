@@ -91,23 +91,19 @@ public class NuevoPedido extends JDialog {
 			ex.printStackTrace();
 		}
 	}
-	public static GestorAdministracionInterface getRemoto()
-			throws RemoteException, NotBoundException {
+	public NuevoPedido(GestorAdministracionInterface conexion) {
 		try {
-
-			if (conexionRemota == null) {
-
-				Registry registry = LocateRegistry.getRegistry(urlRMIAdmin,
-						port);
-				conexionRemota = (GestorAdministracionInterface) registry
-						.lookup("PAC4");
-
-			}
+			seleccionIdioma();
+			initialize();
+			conexionRemota=conexion;
+			CargarControles();
+			CargarCmbProveedores();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return conexionRemota;
 	}
+
+	
 
 	
 
@@ -297,7 +293,7 @@ public class NuevoPedido extends JDialog {
 	{
 		try{
 			ClearControles();
-			Peca p=getRemoto().getPiezaByCode(codigoPieza);
+			Peca p=conexionRemota.getPiezaByCode(codigoPieza);
 			
 			if(p!=null)
 			{
@@ -325,7 +321,7 @@ public class NuevoPedido extends JDialog {
 			cbPieza=null;
 			cmbPieza.removeAllItems();
 			cbPieza = new ArrayList<ItemCombo>();
-			ListPeca=getRemoto().getPiezaByCodeProveedor(codigoProv);
+			ListPeca=conexionRemota.getPiezaByCodeProveedor(codigoProv);
 			
 			for (int i = 0; i < ListPeca.size(); i++) {
 				cbPieza.add(new ItemCombo(i, ListPeca.get(i).getDescripcio(),
@@ -345,7 +341,7 @@ public class NuevoPedido extends JDialog {
 		try {
 			cbProveedor = null;
 			cbProveedor = new ArrayList<ItemCombo>();
-			ListProveedor = getRemoto().getProveedores();
+			ListProveedor = conexionRemota.getProveedores();
 		
 
 			for (int i = 0; i < ListProveedor.size(); i++) {
@@ -423,14 +419,14 @@ public class NuevoPedido extends JDialog {
 			java.sql.Date dateAlta = new java.sql.Date(dt.getTime());
 
 			comanda.setDataalta(dateAlta);
-			comanda.setEstat(true);
+			comanda.setEstat(false);
 			comanda.setIdcaptaller(IDTALLER);
 
 			//comanda.setOrdrereparacio(0);
-			comanda.setTipusreparacio(false);
+			comanda.setTipusreparacio(true);
 			comanda.setCantidad(Integer.valueOf(txtStock.getText()));
 			
-			getRemoto().getNuevoPedido(comanda);
+			conexionRemota.getNuevoPedido(comanda);
 		}catch(Exception ex)
 		{
 			ex.printStackTrace();

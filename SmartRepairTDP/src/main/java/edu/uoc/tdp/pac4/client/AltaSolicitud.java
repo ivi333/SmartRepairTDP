@@ -92,6 +92,17 @@ public class AltaSolicitud extends JDialog {
 
 	}
 	
+	public AltaSolicitud(GestorAdministracionInterface remoto) {
+		try {seleccionIdioma();
+		initialize();
+		conexionRemota=remoto;
+		CargarControles();
+
+	} catch (Exception ex) {
+		ex.printStackTrace();
+	}
+	}
+
 	private void initialize() {
 		setSize(new Dimension(469, 426));
 	}
@@ -101,24 +112,7 @@ public class AltaSolicitud extends JDialog {
 		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
 	}
 	
-	public static GestorAdministracionInterface getRemoto() throws RemoteException, NotBoundException {
-	       try{
-	    	   
-	    	   
-		   if(conexionRemota == null) {
-	           
-			   Registry registry = LocateRegistry.getRegistry(urlRMIAdmin,
-						port);
-				conexionRemota = (GestorAdministracionInterface) registry
-						.lookup("PAC4");
-	           
-		   }
-	       }catch(Exception ex)
-	       {
-	    	   ex.printStackTrace();
-	       }
-	        return conexionRemota;
-	    }
+
 	
 	public void CargarControles() {
 		setTitle(TDSLanguageUtils.getMessage("solicitud.new.titulo"));
@@ -294,12 +288,12 @@ public class AltaSolicitud extends JDialog {
 				java.sql.Date datafinalitzacio = new java.sql.Date(dt1.getTime());
 				sol.setDatafinalitzacio(datafinalitzacio);
 				
-				if(getRemoto().getNuevoSolicitud(sol)==1)
+				if(conexionRemota.getNuevoSolicitud(sol)==1)
 				{  String tittle =  TDSLanguageUtils.getMessage("solicitud.new.titulo");
 					MuestraOk( TDSLanguageUtils.getMessage("cliente.msg.ok"), tittle);
-					dispose();
-				}
 					
+				}
+				dispose();
 			}
 			else
 			{
@@ -407,7 +401,7 @@ public class AltaSolicitud extends JDialog {
 
 	private void getCargarClienteByNIF(String strNIF) {
 		try {
-			Client client=getRemoto().getDadeClient(strNIF);
+			Client client=conexionRemota.getDadeClient(strNIF);
 			if (client != null)
 					{
 				lblInfoModelo.setText(client.getModel().toString().trim());
@@ -432,7 +426,7 @@ public class AltaSolicitud extends JDialog {
 		String strResult = "";
 		try {
 			isOkCLiente = false;
-			boolean bMsg = getRemoto().getExistCliente(strNIF);
+			boolean bMsg = conexionRemota.getExistCliente(strNIF);
 			if (bMsg) {
 				strResult = TDSLanguageUtils
 						.getMessage("cliente.msg.cliente.existe");

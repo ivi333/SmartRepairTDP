@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -46,8 +47,6 @@ import javax.swing.JComboBox;
 import java.awt.Color;
 
 public class AltaCliente extends JDialog {
-	private static int port = 1099;
-	 private final static String urlRMIAdmin = new String("rmi://localhost/GestorAdministracion");
 	private JPanel contentPanel;
 	private JLabel lblCliente;
 	private JLabel lblNif;
@@ -126,24 +125,18 @@ public class AltaCliente extends JDialog {
 		});
 	}
 
-	public static GestorAdministracionInterface getRemoto()
+/*	public  GestorAdministracionInterface conexionRemota
 			throws RemoteException, NotBoundException {
 		try {
-
+				
 			if (conexionRemota == null) {
-
-				Registry registry = LocateRegistry.getRegistry(urlRMIAdmin,
-						port);
-				conexionRemota = (GestorAdministracionInterface) registry
-						.lookup("PAC4");
-
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		return conexionRemota;
 	}
-
+*/
 	public AltaCliente() {
 		try {
 
@@ -157,13 +150,16 @@ public class AltaCliente extends JDialog {
 		}
 	}
 
-	public AltaCliente(String tipo) {
+	public AltaCliente(String tipo,GestorAdministracionInterface remoto) {
 		try {
 			NEW_UPD = tipo;
 			seleccionIdioma();
+			
+			conexionRemota=remoto;
+			
 			initialize();
 			CargarControles();
-		CargarCmbMarca();
+		   CargarCmbMarca();
 			CargarCmbAseg();
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -578,7 +574,7 @@ public class AltaCliente extends JDialog {
 
 	private void getCargarClienteByNIF(String strNIF) {
 		try {
-			Client client = getRemoto().getDadeClient(strNIF);
+			Client client = conexionRemota.getDadeClient(strNIF);
 			if (client != null) {
 				txtID.setText(String.valueOf(client.getNumClient()));
 				txtID.setEnabled(false);
@@ -643,7 +639,7 @@ public class AltaCliente extends JDialog {
 		String strResult = "";
 		try {
 			isOkCLiente = false;
-			boolean bMsg = getRemoto().getExistCliente(strNIF);
+			boolean bMsg = conexionRemota.getExistCliente(strNIF);
 			if (bMsg) {
 				strResult = TDSLanguageUtils
 						.getMessage("cliente.msg.cliente.existe");
@@ -665,7 +661,7 @@ public class AltaCliente extends JDialog {
 		try {
 			cbMarca = null;
 			cbMarca = new ArrayList<ItemCombo>();
-			ListMarca = getRemoto().getMarcas();
+			ListMarca = conexionRemota.getMarcas();
 		//	cmbMarca.insertItemAt("", 0);
 
 			for (int i = 0; i < ListMarca.size(); i++) {
@@ -690,7 +686,7 @@ public class AltaCliente extends JDialog {
 		try {
 			cbAseguradora = null;
 			cbAseguradora = new ArrayList<ItemCombo>();
-			ListAseg = getRemoto().getAseguradoras();
+			ListAseg = conexionRemota.getAseguradoras();
 			//cmbAseguradora.insertItemAt("", 0);
 
 			for (int i = 0; i < ListAseg.size(); i++) {
@@ -718,11 +714,11 @@ public class AltaCliente extends JDialog {
 			if (ImputValues().equals("")) {
 				if (NEW_UPD.equals("NEW"))
 				{
-				getRemoto().getNewClient(getObjectClient());
+				conexionRemota.getNewClient(getObjectClient());
 				
 				}
 				if (NEW_UPD.equals("UPD"))
-					getRemoto().getUpdClient(getObjectClient());
+					conexionRemota.getUpdClient(getObjectClient());
 				
 			} else {
 				strResult = ImputValues();

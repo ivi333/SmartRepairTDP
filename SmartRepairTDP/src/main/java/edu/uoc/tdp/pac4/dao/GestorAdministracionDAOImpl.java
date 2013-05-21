@@ -577,7 +577,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 				sol.setNumreparacio(rs.getInt("numreparacio"));
 				sol.setPendent(rs.getBoolean("pendent"));
 				sol.setFinalitzada(rs.getBoolean("finalitzada"));
-				sol.setNumpoliza(rs.getString("numpoliza"));
+				//sol.setNumpoliza(rs.getString("numpoliza"));
 				
 			}
 		}catch(Exception ex)
@@ -698,7 +698,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 				+ " inner join stockpeca on stockpeca.codipeca=peca.codipeca "
 				+ " left join proveidor on  comanda.idproveidor=proveidor.idproveidor "
 				+ " left join  taller on comanda.idcaptaller=taller.id "
-				+ " where comanda.estat=true and comanda.tipusreparacio=false ";
+				+ " where comanda.estat=false and comanda.tipusreparacio=true ";
 		try {
 			 pstmt = cPostgressDB.createPrepareStatment(sql,ResultSet.CONCUR_READ_ONLY);
 			
@@ -756,8 +756,10 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			prep.setBoolean(5, solicitud.isPendent());
 			prep.setBoolean(6, solicitud.isFinalitzada());
 
-			prep.executeQuery();
+			if(prep.executeUpdate()>0)
+			{
 			iResult = 1;
+			}
 			return iResult;
 		} catch (SQLException e) {
 			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
@@ -821,10 +823,10 @@ public Solicitud getConsultarSolicitud(int numsol) throws DAOException {
 		PreparedStatement prep =null;
 		try{
 			 
-			String sql = " update   client solicitud "
+			String sql = " update  solicitud SET "
 					+ " comentaris=?, datafinalitzacio=? "
 					
-					+" WHERE numsol=?";
+					+" WHERE numsol =?";
 
 			 prep = cPostgressDB.createPrepareStatment(sql,
 					ResultSet.CONCUR_UPDATABLE);
@@ -833,7 +835,7 @@ public Solicitud getConsultarSolicitud(int numsol) throws DAOException {
 			prep.setDate(2, (java.sql.Date) sol.getDatafinalitzacio());
 			prep.setInt(3,sol.getNumsol());
 			
-			int i=prep.executeUpdate();
+			int ii=prep.executeUpdate();
 			
 			iResult = 1;
 			return iResult;
@@ -852,6 +854,111 @@ public Solicitud getConsultarSolicitud(int numsol) throws DAOException {
 		}
 	}
 
+	/***************************** Obtener reparacion********************************************************/
+	public Reparacio getReparacionByCodeReparacion(int numreparacio)throws DAOException {
+		Reparacio r= null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			String sql = "SELECT * FROM reparacio  where ordrereparacio =?";
+			pstmt = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+			pstmt.setInt(1, numreparacio);
+			 rs = pstmt.executeQuery();
+			while (rs.next()) {
+				 r= new Reparacio();
+				r.setOrdreReparacio(rs.getInt("ordrereparacio"));
+				r.setCapTaller(rs.getInt("captaller"));
+				r.setAcceptada(rs.getBoolean("acceptada"));
+				r.setIdMecanic(rs.getInt("idmecanic"));
+				r.setAssignada(rs.getBoolean("assignada"));
+				r.setComptador(rs.getDouble("comptador"));
+				r.setObservacions(rs.getString("observacions"));
+				r.setNumCom(rs.getInt("numcom"));
+				r.setDataAssignacio(rs.getDate("dataassignacio"));
+				r.setDataInici(rs.getDate("datainici"));
+				r.setDataFi(rs.getDate("datafi"));
+
+			}
+			
+			return r;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (pstmt!=null) {
+				try {pstmt.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+			}
+
+	/***************************** Generar una factura atravez de la solicitud********************************************************/
+	public int getFacturarSolicitud(Solicitud solicitud, String txtFactura)throws DAOException {
+		int iResult = -1;
+		PreparedStatement prep =null;
+		ResultSet rs = null;
+		try{
+			 
+			String sql = " update   solicitud SET  "
+					+ " comentaris=?, finalitzada=? "
+					+" WHERE numsol=?";
+			 prep = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+			prep.setString(1, solicitud.getComentaris().toString().trim());
+			prep.setBoolean(2, solicitud.isFinalitzada());
+			prep.setInt(3,solicitud.getNumsol());
+			int i=prep.executeUpdate();
+
+			sql=" select reparacio.numcom  from solicitud "
+				+" left join  reparacio on solicitud.numreparacio=reparacio.ordrereparacio"
+				+" left join comanda on reparacio.numcom=comanda.numcom"
+				+" where numsol=?";
+			 prep = cPostgressDB.createPrepareStatment(sql,
+						ResultSet.CONCUR_UPDATABLE);
+			 prep.setInt(1,solicitud.getNumsol());
+			 
+			 rs = prep.executeQuery();
+			while (rs.next()) {
+				String sql1 = " insert into  albara "
+						+ "( comantaris, comanda ) " + " VALUES (?,?)";
+				prep = cPostgressDB.createPrepareStatment(sql1,
+						ResultSet.CONCUR_UPDATABLE);
+				
+				prep.setString(1, txtFactura);
+				prep.setInt(2, rs.getInt("numcom"));
+				
+				if(prep.executeUpdate()>0)
+				{
+				iResult = 1;
+				}
+			}
+			
+			iResult = 1;
+			return iResult;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);
+		} finally {
+			if (prep != null) {
+				try {
+					prep.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED,
+							e.getMessage(), e);
+				}
+			}
+
+		}
+	}
+	
 
 
 

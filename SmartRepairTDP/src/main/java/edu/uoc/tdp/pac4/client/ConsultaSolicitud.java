@@ -37,8 +37,7 @@ import java.awt.event.KeyEvent;
 
 public class ConsultaSolicitud extends JDialog {
 
-	private static int port = 1099;
-	 private final static String urlRMIAdmin = new String("rmi://localhost/GestorAdministracion");
+
 private JPanel contentPane;
 	private JLabel lblNSolicitud;
 	private JLabel lblInfoSolicitud;
@@ -85,35 +84,32 @@ private JPanel contentPane;
 		});
 	}
 
-	public static GestorAdministracionInterface getRemoto()
-			throws RemoteException, NotBoundException {
-		try {
-
-			if (conexionRemota == null) {
-
-				Registry registry = LocateRegistry.getRegistry(urlRMIAdmin,
-						port);
-				conexionRemota = (GestorAdministracionInterface) registry
-						.lookup("PAC4");
-
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return conexionRemota;
-	}
 	
 	public ConsultaSolicitud() {
 		try{
 			initialize();
+		
 			seleccionIdioma();
+			
 			CargarControles();
 		}catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 	
-    private void initialize() {
+    public ConsultaSolicitud(GestorAdministracionInterface remoto) {
+    	try{
+			initialize();
+			conexionRemota=remoto;
+			seleccionIdioma();
+			
+			CargarControles();
+		}catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private void initialize() {
 		setSize(new Dimension(398, 441));
 	}
 	
@@ -292,7 +288,7 @@ private JPanel contentPane;
 	{
 		try{
 			int numsol=Integer.valueOf(txtNumSol.getText().toString());
-			Solicitud sol=getRemoto().getConsultarSolicitud(numsol);
+			Solicitud sol=conexionRemota.getConsultarSolicitud(numsol);
 		
 			if(sol!=null)
 			{
@@ -301,7 +297,7 @@ private JPanel contentPane;
 				
 				textAreaComentario.setText(sol.getComentaris());
 				String NIF = String.valueOf(sol.getClient());
-				Client client = getRemoto().getDadeClient(NIF);
+				Client client = conexionRemota.getDadeClient(NIF);
 				
 				if (client != null) {
 				
@@ -389,7 +385,7 @@ private JPanel contentPane;
 							java.sql.Date datafinalitzacio = new java.sql.Date(dt1.getTime());
 							sol.setDatafinalitzacio(datafinalitzacio);
 							
-							getRemoto().getActualizarSolicitud(sol);
+							conexionRemota.getActualizarSolicitud(sol);
 							String tittle =  TDSLanguageUtils.getMessage("solicitud.upd.titulo");
 							MuestraOk( TDSLanguageUtils.getMessage("cliente.msg.ok"), tittle);
 							dispose();

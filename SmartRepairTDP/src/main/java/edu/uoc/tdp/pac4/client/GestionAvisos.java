@@ -75,6 +75,24 @@ public class GestionAvisos extends JDialog {
 
 	}
 
+	public GestionAvisos(GestorAdministracionInterface remoto) {
+		getContentPane().setLayout(null);
+
+		try {
+			seleccionIdioma();
+			initialize();
+			conexionRemota=remoto; 
+			CargarControles();
+
+			GruposTableModel gtm = (GruposTableModel) jTableResultado
+					.getModel();
+			gtm.addRow(new Object[] { "", "", "", "" });
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
 	private void initialize() {
 		setSize(new Dimension(912, 250));
 	}
@@ -84,23 +102,7 @@ public class GestionAvisos extends JDialog {
 		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
 	}
 	
-	public static GestorAdministracionInterface getRemoto()
-			throws RemoteException, NotBoundException {
-		try {
 
-			if (conexionRemota == null) {
-
-				Registry registry = LocateRegistry.getRegistry(urlRMIAdmin,
-						port);
-				conexionRemota = (GestorAdministracionInterface) registry
-						.lookup("PAC4");
-
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return conexionRemota;
-	}
 	private void LeerError(String paramString1, String paramString2) {
 		JOptionPane.showMessageDialog(this, paramString1, paramString2, 0);
 	}
@@ -188,7 +190,7 @@ public class GestionAvisos extends JDialog {
 
 			
 			GruposTableModel gtm = (GruposTableModel) jTableResultado.getModel();
-			ArrayList<Reparacio>Reparaciones = getRemoto().getReparaciones();
+			ArrayList<Reparacio>Reparaciones = conexionRemota.getReparaciones();
 			
 			if(Reparaciones!=null)
 			{
@@ -198,7 +200,7 @@ public class GestionAvisos extends JDialog {
 				Solicitud sol =new Solicitud();
 				Client cli=new Client();
 				
-				sol=getRemoto().getSolicitudByCodeReparacion(r.getOrdreReparacio());
+				sol=conexionRemota.getSolicitudByCodeReparacion(r.getOrdreReparacio());
 				int numsol=0;
 				boolean bPendiente=false;
 				boolean bFinalizada=false;
@@ -211,7 +213,7 @@ public class GestionAvisos extends JDialog {
 					bPendiente=	sol.isPendent();
 					bFinalizada=sol.isFinalitzada();
 					
-					cli=getRemoto().getDadeClient(String.valueOf(sol.getClient()));
+					cli=conexionRemota.getDadeClient(String.valueOf(sol.getClient()));
 					if(cli!=null)
 					{
 						nom=cli.getNom();

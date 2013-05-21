@@ -59,6 +59,21 @@ public class RecepcionPedidos extends JDialog {
 		try {
 			initialize();
 			seleccionIdioma();
+			
+			CargarControles();
+			GruposTableModel gtm = (GruposTableModel) jTableResultado
+					.getModel();
+			gtm.addRow(new Object[] { "", "", "", "", "" });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public RecepcionPedidos(GestorAdministracionInterface remoto) {
+		try {
+			initialize();
+			seleccionIdioma();
+			conexionRemota=remoto;
 			CargarControles();
 			GruposTableModel gtm = (GruposTableModel) jTableResultado
 					.getModel();
@@ -115,7 +130,7 @@ public class RecepcionPedidos extends JDialog {
 			btnPedidoNuevo.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 
-					NuevoPedido nuevoPedido = new NuevoPedido();
+					NuevoPedido nuevoPedido = new NuevoPedido(conexionRemota);
 					nuevoPedido.setSize(390, 388);
 					final Toolkit toolkitpedidos = Toolkit.getDefaultToolkit();
 					final Dimension screenSizetoolkitpedidos = toolkitpedidos
@@ -166,23 +181,7 @@ public class RecepcionPedidos extends JDialog {
 		return btnGestionar;
 	}
 	
-	public static GestorAdministracionInterface getRemoto()
-			throws RemoteException, NotBoundException {
-		try {
-
-			if (conexionRemota == null) {
-
-				Registry registry = LocateRegistry.getRegistry(urlRMIAdmin,
-						port);
-				conexionRemota = (GestorAdministracionInterface) registry
-						.lookup("PAC4");
-
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return conexionRemota;
-	}
+	
 	
 	private void getCargarPedidos() {
 		
@@ -194,7 +193,7 @@ public class RecepcionPedidos extends JDialog {
 			    }
 			}
 
-			ArrayList<String> list = getRemoto().getCargarPedidos();
+			ArrayList<String> list = conexionRemota.getCargarPedidos();
 
 			Iterator<String> it = list.iterator();
 			GruposTableModel gtm = (GruposTableModel) jTableResultado.getModel();

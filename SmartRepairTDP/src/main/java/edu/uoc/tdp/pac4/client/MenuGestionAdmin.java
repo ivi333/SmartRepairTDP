@@ -6,6 +6,11 @@ import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Locale;
 
 import javax.swing.JDialog;
@@ -16,10 +21,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
+import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 
 public class MenuGestionAdmin extends JFrame {
-
+	private static int port = 1099;
+	 private final static String urlRMIAdmin = new String("rmi://localhost/GestorAdministracion");
+	
 	private static final long serialVersionUID = 1L;
+	private static GestorAdministracionInterface conexionRemota;
 	private JScrollPane jScrollPanel;
 	private JMenu jMenuClientes;
 	private JMenu jMenuSoli;
@@ -56,9 +65,20 @@ public class MenuGestionAdmin extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
+	public static GestorAdministracionInterface getRemoto()
+			throws RemoteException, NotBoundException {
+		try {
+		
+			if (conexionRemota == null) {
+				Registry registry = LocateRegistry.getRegistry("localhost",
+						port);
+				conexionRemota = (GestorAdministracionInterface) Naming.lookup(urlRMIAdmin);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return conexionRemota;
+	}
 	public MenuGestionAdmin() {
 		try {
 			seleccionIdioma();
@@ -209,7 +229,7 @@ public class MenuGestionAdmin extends JFrame {
 			final int y; 
 			switch (Option) {
 			case Frm_NewCliente:
-				AltaCliente altaCliente = new AltaCliente("NEW");
+				AltaCliente altaCliente = new AltaCliente("NEW",getRemoto());
 				altaCliente.setSize(422, 781);
 				final Toolkit toolkit = Toolkit.getDefaultToolkit();
 				final Dimension screenSize = toolkit.getScreenSize();
@@ -220,7 +240,7 @@ public class MenuGestionAdmin extends JFrame {
 				
 				break;
 			case Frm_UpdCliente:
-				AltaCliente updCliente = new AltaCliente("UPD");
+				AltaCliente updCliente = new AltaCliente("UPD",getRemoto());
 				updCliente.setSize(422, 781);
 				final Toolkit toolkit1 = Toolkit.getDefaultToolkit();
 				final Dimension screenSize1 = toolkit1.getScreenSize();
@@ -231,20 +251,38 @@ public class MenuGestionAdmin extends JFrame {
 				break;
 			case Frm_NewSol:
 
-				AltaSolicitud NewSol = new AltaSolicitud();
+				AltaSolicitud NewSol = new AltaSolicitud(getRemoto());
+				NewSol.setSize(469, 426);
+				final Toolkit toolkit2 = Toolkit.getDefaultToolkit();
+				final Dimension screenSize2 = toolkit2.getScreenSize();
+				x = (screenSize2.width - NewSol.getWidth()) / 2;
+				y= (screenSize2.height - NewSol.getHeight()) / 2;
+				NewSol.setLocation(x, y);
 				NewSol.setVisible(true);
 				break;
 			case Frm_UpdSol:
 
-				ConsultaSolicitud UpdSol = new ConsultaSolicitud();
+				ConsultaSolicitud UpdSol = new ConsultaSolicitud(getRemoto());
+				UpdSol.setSize(398, 441);
+				final Toolkit toolkit3 = Toolkit.getDefaultToolkit();
+				final Dimension screenSize3 = toolkit3.getScreenSize();
+				x = (screenSize3.width - UpdSol.getWidth()) / 2;
+				y= (screenSize3.height - UpdSol.getHeight()) / 2;
+				UpdSol.setLocation(x, y);
 				UpdSol.setVisible(true);
 				break;
 			case Frm_DeleteSol:
-				BajaSolicitud bajaSol = new BajaSolicitud();
+				BajaSolicitud bajaSol = new BajaSolicitud(getRemoto());
+				bajaSol.setSize(398, 526);
+				final Toolkit toolkit4 = Toolkit.getDefaultToolkit();
+				final Dimension screenSize4= toolkit4.getScreenSize();
+				x = (screenSize4.width - bajaSol.getWidth()) / 2;
+				y= (screenSize4.height - bajaSol.getHeight()) / 2;
+				bajaSol.setLocation(x, y);
 				bajaSol.setVisible(true);
 				break;
 			case Frm_Gestion:
-				GestionAvisos gestion = new GestionAvisos();
+				GestionAvisos gestion = new GestionAvisos(getRemoto());
 				gestion.setSize(912,250);
 				final Toolkit toolkitgestion = Toolkit.getDefaultToolkit();
 				final Dimension screenSizetoolkitgestion = toolkitgestion
@@ -255,7 +293,7 @@ public class MenuGestionAdmin extends JFrame {
 				gestion.setVisible(true);
 				break;
 			case Frm_Recepcion:
-				RecepcionPedidos pedidos = new RecepcionPedidos();
+				RecepcionPedidos pedidos = new RecepcionPedidos(getRemoto());
 				pedidos.setSize(762, 250);
 				final Toolkit toolkitpedidos = Toolkit.getDefaultToolkit();
 				final Dimension screenSizetoolkitpedidos = toolkitpedidos
