@@ -2,6 +2,7 @@ package edu.uoc.tdp.pac4.service;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.List;
 
 import edu.uoc.tdp.pac4.beans.DetallPeca;
@@ -153,6 +154,34 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 			GestorReparacionException {
 		try {
 			return gestorReparacionDAO.getUsuario(idUsuario);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public void setPiezaComanda(int codigoPieza, int idUsuario, int ordenReparacion, int cantidad)
+			throws RemoteException, GestorReparacionException {
+		try {
+			gestorReparacionDAO.setPiezaComanda(codigoPieza, idUsuario, ordenReparacion, cantidad);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+		
+	}
+
+	public void deletePiezaComanda(int codigoPieza, int ordenReparacion)
+			throws RemoteException, GestorReparacionException {
+		try {
+			gestorReparacionDAO.deletePiezaComanda(codigoPieza, ordenReparacion);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public List<DetallPeca> getDetallePiezasTaller(int idTaller, String nombrePieza)
+			throws RemoteException, GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getDetallePiezasTaller(idTaller, nombrePieza);
 		} catch (DAOException e) {
 			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
 		}

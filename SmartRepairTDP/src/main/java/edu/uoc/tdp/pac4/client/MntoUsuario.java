@@ -25,14 +25,19 @@ import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
 import javax.swing.JPasswordField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 
 public class MntoUsuario extends JFrame {
 
@@ -52,6 +57,8 @@ public class MntoUsuario extends JFrame {
 	private int idUsuari;
 	private Usuari usuari;
 	private ArrayList<ItemCombo> cbTaller;
+	private ArrayList<ItemCombo> cbPerfil;
+	
 	private JTextField txtId;
 	private JTextField txtNif;
 	private JTextField txtFalta;
@@ -62,10 +69,10 @@ public class MntoUsuario extends JFrame {
 	private JTextField txtApellidos;
 	private JPasswordField txtPassword;
 	private JPasswordField txtRepeatPass;
-	private JComboBox cmbPerfil;
 	private JCheckBox chkActivo;
 	private JComboBox cmbTaller;
 	private JLabel lblTitle;
+	private JList listPerfil;
 	
 	/**
 	 * Launch the application.
@@ -94,9 +101,10 @@ public class MntoUsuario extends JFrame {
 		this.gestorConexion = gestorConexion;
 		this.accion = "NUEVO";
 		initialize ();
-		initCmbPerfil();		
 		initCmbTaller();
+		initListPerfil ();
 		cargarOperacion ();
+		
 	}
 	
 	public MntoUsuario (GestorConexionInterface gestorConexion, String accion, int idUsuari){
@@ -104,11 +112,12 @@ public class MntoUsuario extends JFrame {
 		this.accion = accion;
 		this.idUsuari = idUsuari;
 		initialize ();
-		initCmbPerfil ();
 		initCmbTaller ();
+		initListPerfil ();
 		leerUsuariById();
 		cargarOperacion ();
 		mostrarUsuari();
+		
 	}
 	
 	private void initialize (){
@@ -236,7 +245,6 @@ public class MntoUsuario extends JFrame {
 		txtUsuario = new JTextField();
 		txtUsuario.setColumns(10);
 		
-		cmbPerfil = new JComboBox();
 		
 		chkActivo = new JCheckBox(TDSLanguageUtils.getMessage("mntousuario.label.activo"));
 		
@@ -251,102 +259,97 @@ public class MntoUsuario extends JFrame {
 		txtPassword = new JPasswordField();
 		
 		txtRepeatPass = new JPasswordField();
+		
+		JScrollPane scrollPane = new JScrollPane();
 		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
 		gl_panel_1.setHorizontalGroup(
 			gl_panel_1.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_1.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
-							.addComponent(lblPerfil)
-							.addComponent(lblUsuario)
-							.addComponent(lblFalta)
-							.addComponent(lblFmodificacion)
-							.addComponent(lblFbaja))
-						.addComponent(lblId, GroupLayout.PREFERRED_SIZE, 109, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
-					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_panel_1.createSequentialGroup()
-							.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
-								.addComponent(lblTaller)
-								.addComponent(lblApellidos)
+							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
+									.addComponent(lblFalta)
+									.addComponent(lblFmodificacion)
+									.addComponent(lblFbaja))
+								.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
+									.addComponent(lblPerfil)
+									.addComponent(lblUsuario))
+								.addComponent(lblId, GroupLayout.PREFERRED_SIZE, 109, GroupLayout.PREFERRED_SIZE))
+							.addGap(44)
+							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_panel_1.createSequentialGroup()
 									.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
-										.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 										.addComponent(txtUsuario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(cmbPerfil, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(chkActivo))
-									.addGap(84)
+										.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 176, GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(ComponentPlacement.RELATED, 210, Short.MAX_VALUE)
 									.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
 										.addComponent(lblNif, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
 										.addComponent(lblPassword)
-										.addComponent(lblRepeatpass)))
-								.addComponent(lblNombre))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING, false)
-								.addComponent(txtRepeatPass)
-								.addComponent(txtNombre)
-								.addComponent(txtApellidos)
-								.addComponent(cmbTaller, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(txtPassword)
-								.addComponent(txtNif, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)))
-						.addComponent(txtFalta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtFmodificacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtFbaja, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(49, Short.MAX_VALUE))
+										.addComponent(lblRepeatpass)
+										.addComponent(lblNombre)
+										.addComponent(lblApellidos)))
+								.addComponent(txtFbaja, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(txtFmodificacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(txtFalta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(chkActivo)))
+						.addComponent(lblTaller))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING, false)
+						.addComponent(txtRepeatPass)
+						.addComponent(txtNombre)
+						.addComponent(txtApellidos)
+						.addComponent(cmbTaller, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtPassword)
+						.addComponent(txtNif, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(127, Short.MAX_VALUE))
 		);
 		gl_panel_1.setVerticalGroup(
 			gl_panel_1.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panel_1.createSequentialGroup()
-					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel_1.createSequentialGroup()
-							.addContainerGap(149, Short.MAX_VALUE)
-							.addComponent(cmbPerfil, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addGap(14))
-						.addGroup(gl_panel_1.createSequentialGroup()
-							.addGap(23)
-							.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
-								.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-									.addComponent(txtNif, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addComponent(lblNif))
-								.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-									.addComponent(lblId)
-									.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING, false)
-								.addGroup(gl_panel_1.createSequentialGroup()
-									.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-										.addComponent(txtNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(lblNombre))
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-										.addComponent(txtApellidos, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(lblApellidos))
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-										.addComponent(cmbTaller, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(lblTaller))
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-										.addComponent(lblUsuario)
-										.addComponent(txtPassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(lblPassword))
-									.addPreferredGap(ComponentPlacement.RELATED))
-								.addGroup(gl_panel_1.createSequentialGroup()
-									.addComponent(txtUsuario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addGap(14)))
-							.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblPerfil)
-								.addComponent(txtRepeatPass, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblRepeatpass))
-							.addGap(15)))
+					.addGap(23)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+							.addComponent(txtNif, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(lblNif))
+						.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblId)
+							.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+						.addComponent(txtNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblNombre))
 					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+						.addComponent(txtApellidos, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblApellidos))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+						.addComponent(cmbTaller, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblTaller))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblUsuario)
+							.addComponent(txtPassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(lblPassword))
+						.addComponent(txtUsuario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblPerfil)
+							.addComponent(txtRepeatPass, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(lblRepeatpass))
+						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE))
+					.addGap(14)
 					.addComponent(chkActivo)
-					.addGap(18)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblFalta)
 						.addComponent(txtFalta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(10)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblFmodificacion)
 						.addComponent(txtFmodificacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -354,19 +357,18 @@ public class MntoUsuario extends JFrame {
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblFbaja)
 						.addComponent(txtFbaja, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(63, Short.MAX_VALUE))
+					.addGap(24))
 		);
 		gl_panel_1.linkSize(SwingConstants.HORIZONTAL, new Component[] {lblNif, lblNombre, lblApellidos, lblTaller, lblPassword, lblRepeatpass});
 		gl_panel_1.linkSize(SwingConstants.HORIZONTAL, new Component[] {lblId, lblUsuario, lblPerfil, lblFalta, lblFmodificacion, lblFbaja});
+		
+		listPerfil = new JList();
+		scrollPane.setViewportView(listPerfil);
+		
+				listPerfil.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		panel_1.setLayout(gl_panel_1);
 		setResizable(false);
 		pack();
-	}
-	
-	private void initCmbPerfil () {
-		for (PerfilUsuari t : PerfilUsuari.values()) {
-			cmbPerfil.addItem(t.toString());
-		}
 	}
 	
 	private void initCmbTaller () {
@@ -404,7 +406,7 @@ public class MntoUsuario extends JFrame {
 			txtPassword.setEnabled(true);
 			txtRepeatPass.setEnabled(true);
 			cmbTaller.setEnabled(true);
-			cmbPerfil.setEnabled(true);
+			listPerfil.setEnabled(true);
 			chkActivo.setEnabled(true);
 		} else if (this.accion.equalsIgnoreCase("MODIFICAR")) {
 			lblTitle.setText(TDSLanguageUtils.getMessage("mntousuario.titulo.modificacion"));
@@ -415,7 +417,7 @@ public class MntoUsuario extends JFrame {
 			txtPassword.setEnabled(true);
 			txtRepeatPass.setEnabled(true);
 			cmbTaller.setEnabled(true);
-			cmbPerfil.setEnabled(false);
+			listPerfil.setEnabled(false);
 			if (usuari.isActiu())
 				chkActivo.setEnabled(false);
 		} else if (this.accion.equalsIgnoreCase("BAJA")){
@@ -427,7 +429,7 @@ public class MntoUsuario extends JFrame {
 			txtPassword.setEnabled(false);
 			txtRepeatPass.setEnabled(false);
 			cmbTaller.setEnabled(false);
-			cmbPerfil.setEnabled(false);
+			listPerfil.setEnabled(false);
 			if (usuari.isActiu()) {
 				chkActivo.setEnabled(true);
 			} else {
@@ -454,20 +456,37 @@ public class MntoUsuario extends JFrame {
 		} 
 	}
 
-	private void mostrarUsuari () {
+	private void mostrarUsuari () {				
+		int perfiles[] = new int[PerfilUsuari.values().length];		 
+		int indPerfiles = 0;
+		
 		txtId.setText(String.valueOf(usuari.getId()));
 		txtNif.setText(usuari.getNif());
 		txtNombre.setText(usuari.getNom());
 		txtApellidos.setText(usuari.getCognoms());
 		chkActivo.setSelected(usuari.isActiu());
-		cmbPerfil.setSelectedItem(usuari.getPerfil());
-		System.out.println("Usuari.getTaller = " + usuari.getTaller());
+
 		for (int i = 0; i < cbTaller.size(); i ++) {
 			if (Integer.valueOf(cbTaller.get(i).getAux()) == usuari.getTaller()) {
 				cmbTaller.setSelectedIndex(Integer.valueOf(cbTaller.get(i).getAux()));
 				break;
 			}
 		}
+		
+		
+		for (int i=0; i < perfiles.length; i++)
+			perfiles[i] = -1;
+		
+		for (String perfil : usuari.getPerfil().split(";"))			
+			for (int i=0; i < cbPerfil.size(); i++ ) {
+				if (cbPerfil.get(i).getValue().equals(perfil)){
+					perfiles[indPerfiles] = Integer.valueOf(cbPerfil.get(i).getAux());
+					indPerfiles ++;
+					break;
+				}
+		}
+		
+		listPerfil.setSelectedIndices(perfiles);
 		
 		cmbTaller.setSelectedItem(usuari.getTaller());
 		txtUsuario.setText(usuari.getUsuari());
@@ -485,13 +504,17 @@ public class MntoUsuario extends JFrame {
 	
 	private void actions (ActionEvent action){
 		if (action.getActionCommand().toString().equalsIgnoreCase("BTN_ACEPTAR")){
+			String perfil = new String();
+			for (int i=0; i<listPerfil.getSelectedValues().length; i++)
+				perfil += listPerfil.getSelectedValues()[i] + ";";
+			
 			if (this.accion.equals("NUEVO")){
 				Usuari usuari = new Usuari ();
 				usuari.setNif(txtNif.getText().toUpperCase());
 				usuari.setNom(txtNombre.getText());
 				usuari.setCognoms(txtApellidos.getText());
 				usuari.setUsuari(txtUsuario.getText().toUpperCase());
-				usuari.setPerfil(cmbPerfil.getSelectedItem().toString());
+				usuari.setPerfil(perfil);
 				usuari.setContrasenya(new String(txtPassword.getPassword()));
 				usuari.setActiu(chkActivo.isSelected());
 				usuari.setTaller(Integer.valueOf(cbTaller.get(cmbTaller.getSelectedIndex()).getAux()));
@@ -517,7 +540,6 @@ public class MntoUsuario extends JFrame {
 				usuari.setNom(txtNombre.getText());
 				usuari.setCognoms(txtApellidos.getText());
 				usuari.setUsuari(txtUsuario.getText().toUpperCase());
-				usuari.setPerfil(cmbPerfil.getSelectedItem().toString());
 				usuari.setContrasenya(new String(txtPassword.getPassword()));
 				usuari.setActiu(chkActivo.isSelected());
 				usuari.setTaller(Integer.valueOf(cbTaller.get(cmbTaller.getSelectedIndex()).getAux()));
@@ -534,14 +556,17 @@ public class MntoUsuario extends JFrame {
 					showInfo(msg, "GESCON.showmessage.valida");
 				}
 			} else {
-				try {
-					gestorConexion.disableUser(usuari.getId());
-					leerUsuariById();
-					cargarOperacion();
-					mostrarUsuari();					
-				} catch (Exception e ) {
-					showError(e.getMessage(), this.lblTitle.getText());
+				if (JOptionPane.showConfirmDialog(this, "Realmente desea salir de Hola Swing?", "Confirmar salida", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {					
+					try {					
+						gestorConexion.disableUser(usuari.getId());
+					} catch (Exception e ) {
+						showError(e.getMessage(), this.lblTitle.getText());
+					}				
 				}
+				leerUsuariById();
+				cargarOperacion();
+				mostrarUsuari();					
+
 			}
 		} else if (action.getActionCommand().toString().equals("BTN_CANCELAR")) {
 			if (usuari != null) {
@@ -574,12 +599,18 @@ public class MntoUsuario extends JFrame {
 			return "mntousuario.valida.password";
 		if (!(new String(txtPassword.getPassword()).equals(new String(txtRepeatPass.getPassword()))))
 			return "mntousuario.valida.repeatpass";
-		if (!(cmbPerfil.getSelectedItem().equals(PerfilUsuari.Administrador.toString()))) {
-			if ((chkActivo.isSelected()) && (cmbTaller.getSelectedIndex()==0))
+		
+		for (Object perfil : listPerfil.getSelectedValues())
+			if (perfil.toString().equals(PerfilUsuari.Administrador.toString())) {
+				if (cmbTaller.getSelectedIndex() != 0) {
+					return "mntousuario.valida.asigntalleradmin";
+				}
+				if (listPerfil.getSelectedValues().length > 1) {
+					return "mntousuario.valida.talleradmin";
+				}
+			} else if (chkActivo.isSelected() && cmbTaller.getSelectedIndex()==0) {
 				return "mntousuario.valida.taller";
-		} else if (cmbTaller.getSelectedIndex() != 0) {
-			return "mntousuario.valida.talleradmin";
-		}
+			}
 		return msg;
 	}
 	
@@ -599,5 +630,22 @@ public class MntoUsuario extends JFrame {
 	
 	private void showMessage (String message, String title, int messageType) {
 		JOptionPane.showMessageDialog(this, message, title, messageType);
+	}
+	
+	private void initListPerfil (){		
+		cbPerfil = new ArrayList<ItemCombo>();
+		DefaultListModel listModel = new DefaultListModel();
+		
+		for (int i = 0; i < PerfilUsuari.values().length; i ++) {
+			cbPerfil.add(new ItemCombo(i,PerfilUsuari.values()[i].name(),String.valueOf(i)));
+		}
+
+		
+		for (ItemCombo cb : cbPerfil) {
+			listModel.add(Integer.valueOf(cb.getAux()), cb.getValue());
+		}
+		
+		listPerfil.setModel(listModel);
+		
 	}
 }

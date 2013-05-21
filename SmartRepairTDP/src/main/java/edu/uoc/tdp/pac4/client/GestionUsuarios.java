@@ -47,6 +47,7 @@ import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.exception.GestorConexionException;
 import edu.uoc.tdp.pac4.service.GestorConexionInterface;
 import javax.swing.ListSelectionModel;
+import javax.swing.JSeparator;
 
 
 public class GestionUsuarios extends JFrame {
@@ -117,7 +118,7 @@ public class GestionUsuarios extends JFrame {
 	private void initialize (){
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle(TDSLanguageUtils.getMessage("gestionusuarios.titulo.ventana"));
-		setBounds(100, 100, 850, 450);
+		setBounds(100, 100, 950, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -186,27 +187,35 @@ public class GestionUsuarios extends JFrame {
 				
 			}
 		});
+		
+		JSeparator separator = new JSeparator();
 		GroupLayout gl_panel_2 = new GroupLayout(panel_2);
 		gl_panel_2.setHorizontalGroup(
 			gl_panel_2.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_2.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnNuevo)
-						.addComponent(btnModificar))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnBaja)
-					.addContainerGap(567, Short.MAX_VALUE))
+						.addGroup(gl_panel_2.createSequentialGroup()
+							.addComponent(btnModificar)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(btnBaja)
+							.addContainerGap(690, Short.MAX_VALUE))
+						.addComponent(separator, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 938, Short.MAX_VALUE)
+						.addGroup(gl_panel_2.createSequentialGroup()
+							.addComponent(btnNuevo)
+							.addContainerGap(814, Short.MAX_VALUE))))
 		);
 		gl_panel_2.setVerticalGroup(
 			gl_panel_2.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panel_2.createSequentialGroup()
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGap(6)
 					.addComponent(btnNuevo)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnModificar, Alignment.TRAILING)
-						.addComponent(btnBaja, Alignment.TRAILING))
+					.addComponent(separator, GroupLayout.PREFERRED_SIZE, 13, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnModificar)
+						.addComponent(btnBaja))
 					.addContainerGap())
 		);
 		panel_2.setLayout(gl_panel_2);
@@ -374,10 +383,8 @@ public class GestionUsuarios extends JFrame {
 			winMantenimiento("x");
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_MODIFICAR")){
 			winMantenimiento("MODIFICAR");
-			System.out.println ("MODIFICAR " + tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_BAJA")){
 			winMantenimiento("BAJA");
-			System.out.println ("BAJA = " + tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_SALIR")){
 			dispose ();
 		}

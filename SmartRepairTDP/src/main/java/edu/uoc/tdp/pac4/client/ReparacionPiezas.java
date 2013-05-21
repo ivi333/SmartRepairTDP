@@ -50,13 +50,19 @@ public class ReparacionPiezas extends JFrame {
 	private JTable table2;
 	private JTextField txtAnadir;
 	
-	private static final Object columnNames[] = {
+	private static final Object columnNames1[] = {
 		"C\u00F3digo", "Descripci\u00F3n", "Unidades", "Stock", "Precio"
 	};
+	private static final Object columnNames2[] = {
+		"C\u00F3digo", "Descripci\u00F3n", "Stock", "Precio"
+	};
+	
 	private JScrollPane scrollPanel1;
 	private JScrollPane scrollPanel2;
 	private JButton btnBuscarPieza;
 	private JButton btnAnadir;
+	
+	private Usuari usuario;
 
 	/**
 	 * Launch the application.
@@ -79,6 +85,7 @@ public class ReparacionPiezas extends JFrame {
 	 */
 	public ReparacionPiezas(GestorReparacionInterface conexion, final Usuari usuario, final int ordenReparacion) {
 		this.gestorReparacion = conexion;
+		this.usuario = usuario;
 		
 		setTitle("Piezas reparación");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -116,10 +123,34 @@ public class ReparacionPiezas extends JFrame {
 		txtObservaciones = new JTextArea();
 		
 		btnAnadir = new JButton("Añadir");
-		
-		JButton btnEditar = new JButton("Editar");
+		btnAnadir.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					gestorReparacion.setPiezaComanda(getIdPiezaSeleccionada(table2), usuario.getId(), ordenReparacion, Integer.getInteger(txtAnadir.getText()));
+					table1.setModel(getTableModel(ordenReparacion, ""));
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
+				} catch (GestorReparacionException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				try {
+					gestorReparacion.deletePiezaComanda(getIdPiezaSeleccionada(table1), ordenReparacion);
+					table1.setModel(getTableModel(ordenReparacion, ""));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (GestorReparacionException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		
 		btnBuscarPieza = new JButton("Buscar pieza");
 		btnBuscarPieza.addMouseListener(new MouseAdapter() {
@@ -177,28 +208,19 @@ public class ReparacionPiezas extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(btnRealizarPedido)
-							.addPreferredGap(ComponentPlacement.RELATED, 437, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 444, Short.MAX_VALUE)
 							.addComponent(btnAsignarMecanico)
 							.addGap(22)
 							.addComponent(btnSalir))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGap(69)
-									.addComponent(btnEditar)
-									.addPreferredGap(ComponentPlacement.RELATED)
+									.addGap(136)
 									.addComponent(btnEliminar)
 									.addGap(194)
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-										.addComponent(btnAnadir, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-										.addComponent(btnBuscarPieza, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+									.addComponent(btnBuscarPieza)
 									.addGap(18)
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-										.addGroup(gl_contentPane.createSequentialGroup()
-											.addComponent(txtAnadir, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(lblUnidades))
-										.addComponent(txtBuscarPieza, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE)))
+									.addComponent(txtBuscarPieza, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE))
 								.addComponent(lblObservaciones)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(lblOrdenReparacion)
@@ -216,12 +238,21 @@ public class ReparacionPiezas extends JFrame {
 									.addComponent(lblModelo)
 									.addPreferredGap(ComponentPlacement.UNRELATED)
 									.addComponent(txtModelo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-								.addComponent(lblPiezasReparacion, GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE)
-								.addComponent(txtObservaciones, GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE))
+								.addComponent(lblPiezasReparacion, GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE)
+								.addComponent(txtObservaciones, GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE))
 							.addGap(94))
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(scrollPanel1, GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(scrollPanel1, GroupLayout.PREFERRED_SIZE, 277, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(btnAnadir, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+									.addGap(16))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(txtAnadir, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(lblUnidades)
+									.addGap(18)))
 							.addComponent(scrollPanel2, GroupLayout.PREFERRED_SIZE, 336, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
@@ -244,32 +275,33 @@ public class ReparacionPiezas extends JFrame {
 					.addComponent(lblObservaciones)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(txtObservaciones, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPanel1, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)
-						.addComponent(scrollPanel2, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(scrollPanel2, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)
+								.addComponent(scrollPanel1, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(17)
+									.addComponent(btnEliminar))
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+									.addComponent(txtBuscarPieza, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addComponent(btnBuscarPieza)))
+							.addPreferredGap(ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(btnRealizarPedido)
+								.addComponent(btnAsignarMecanico)
+								.addComponent(btnSalir)))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(17)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(btnEditar)
-								.addComponent(btnEliminar)))
-						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(btnAnadir)
 							.addPreferredGap(ComponentPlacement.UNRELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(txtBuscarPieza, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnBuscarPieza))
-							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(btnAnadir)
 								.addComponent(txtAnadir, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblUnidades))))
-					.addPreferredGap(ComponentPlacement.RELATED, 11, GroupLayout.PREFERRED_SIZE)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnRealizarPedido)
-						.addComponent(btnAsignarMecanico)
-						.addComponent(btnSalir)))
+								.addComponent(lblUnidades))
+							.addGap(117))))
 		);
 		
 		table2 = new JTable();
@@ -285,23 +317,42 @@ public class ReparacionPiezas extends JFrame {
 	
 	private TableModel getTableModel (int ordenReparacion, String nombrePieza) throws RemoteException, GestorReparacionException  {
 		List<DetallPeca> list = null;
-		if (nombrePieza == "") {
-			list = gestorReparacion.getPiezasReparacion(ordenReparacion);
+		TableModel model = null;
+		if (ordenReparacion == -1){
+			list = gestorReparacion.getDetallePiezasTaller(usuario.getTaller(), nombrePieza);
+			Object rowData [][] = new Object [list.size()][4];
+			int z=0;
+			for (DetallPeca bean : list) {
+				rowData[z][0] = String.valueOf(bean.getCodiPeca());
+				rowData[z][1] = String.valueOf(bean.getDescipcio());
+				rowData[z][2] = String.valueOf(bean.getStock());
+				rowData[z][3] = String.valueOf(bean.getPvp());
+				z++;
+			}
+			model = new DefaultTableModel(rowData, columnNames2);
 		} else {
-			list = gestorReparacion.getDetallePiezas(nombrePieza);
+			list = gestorReparacion.getPiezasReparacion(ordenReparacion);
+			Object rowData [][] = new Object [list.size()][5];
+			int z=0;
+			for (DetallPeca bean : list) {
+				rowData[z][0] = String.valueOf(bean.getCodiPeca());
+				rowData[z][1] = String.valueOf(bean.getDescipcio());
+				rowData[z][2] = String.valueOf(bean.getCantidad());
+				rowData[z][3] = String.valueOf(bean.getStock());
+				rowData[z][4] = String.valueOf(bean.getPvp());
+				z++;
+			}
+			model = new DefaultTableModel(rowData, columnNames1);
 		}
-		Object rowData [][] = new Object [list.size()][5];
-		int z=0;
-		for (DetallPeca bean : list) {
-			rowData[z][0] = String.valueOf(bean.getCodiPeca());
-			rowData[z][1] = String.valueOf(bean.getDescipcio());
-			rowData[z][2] = String.valueOf(bean.getCantidad());
-			rowData[z][3] = String.valueOf(bean.getStock());
-			rowData[z][4] = String.valueOf(bean.getPvp());
-			z++;
-		}
-		TableModel model = new DefaultTableModel(rowData, columnNames);
 		return model;
+	}
+	
+	private int getIdPiezaSeleccionada (JTable tabla) throws RemoteException, GestorReparacionException {
+		if (tabla.getSelectedRow() >= 0) {
+			return Integer.parseInt(tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
+		} else {
+			return -1;
+		}
 	}
 	
 	private void initCampos(int ordenReparacion) {
@@ -317,7 +368,7 @@ public class ReparacionPiezas extends JFrame {
 			table1.setModel(getTableModel(datosReparacion.getOrdreReparacio(), ""));
 			
 			scrollPanel2.setViewportView(table2);
-			table2.setModel(getTableModel(-1, txtBuscarPieza.getText()));
+			table2.setModel(getTableModel(-1, ""));
 
 		} catch (RemoteException e) {
 			e.printStackTrace();

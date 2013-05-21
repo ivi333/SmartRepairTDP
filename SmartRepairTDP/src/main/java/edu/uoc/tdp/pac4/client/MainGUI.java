@@ -216,7 +216,7 @@ public class MainGUI extends JFrame {
 		} else if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.JefeTaller.toString())) {
 			mnNewMenu_2.setEnabled(true);
 			mnNewMenu_2.setVisible(true);
-		} else if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.Mecanic.toString())){
+		} else if (usuari.getPerfil().equalsIgnoreCase(PerfilUsuari.Mecanico.toString())){
 			mnNewMenu_2.setEnabled(true);
 			mnNewMenu_2.setVisible(true);
 		}
