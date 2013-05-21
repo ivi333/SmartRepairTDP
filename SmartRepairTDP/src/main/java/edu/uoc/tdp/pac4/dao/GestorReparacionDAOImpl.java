@@ -66,14 +66,17 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			 											  "where pec.descripcio like ";
 	public static final String QUERY_GET_USUARIO = "select id, taller, usuari, perfil, nif, nom, cognoms, contrasenya, actiu, dataAlta, dataModificacio, dataBaixa, reparacionsAssignades from usuari where id = ?";
 	public static final String QUERY_SET_PIEZA_COMANDA = "insert into comanda (estat,dataalta,codipeca,idcaptaller,idproveidor,ordrereparacio,tipusreparacio,cantidad) " +
-														 "(select false as estat, CURRENT_DATE as dataalta, ? as codipeca, " +
-														 "(select usu.id from usuari usu where taller = (select taller from usuari where id = ?) and perfil like '%JefeTaller%') as idcaptaller, " +
-														 "(select ppe.idproveidor from proveidorpeca ppe where idpeca = ? limit 1) as idproveidor, " +
-														 "? as ordrereparacio, false as tipusreparacio, ? as cantidad)";
+														 "(select ? as estat, CURRENT_DATE as dataalta, ? as codipeca, " +
+														 "(select id from usuari where perfil like '%JefeTaller%' and taller = ? limit 1) as idcaptaller, " +
+														 "(select idproveidor from proveidorpeca where idpeca = ? limit 1) as idproveidor, " +
+														 "? as ordrereparacio, true as tipusreparacio, ? as cantidad)";
 	public static final String QUERY_DELETE_PIEZA_COMANDA = "delete from comanda where codipeca = ? and ordrereparacio = ?";
 	public static final String QUERY_GET_DETALLE_PIEZA_REPARACION = "select pec.codipeca, pec.descripcio, sto.stock, 0, pec.pvp " +
 																    "from peca pec " + 
 																    "inner join stockpeca sto on pec.codipeca = sto.codipeca ";
+	public static final String QUERY_SET_DESCONTAR_STOCK = "update stockpeca set stock = stock-? where codipeca = ?";
+	public static final String QUERY_SET_REPARACION_ASIGNADA = "update reparacio set assignada = true, dataassignacio = CURRENT_DATE where ordrereparacio = ?";
+	public static final String QUERY_SET_REPARACION_ACEPTADA = "update reparacio set acceptada = true where ordrereparacio = ?";
 	
 	
 	
@@ -490,16 +493,17 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 	}
 
 
-	public void setPiezaComanda(int codigoPieza, int idUsuario, int ordenReparacion, int cantidad)
+	public void setPiezaComanda(boolean estado, int codigoPieza, int idTaller, int ordenReparacion, int cantidad)
 			throws DAOException {
 		getConnectionDB();
 		PreparedStatement ps = createPrepareStatment(QUERY_SET_PIEZA_COMANDA, ResultSet.CONCUR_UPDATABLE);
 		try {
-			ps.setInt(1, codigoPieza);
-			ps.setInt(2, idUsuario);
-			ps.setInt(3, codigoPieza);
-			ps.setInt(4, ordenReparacion);
-			ps.setInt(5, cantidad);
+			ps.setBoolean(1, estado);
+			ps.setInt(2, codigoPieza);
+			ps.setInt(3, idTaller);
+			ps.setInt(4, codigoPieza);
+			ps.setInt(5, ordenReparacion);
+			ps.setInt(6, cantidad);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
@@ -567,5 +571,63 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			}
 		}
 	}
+
+
+	public void setDescontarStock(int codigoPieza, int cantidad) throws DAOException {
+		getConnectionDB();
+		PreparedStatement ps = createPrepareStatment(QUERY_SET_DESCONTAR_STOCK, ResultSet.CONCUR_UPDATABLE);
+		try {
+			ps.setInt(1, cantidad);
+			ps.setInt(2, codigoPieza);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+	public void setReparacionAceptada(int ordenReparacion) throws DAOException {
+		getConnectionDB();
+		PreparedStatement ps = createPrepareStatment(QUERY_SET_REPARACION_ACEPTADA, ResultSet.CONCUR_UPDATABLE);
+		try {
+			ps.setInt(1, ordenReparacion);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+	public void setReparacionAsignada(int ordenReparacion) throws DAOException {
+		getConnectionDB();
+		PreparedStatement ps = createPrepareStatment(QUERY_SET_REPARACION_ASIGNADA, ResultSet.CONCUR_UPDATABLE);
+		try {
+			ps.setInt(1, ordenReparacion);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+
 
 }

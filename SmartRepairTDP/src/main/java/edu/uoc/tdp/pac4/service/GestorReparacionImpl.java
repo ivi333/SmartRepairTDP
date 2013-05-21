@@ -159,10 +159,10 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 		}
 	}
 
-	public void setPiezaComanda(int codigoPieza, int idUsuario, int ordenReparacion, int cantidad)
+	public void setPiezaComanda(boolean estado, int codigoPieza, int idTaller, int ordenReparacion, int cantidad)
 			throws RemoteException, GestorReparacionException {
 		try {
-			gestorReparacionDAO.setPiezaComanda(codigoPieza, idUsuario, ordenReparacion, cantidad);
+			gestorReparacionDAO.setPiezaComanda(estado, codigoPieza, idTaller, ordenReparacion, cantidad);
 		} catch (DAOException e) {
 			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
 		}
@@ -186,6 +186,35 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
 		}
 	}
+
+	public void setDescontarStock(int codigoPieza, int cantidad) throws RemoteException,
+			GestorReparacionException {
+		try {
+			gestorReparacionDAO.setDescontarStock(codigoPieza, cantidad);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+	
+	public void setReparacionAceptada(int ordenReparacion)
+			throws RemoteException, GestorReparacionException {
+		try {
+			gestorReparacionDAO.setReparacionAceptada(ordenReparacion);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public void setReparacionAsignada(int ordenReparacion)
+			throws RemoteException, GestorReparacionException {
+		try {
+			gestorReparacionDAO.setReparacionAsignada(ordenReparacion);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	
 
 	
 }

@@ -121,11 +121,11 @@ public interface GestorReparacionDAO {
 	
 	/**
 	 * Inserta una pieza a la comanda
-	 * @param codigoPieza, idUsuario, ordenReparacion, cantidad
+	 * @param estado, codigoPieza, idTaller, ordenReparacion, cantidad
 	 * @return
 	 * @throws GestorReparacionException
 	 */
-	public void setPiezaComanda(int codigoPieza, int idUsuario, int ordenReparacion, int cantidad)
+	public void setPiezaComanda(boolean estado, int codigoPieza, int idTaller, int ordenReparacion, int cantidad)
 			throws DAOException;
 	
 	/**
@@ -145,4 +145,29 @@ public interface GestorReparacionDAO {
 	 */
 	public List<DetallPeca> getDetallePiezasTaller(int idTaller, String nombrePieza) throws DAOException;
 	
+	/**
+	 * Descuenta stock de una pieza
+	 * @param codigoPieza, cantidad
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void setDescontarStock(int codigoPieza, int cantidad) throws DAOException;
+	
+	/**
+	 * Marca una reparación como aceptada
+	 * @param ordenReparacion
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void setReparacionAceptada(int ordenReparacion) throws DAOException;
+	
+	/**
+	 * Marca una reparación como asignada
+	 * @param ordenReparacion
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void setReparacionAsignada(int ordenReparacion) throws DAOException;
+	
+
 }

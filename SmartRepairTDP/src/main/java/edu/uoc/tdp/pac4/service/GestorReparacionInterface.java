@@ -124,11 +124,11 @@ public interface GestorReparacionInterface extends Remote{
 	
 	/**
 	 * Inserta una pieza a la comanda
-	 * @param codigoPieza, idUsuario, ordenReparacion, cantidad
+	 * @param estado, codigoPieza, idTaller, ordenReparacion, cantidad
 	 * @return
 	 * @throws GestorReparacionException
 	 */
-	public void setPiezaComanda(int codigoPieza, int idUsuario, int ordenReparacion, int cantidad)
+	public void setPiezaComanda(boolean estado, int codigoPieza, int idTaller, int ordenReparacion, int cantidad)
 			throws RemoteException, GestorReparacionException;
 	
 	/**
@@ -149,6 +149,31 @@ public interface GestorReparacionInterface extends Remote{
 	 */
 	public List<DetallPeca> getDetallePiezasTaller(int idTaller, String nombrePieza)
 			throws RemoteException, GestorReparacionException;
+	
+	/**
+	 * Descuenta stock de una pieza
+	 * @param codigoPieza, cantidad
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void setDescontarStock(int codigoPieza, int cantidad) throws RemoteException, GestorReparacionException;
+
+	/**
+	 * Marca una reparación como aceptada
+	 * @param ordenReparacion
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void setReparacionAceptada(int ordenReparacion) throws RemoteException, GestorReparacionException;
+	
+	/**
+	 * Marca una reparación como asignada
+	 * @param ordenReparacion
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void setReparacionAsignada(int ordenReparacion) throws RemoteException, GestorReparacionException;
+	
 }
 
 

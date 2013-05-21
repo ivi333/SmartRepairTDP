@@ -16,6 +16,10 @@ public class DetallPeca implements java.io.Serializable {
 		this.pvp = pvp;
 	}
 	
+	public DetallPeca() {
+		
+	}
+	
 	public int getCodiPeca() {
 		return codiPeca;
 	}

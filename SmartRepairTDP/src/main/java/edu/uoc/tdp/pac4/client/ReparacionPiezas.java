@@ -12,6 +12,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.JTextField;
@@ -30,6 +31,7 @@ import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JScrollPane;
@@ -48,7 +50,7 @@ public class ReparacionPiezas extends JFrame {
 	private JTextArea txtObservaciones;
 	private JTable table1;
 	private JTable table2;
-	private JTextField txtAnadir;
+	private JTextField txtAnadir = new JTextField();
 	
 	private static final Object columnNames1[] = {
 		"C\u00F3digo", "Descripci\u00F3n", "Unidades", "Stock", "Precio"
@@ -63,7 +65,10 @@ public class ReparacionPiezas extends JFrame {
 	private JButton btnAnadir;
 	
 	private Usuari usuario;
-
+	private int ordenReparacion;
+	
+	private List<DetallPeca> piezasSeleccionadas = new ArrayList<DetallPeca>() ;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -86,6 +91,7 @@ public class ReparacionPiezas extends JFrame {
 	public ReparacionPiezas(GestorReparacionInterface conexion, final Usuari usuario, final int ordenReparacion) {
 		this.gestorReparacion = conexion;
 		this.usuario = usuario;
+		this.ordenReparacion = ordenReparacion;
 		
 		setTitle("Piezas reparación");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -126,14 +132,7 @@ public class ReparacionPiezas extends JFrame {
 		btnAnadir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				try {
-					gestorReparacion.setPiezaComanda(getIdPiezaSeleccionada(table2), usuario.getId(), ordenReparacion, Integer.getInteger(txtAnadir.getText()));
-					table1.setModel(getTableModel(ordenReparacion, ""));
-				} catch (RemoteException e1) {
-					e1.printStackTrace();
-				} catch (GestorReparacionException e1) {
-					e1.printStackTrace();
-				}
+				anadirPieza();
 			}
 		});
 		
@@ -141,14 +140,7 @@ public class ReparacionPiezas extends JFrame {
 		btnEliminar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				try {
-					gestorReparacion.deletePiezaComanda(getIdPiezaSeleccionada(table1), ordenReparacion);
-					table1.setModel(getTableModel(ordenReparacion, ""));
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				} catch (GestorReparacionException e) {
-					e.printStackTrace();
-				}
+				eliminarPieza();
 			}
 		});
 		
@@ -170,6 +162,12 @@ public class ReparacionPiezas extends JFrame {
 		txtBuscarPieza.setColumns(10);
 		
 		JButton btnRealizarPedido = new JButton("Realizar pedido");
+		btnRealizarPedido.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+						realizarPedido();
+			}
+		});
 		
 		JButton btnAsignarMecanico = new JButton("Asignar mecánico");
 		btnAsignarMecanico.addMouseListener(new MouseAdapter() {
@@ -196,7 +194,6 @@ public class ReparacionPiezas extends JFrame {
 		
 		scrollPanel2 = new JScrollPane();
 		
-		txtAnadir = new JTextField();
 		txtAnadir.setColumns(10);
 		
 		JLabel lblUnidades = new JLabel("Unidades");
@@ -352,6 +349,140 @@ public class ReparacionPiezas extends JFrame {
 			return Integer.parseInt(tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
 		} else {
 			return -1;
+		}
+	}
+	
+	private String getDescPiezaSeleccionada () throws RemoteException, GestorReparacionException {
+		if (table2.getSelectedRow() >= 0) {
+			return table2.getValueAt(table2.getSelectedRow(), 1).toString();
+		} else {
+			return "";
+		}
+	}
+	
+	private int getStockPiezaSeleccionada () throws RemoteException, GestorReparacionException {
+		if (table2.getSelectedRow() >= 0) {
+			return Integer.parseInt(table2.getValueAt(table2.getSelectedRow(), 2).toString());
+		} else {
+			return -1;
+		}
+	}
+	
+	private double getPvpPiezaSeleccionada () throws RemoteException, GestorReparacionException {
+		if (table2.getSelectedRow() >= 0) {
+			return Double.parseDouble(table2.getValueAt(table2.getSelectedRow(), 3).toString());
+		} else {
+			return -1;
+		}
+	}
+	
+	private void anadirPieza() {
+		int idPiezaAnadir;
+		boolean piezaEncontrada = false;
+		try {
+			if (table2.getSelectedRowCount() == 1) {
+				if (!txtAnadir.getText().isEmpty()) {
+					int numPiezas = Integer.parseInt(txtAnadir.getText());
+					idPiezaAnadir = getIdPiezaSeleccionada(table2);
+					if (piezasSeleccionadas != null) {
+						for (int i=0; i<piezasSeleccionadas.size(); i++) {
+							if (piezasSeleccionadas.get(i).getCodiPeca() == idPiezaAnadir) {
+								piezasSeleccionadas.get(i).setCantidad(piezasSeleccionadas.get(i).getCantidad() + numPiezas);
+								piezaEncontrada = true;
+							}
+						}
+					}
+					if (!piezaEncontrada) {
+						
+						DetallPeca peca = new DetallPeca(idPiezaAnadir, getDescPiezaSeleccionada(), getStockPiezaSeleccionada(), numPiezas, getPvpPiezaSeleccionada());
+						piezasSeleccionadas.add(peca);
+					}
+					
+					Object rowData [][] = new Object [piezasSeleccionadas.size()][5];
+					int z=0;
+					for (DetallPeca bean : piezasSeleccionadas) {
+						rowData[z][0] = String.valueOf(bean.getCodiPeca());
+						rowData[z][1] = String.valueOf(bean.getDescipcio());
+						rowData[z][2] = String.valueOf(bean.getCantidad());
+						rowData[z][3] = String.valueOf(bean.getStock());
+						rowData[z][4] = String.valueOf(bean.getPvp());
+						z++;
+					}
+					TableModel model = new DefaultTableModel(rowData, columnNames1);
+					table1.setModel(model);
+				} else {
+					JOptionPane.showMessageDialog(reparacionGestion, "Debe indicar el número de piezas a añadir.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				
+			} else {
+				JOptionPane.showMessageDialog(reparacionGestion, "Debe seleccionar una fila para poder añadirla.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			
+		} catch (RemoteException e1) {
+			e1.printStackTrace();
+		} catch (GestorReparacionException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	private void eliminarPieza() {
+		
+			try {
+				if (table1.getSelectedRowCount() == 1) {
+					int idPieza;
+					idPieza = getIdPiezaSeleccionada(table1);
+					if (piezasSeleccionadas != null) {
+						for (int i=0; i<piezasSeleccionadas.size(); i++) {
+							if (piezasSeleccionadas.get(i).getCodiPeca() == idPieza) {
+								piezasSeleccionadas.remove(i);
+							}
+						}
+					}
+					Object rowData [][] = new Object [piezasSeleccionadas.size()][5];
+					int z=0;
+					for (DetallPeca bean : piezasSeleccionadas) {
+						rowData[z][0] = String.valueOf(bean.getCodiPeca());
+						rowData[z][1] = String.valueOf(bean.getDescipcio());
+						rowData[z][2] = String.valueOf(bean.getCantidad());
+						rowData[z][3] = String.valueOf(bean.getStock());
+						rowData[z][4] = String.valueOf(bean.getPvp());
+						z++;
+					}
+					TableModel model = new DefaultTableModel(rowData, columnNames1);
+					table1.setModel(model);
+			} else {
+				JOptionPane.showMessageDialog(reparacionGestion, "Debe seleccionar una fila para poder eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+				
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} catch (GestorReparacionException e) {
+				e.printStackTrace();
+			}	
+	}
+	
+	private void realizarPedido() {
+		try {
+			if (piezasSeleccionadas != null) {
+				for (int i=0; i<piezasSeleccionadas.size(); i++) {
+					DetallPeca pieza = piezasSeleccionadas.get(i);
+					boolean estado = false;
+					if (pieza.getCantidad() <= pieza.getStock()) {
+						estado = true;
+					}
+					gestorReparacion.setPiezaComanda(estado,pieza.getCodiPeca(), usuario.getTaller(), ordenReparacion, pieza.getCantidad());
+					if (estado == true) {
+						gestorReparacion.setDescontarStock(pieza.getCodiPeca(), pieza.getCantidad());
+					}
+				}
+				gestorReparacion.setReparacionAceptada(ordenReparacion);
+			} else {
+				JOptionPane.showMessageDialog(reparacionGestion, "Debe añadir piezas antes de realizar el pedido.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (RemoteException e1) {
+			e1.printStackTrace();
+		} catch (GestorReparacionException e1) {
+			e1.printStackTrace();
 		}
 	}
 	

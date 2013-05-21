@@ -16,14 +16,19 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import edu.uoc.tdp.pac4.beans.DetallReparacio;
+import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
+import java.util.List;
+
+import javax.swing.JScrollPane;
 
 public class ReparacionAsignarMecanico extends JFrame {
 
@@ -32,8 +37,6 @@ public class ReparacionAsignarMecanico extends JFrame {
 	private JTextField txtMatricula;
 	private JTextField txtMarca;
 	private JTextField txtModelo;
-	private JTable tblMecanicoAsignado;
-	private JTable tblMecanicos;
 	private JButton btnEliminar;
 	private JLabel lblMecanico;
 	private JTextField txtMecanico;
@@ -43,6 +46,17 @@ public class ReparacionAsignarMecanico extends JFrame {
 	
 	private static ReparacionGestion reparacionGestion;
 	private GestorReparacionInterface gestorReparacion;
+	private JTable table1;
+	private JTable table2;
+	private JScrollPane scrollPanel1;
+	private JScrollPane scrollPanel2;
+	
+	private static final Object columnNames1[] = {
+		"Id", "Nombre", "Apellidos"
+	};
+	private static final Object columnNames2[] = {
+		"Id", "Nombre", "Apellidos", "Reparaciones asignadas"
+	};
 
 	/**
 	 * Launch the application.
@@ -103,34 +117,6 @@ public class ReparacionAsignarMecanico extends JFrame {
 		JLabel lblMecanicos = new JLabel("Mecánicos");
 		lblMecanicos.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		tblMecanicoAsignado = new JTable();
-		tblMecanicoAsignado.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-			},
-			new String[] {
-				"New column", "New column"
-			}
-		));
-		
-		tblMecanicos = new JTable();
-		tblMecanicos.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-			},
-			new String[] {
-				"New column", "New column"
-			}
-		));
-		
 		btnEliminar = new JButton("Eliminar");
 		
 		lblMecanico = new JLabel("Mecánico");
@@ -149,54 +135,57 @@ public class ReparacionAsignarMecanico extends JFrame {
 				dispose();
 			}
 		});
+		
+		scrollPanel1 = new JScrollPane();
+		
+		scrollPanel2 = new JScrollPane();
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+							.addComponent(lblAsignacionMecanico, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addGroup(gl_contentPane.createSequentialGroup()
+								.addComponent(lblOrdenReparacion)
+								.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(txtOrdenReparacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addGap(18)
+								.addComponent(lblMatricula)
+								.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(txtMatricula, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addGap(18)
+								.addComponent(lblMarca)
+								.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(txtMarca, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addGap(18)
+								.addComponent(lblModelo)
+								.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(txtModelo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(lblMecanicoAsignado, GroupLayout.PREFERRED_SIZE, 298, GroupLayout.PREFERRED_SIZE)
+							.addGap(36)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-									.addComponent(lblAsignacionMecanico, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-									.addGroup(gl_contentPane.createSequentialGroup()
-										.addComponent(lblOrdenReparacion)
-										.addPreferredGap(ComponentPlacement.UNRELATED)
-										.addComponent(txtOrdenReparacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addGap(18)
-										.addComponent(lblMatricula)
-										.addPreferredGap(ComponentPlacement.UNRELATED)
-										.addComponent(txtMatricula, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addGap(18)
-										.addComponent(lblMarca)
-										.addPreferredGap(ComponentPlacement.UNRELATED)
-										.addComponent(txtMarca, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addGap(18)
-										.addComponent(lblModelo)
-										.addPreferredGap(ComponentPlacement.UNRELATED)
-										.addComponent(txtModelo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+								.addComponent(lblMecanicos, GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
 								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(lblMecanicoAsignado, GroupLayout.PREFERRED_SIZE, 298, GroupLayout.PREFERRED_SIZE)
-									.addGap(36)
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-										.addComponent(tblMecanicos, GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
-										.addComponent(lblMecanicos, GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
-										.addGroup(gl_contentPane.createSequentialGroup()
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(lblMecanico)
-											.addPreferredGap(ComponentPlacement.UNRELATED)
-											.addComponent(txtMecanico, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(btnBuscar)
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addComponent(btnAsignar))
-										.addComponent(btnSalir, Alignment.TRAILING))))
-							.addContainerGap())
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(lblMecanico)
+									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addComponent(txtMecanico, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(btnBuscar)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(btnAsignar))
+								.addComponent(btnSalir, Alignment.TRAILING)))
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-								.addComponent(btnEliminar)
-								.addComponent(tblMecanicoAsignado, GroupLayout.PREFERRED_SIZE, 289, GroupLayout.PREFERRED_SIZE))
-							.addContainerGap())))
+							.addGap(220)
+							.addComponent(btnEliminar))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(scrollPanel1, GroupLayout.PREFERRED_SIZE, 296, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(scrollPanel2, GroupLayout.PREFERRED_SIZE, 320, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -218,10 +207,10 @@ public class ReparacionAsignarMecanico extends JFrame {
 						.addComponent(lblMecanicoAsignado)
 						.addComponent(lblMecanicos))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(tblMecanicoAsignado, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
-						.addComponent(tblMecanicos, GroupLayout.PREFERRED_SIZE, 74, GroupLayout.PREFERRED_SIZE))
-					.addGap(18)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(scrollPanel1, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
+						.addComponent(scrollPanel2, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE))
+					.addGap(9)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnEliminar)
 						.addComponent(txtMecanico, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -233,11 +222,42 @@ public class ReparacionAsignarMecanico extends JFrame {
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		
+		table2 = new JTable();
+		scrollPanel2.setViewportView(table2);
+		
+		table1 = new JTable();
+		scrollPanel1.setViewportView(table1);
+		
 		initCampos(ordenReparacion);
 		
 		contentPane.setLayout(gl_contentPane);
 	}
 
+	private TableModel getTableModel (int idMecanico) throws RemoteException, GestorReparacionException  {
+		TableModel model = null;
+		if (idMecanico == -1){
+			List<Mecanic> list = gestorReparacion.getMecanicos();
+			Object rowData [][] = new Object [list.size()][4];
+			int z=0;
+			for (Mecanic bean : list) {
+				rowData[z][0] = String.valueOf(bean.getId());
+				rowData[z][1] = String.valueOf(bean.getNom());
+				rowData[z][2] = String.valueOf(bean.getCognoms());
+				rowData[z][3] = String.valueOf(bean.getReparacionsAssignades());
+				z++;
+			}
+			model = new DefaultTableModel(rowData, columnNames2);
+		} else {
+			Mecanic mecanico = gestorReparacion.getMecanico(idMecanico);
+			Object rowData [][] = new Object [1][3];
+			rowData[0][0] = String.valueOf(mecanico.getId());
+			rowData[0][1] = String.valueOf(mecanico.getNom());
+			rowData[0][2] = String.valueOf(mecanico.getCognoms());
+			model = new DefaultTableModel(rowData, columnNames1);
+		}
+		return model;
+	}
+	
 	private void initCampos(int ordenReparacion) {
 		try {
 			DetallReparacio datosReparacion = gestorReparacion.getDetalleReparacion(ordenReparacion);
@@ -245,6 +265,12 @@ public class ReparacionAsignarMecanico extends JFrame {
 			this.txtMatricula.setText(datosReparacion.getMatricula());
 			this.txtMarca.setText(datosReparacion.getMarca());
 			this.txtModelo.setText(datosReparacion.getModel());
+			
+			scrollPanel1.setViewportView(table1);
+			table1.setModel(getTableModel(datosReparacion.getIdMecanic()));
+			
+			scrollPanel2.setViewportView(table2);
+			table2.setModel(getTableModel(-1));
 
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -252,5 +278,4 @@ public class ReparacionAsignarMecanico extends JFrame {
 			e.printStackTrace();
 		}
 	}
-	
 }
