@@ -214,6 +214,15 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 		}
 	}
 
+	public List<Usuari> getUsuarios(String tipo, String nombre) throws RemoteException,
+			GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getUsuarios(tipo, nombre);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
 	
 
 	

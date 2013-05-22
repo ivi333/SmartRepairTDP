@@ -77,7 +77,7 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 	public static final String QUERY_SET_DESCONTAR_STOCK = "update stockpeca set stock = stock-? where codipeca = ?";
 	public static final String QUERY_SET_REPARACION_ASIGNADA = "update reparacio set assignada = true, dataassignacio = CURRENT_DATE where ordrereparacio = ?";
 	public static final String QUERY_SET_REPARACION_ACEPTADA = "update reparacio set acceptada = true where ordrereparacio = ?";
-	
+	public static final String QUERY_GET_USUARIOS = "select id, taller, usuari, perfil, nif, nom, cognoms, contrasenya, actiu, dataAlta, dataModificacio, dataBaixa, reparacionsAssignades from usuari ";
 	
 	
 	
@@ -621,6 +621,39 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 		} finally {
 			if (ps!=null) {
 				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+
+	public List<Usuari> getUsuarios(String tipo, String nombre) throws DAOException {
+		List<Usuari> result = new LinkedList<Usuari>();
+		getConnectionDB();
+		
+		Statement stm = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			String Query = QUERY_GET_USUARIOS + "where perfil like '%" + tipo + "%' and (nom like '%" + nombre + "%' or cognoms like '%" + nombre + "%')";
+			rs = stm.executeQuery(Query);
+			while (rs.next()){
+				result.add(new Usuari(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getBoolean(9), rs.getDate(10), rs.getDate(11), rs.getDate(12), rs.getInt(13)));
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (stm!=null) {
+				try {stm.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
 				} catch (SQLException e) {
 					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
 				}

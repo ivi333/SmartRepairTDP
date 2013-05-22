@@ -169,5 +169,13 @@ public interface GestorReparacionDAO {
 	 */
 	public void setReparacionAsignada(int ordenReparacion) throws DAOException;
 	
+	/**
+	 * Obtiene una lista de todos los usuarios de un determinado tipo.
+	 * @param tipo, nombre
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public List<Usuari> getUsuarios(String tipo, String nombre) throws DAOException;
+	
 
 }

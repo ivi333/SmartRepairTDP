@@ -45,7 +45,7 @@ public class ReparacionPiezas extends JFrame {
 	private JTextField txtModelo;
 	private JTextField txtBuscarPieza;
 	
-	private static ReparacionGestion reparacionGestion;
+	private static ReparacionPiezas reparacionPiezas;
 	private GestorReparacionInterface gestorReparacion;
 	private JTextArea txtObservaciones;
 	private JTable table1;
@@ -411,11 +411,11 @@ public class ReparacionPiezas extends JFrame {
 					TableModel model = new DefaultTableModel(rowData, columnNames1);
 					table1.setModel(model);
 				} else {
-					JOptionPane.showMessageDialog(reparacionGestion, "Debe indicar el número de piezas a añadir.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(reparacionPiezas, "Debe indicar el número de piezas a añadir.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 				
 			} else {
-				JOptionPane.showMessageDialog(reparacionGestion, "Debe seleccionar una fila para poder añadirla.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionPiezas, "Debe seleccionar una fila para poder añadirla.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			
 		} catch (RemoteException e1) {
@@ -451,7 +451,7 @@ public class ReparacionPiezas extends JFrame {
 					TableModel model = new DefaultTableModel(rowData, columnNames1);
 					table1.setModel(model);
 			} else {
-				JOptionPane.showMessageDialog(reparacionGestion, "Debe seleccionar una fila para poder eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionPiezas, "Debe seleccionar una fila para poder eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 				
 			} catch (RemoteException e) {
@@ -477,7 +477,7 @@ public class ReparacionPiezas extends JFrame {
 				}
 				gestorReparacion.setReparacionAceptada(ordenReparacion);
 			} else {
-				JOptionPane.showMessageDialog(reparacionGestion, "Debe añadir piezas antes de realizar el pedido.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionPiezas, "Debe añadir piezas antes de realizar el pedido.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (RemoteException e1) {
 			e1.printStackTrace();

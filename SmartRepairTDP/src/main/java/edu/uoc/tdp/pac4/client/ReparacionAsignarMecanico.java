@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -26,6 +27,7 @@ import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JScrollPane;
@@ -44,7 +46,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 	private JButton btnAsignar;
 	private JButton btnSalir;
 	
-	private static ReparacionGestion reparacionGestion;
+	private static ReparacionAsignarMecanico reparacionAsignarMecanico;
 	private GestorReparacionInterface gestorReparacion;
 	private JTable table1;
 	private JTable table2;
@@ -57,6 +59,9 @@ public class ReparacionAsignarMecanico extends JFrame {
 	private static final Object columnNames2[] = {
 		"Id", "Nombre", "Apellidos", "Reparaciones asignadas"
 	};
+	
+	private List<Usuari> mecanicosSeleccionados = new ArrayList<Usuari>() ;
+	
 
 	/**
 	 * Launch the application.
@@ -118,6 +123,12 @@ public class ReparacionAsignarMecanico extends JFrame {
 		lblMecanicos.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		btnEliminar = new JButton("Eliminar");
+		btnEliminar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				eliminarMecanico();
+			}
+		});
 		
 		lblMecanico = new JLabel("Mecánico");
 		
@@ -125,8 +136,27 @@ public class ReparacionAsignarMecanico extends JFrame {
 		txtMecanico.setColumns(10);
 		
 		btnBuscar = new JButton("Buscar");
+		btnBuscar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				try {
+					table2.setModel(getTableModel(-1, txtMecanico.getText()));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (GestorReparacionException e) {
+					e.printStackTrace();
+				}
+			}
+
+		});
 		
 		btnAsignar = new JButton("Asignar");
+		btnAsignar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				anadirMecanico();
+			}
+		});
 		
 		btnSalir = new JButton("Salir");
 		btnSalir.addMouseListener(new MouseAdapter() {
@@ -233,13 +263,13 @@ public class ReparacionAsignarMecanico extends JFrame {
 		contentPane.setLayout(gl_contentPane);
 	}
 
-	private TableModel getTableModel (int idMecanico) throws RemoteException, GestorReparacionException  {
+	private TableModel getTableModel (int idMecanico, String nombre) throws RemoteException, GestorReparacionException  {
 		TableModel model = null;
 		if (idMecanico == -1){
-			List<Mecanic> list = gestorReparacion.getMecanicos();
+			List<Usuari> list = gestorReparacion.getUsuarios("Mecanico", nombre);
 			Object rowData [][] = new Object [list.size()][4];
 			int z=0;
-			for (Mecanic bean : list) {
+			for (Usuari bean : list) {
 				rowData[z][0] = String.valueOf(bean.getId());
 				rowData[z][1] = String.valueOf(bean.getNom());
 				rowData[z][2] = String.valueOf(bean.getCognoms());
@@ -248,14 +278,95 @@ public class ReparacionAsignarMecanico extends JFrame {
 			}
 			model = new DefaultTableModel(rowData, columnNames2);
 		} else {
-			Mecanic mecanico = gestorReparacion.getMecanico(idMecanico);
+			Usuari usuario = gestorReparacion.getUsuario(idMecanico);
+			/*Mecanic mecanico = gestorReparacion.getMecanico(idMecanico);*/
 			Object rowData [][] = new Object [1][3];
-			rowData[0][0] = String.valueOf(mecanico.getId());
-			rowData[0][1] = String.valueOf(mecanico.getNom());
-			rowData[0][2] = String.valueOf(mecanico.getCognoms());
+			rowData[0][0] = String.valueOf(usuario.getId());
+			rowData[0][1] = String.valueOf(usuario.getNom());
+			rowData[0][2] = String.valueOf(usuario.getCognoms());
 			model = new DefaultTableModel(rowData, columnNames1);
 		}
 		return model;
+	}
+	
+	private int getIdMecanicoSeleccionado (JTable tabla) throws RemoteException, GestorReparacionException {
+		if (tabla.getSelectedRow() >= 0) {
+			return Integer.parseInt(tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
+		} else {
+			return -1;
+		}
+	}
+	
+	private void anadirMecanico() {
+		int idMecanicoAnadir;
+		boolean existeMecanicoAsignado = false;
+		try {
+			if (table2.getSelectedRowCount() == 1) {
+				idMecanicoAnadir = getIdMecanicoSeleccionado(table2);
+				if (mecanicosSeleccionados != null) {
+					if (mecanicosSeleccionados.size() == 1) {
+						JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Debe eliminar el mecánico asignado a la reparación antes de añadir otro.", "Error", JOptionPane.ERROR_MESSAGE);
+						existeMecanicoAsignado = true;
+					}
+				}
+				if (!existeMecanicoAsignado) {
+					Usuari mecanico = gestorReparacion.getUsuario(idMecanicoAnadir);
+					mecanicosSeleccionados.add(mecanico);
+					
+					Object rowData [][] = new Object [mecanicosSeleccionados.size()][3];
+					int z=0;
+					for (Usuari bean : mecanicosSeleccionados) {
+						rowData[z][0] = String.valueOf(bean.getId());
+						rowData[z][1] = String.valueOf(bean.getNom());
+						rowData[z][2] = String.valueOf(bean.getCognoms());
+						z++;
+					}
+					TableModel model = new DefaultTableModel(rowData, columnNames1);
+					table1.setModel(model);
+				}
+		
+			} else {
+				JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Debe seleccionar una fila para poder añadirla.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			
+		} catch (RemoteException e1) {
+			e1.printStackTrace();
+		} catch (GestorReparacionException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	private void eliminarMecanico() {
+		try {
+			if (table1.getSelectedRowCount() == 1) {
+				int idMecanico;
+				idMecanico = getIdMecanicoSeleccionado(table1);
+				if (mecanicosSeleccionados != null) {
+					for (int i=0; i<mecanicosSeleccionados.size(); i++) {
+						if (mecanicosSeleccionados.get(i).getId() == idMecanico) {
+							mecanicosSeleccionados.remove(i);
+						}
+					}
+				}
+				Object rowData [][] = new Object [mecanicosSeleccionados.size()][3];
+				int z=0;
+				for (Usuari bean : mecanicosSeleccionados) {
+					rowData[z][0] = String.valueOf(bean.getId());
+					rowData[z][1] = String.valueOf(bean.getNom());
+					rowData[z][2] = String.valueOf(bean.getCognoms());
+					z++;
+				}
+				TableModel model = new DefaultTableModel(rowData, columnNames1);
+				table1.setModel(model);
+		} else {
+			JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Debe seleccionar una fila para poder eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+			
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (GestorReparacionException e) {
+			e.printStackTrace();
+		}	
 	}
 	
 	private void initCampos(int ordenReparacion) {
@@ -267,10 +378,10 @@ public class ReparacionAsignarMecanico extends JFrame {
 			this.txtModelo.setText(datosReparacion.getModel());
 			
 			scrollPanel1.setViewportView(table1);
-			table1.setModel(getTableModel(datosReparacion.getIdMecanic()));
+			table1.setModel(getTableModel(datosReparacion.getIdMecanic(), ""));
 			
 			scrollPanel2.setViewportView(table2);
-			table2.setModel(getTableModel(-1));
+			table2.setModel(getTableModel(-1, ""));
 
 		} catch (RemoteException e) {
 			e.printStackTrace();
