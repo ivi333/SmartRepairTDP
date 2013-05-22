@@ -1,5 +1,6 @@
 package edu.uoc.tdp.pac4.dao;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,45 +28,112 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 	 * para el subsistema de Conexion y Mantenimiento
 	 */
 	
-	private static final String QUERY_ALL_USUARIS = "SELECT * FROM USUARI";
-	private static final String QUERY_USUARI_BY_ID = "SELECT * FROM USUARI WHERE ID = ?";
-	private static final String QUERY_USUARI_BY_NIF = "SELECT * FROM USUARI WHERE NIF = ?";
-	private static final String QUERY_USUARI_BY_USUARI = "SELECT * FROM USUARI WHERE UPPER(USUARI) = ?";
-	private static final String QUERY_USUARIS_BY_FILTER = "SELECT * FROM USUARI WHERE 1=1 ";
-	private static final String UPDATE_DISABLE_USER = "UPDATE USUARI SET ACTIU = FALSE WHERE ID = ?";
-	private static final String QUERY_ALL_USUARIS_CAPTALLER = "SELECT * FROM USUARI WHERE PERFIL='JefeTaller'";
-	private static final String EXIST_USUARI = "SELECT * FROM USUARI WHERE UPPER(nif)=? OR UPPEr(USUARI)=?";
-	private static final String EXIST_USUARI_ID = "SELECT * FROM USUARI WHERE ID != ? AND (UPPER(nif)=? OR UPPEr(USUARI)=?)";
-	private static final String ALTA_USUARI = "INSERT INTO usuari (nif, nom, cognoms, taller, usuari, perfil, " + 
-			"contrasenya, actiu) " + 
-			" values (?,?,?,?,?,?,?,?)";
-	private static final String UPDATE_USUARI = "UPDATE USUARI SET nif=?, nom=?, cognoms=?, taller=?, usuari=?, " + 
-			" contrasenya=?, datamodificacio=now(), actiu= ? WHERE id=?";
-	private static final String CHANGE_PASSWORD = "UPDATE usuari SET contrasenya=?, datamodificacio=now() " + 
-			"WHERE ID=?";
+	private static final String QUERY_ALL_USUARIS = 
+			"SELECT * FROM usuari";
 	
-	private static final String QUERY_MECANIC_BY_ID = "SELECT * FROM MECANIC WHERE ID = ?";
-	private static final String ALTA_MECANIC = "INSERT INTO mecanic(idmecanic, disponible, idrep1, idrep2) " +
+	private static final String QUERY_USUARI_BY_ID = 
+			"SELECT * FROM usuari WHERE id = ?";
+	
+	private static final String QUERY_USUARI_BY_NIF = 
+			"SELECT * FROM usuari WHERE nif = ?";
+	
+	private static final String QUERY_USUARI_BY_USUARI = 
+			"SELECT * FROM usuari WHERE UPPER(usuari) = ?";
+	
+	private static final String QUERY_USUARIS_BY_FILTER = 
+			"SELECT * FROM usuari WHERE 1=1 ";
+	
+	private static final String UPDATE_DISABLE_USER = 
+			"UPDATE usuari " +
+			"   SET actiu = FALSE, " +
+			"       databaixa = now (), " +
+			"       datamodificacio = now () " +
+			" WHERE id = ?";
+	
+	private static final String QUERY_ALL_USUARIS_CAPTALLER = 
+			"SELECT * FROM usuari WHERE perfil='JefeTaller'";
+	
+	private static final String EXIST_USUARI = 
+			"SELECT * FROM usuari WHERE UPPER(nif)=? OR UPPER(usuari)=?";
+	
+	private static final String EXIST_USUARI_ID = 
+			"SELECT * FROM usuari WHERE id != ? AND (UPPER(nif)=? OR UPPER(usuari)=?)";
+	
+	private static final String ALTA_USUARI = 
+			"INSERT INTO usuari (nif, nom, cognoms, taller, usuari, perfil, contrasenya, actiu) " + 
+					" values (?,?,?,?,?,?,?,?)";
+	
+	private static final String UPDATE_USUARI =
+			"UPDATE USUARI " + 
+			   "SET nif = ?, " +
+			   "    nom = ?, " +
+			   "    cognoms = ?, " +
+			   "    taller = ?, " +
+			   "    usuari= ?, " +
+			   "    contrasenya = ?, " + 
+			   "    datamodificacio = now(), " +
+			   "    actiu = ? ," +
+			   "    databaixa = ? " +
+			 "WHERE id = ? ";
+	
+	private static final String CHANGE_PASSWORD = 
+			"UPDATE usuari " +
+			"   SET contrasenya= ? , " + 
+			"	    datamodificacio=now() " +
+			" WHERE id = ? ";
+
+	private static final String QUERY_MECANIC_BY_ID = 
+			"SELECT * FROM mecanic WHERE idmecanic = ?";
+	
+	private static final String ALTA_MECANIC = 
+			"INSERT INTO mecanic(idmecanic, disponible, idrep1, idrep2) " +
 			"VALUES (?, ?, ?, ?)";
 
-	private static final String UPDATE_DISABLE_MECANIC = "UPDATE MECANIC SET ACTIU = FALSE WHERE IDMECANIC = ?";
-	private static final String UPDATE_ENABLE_MECANIC = "UPDATE MECANIC SET ACTIU = TRUE WHERE IDMECANIC = ?";
+	private static final String UPDATE_ESTADO_MECANIC = 
+			"UPDATE mecanic " +
+			"   SET disponible = ? " +
+			" WHERE idmecanic = ?";
+
+	private static final String QUERY_ALL_TALLERS = 
+			"SELECT * FROM taller";
 	
-	private static final String QUERY_ALL_TALLERS = "SELECT * FROM TALLER";
-	private static final String QUERY_TALLER_BY_ID = "SELECT * FROM TALLER WHERE ID = ?";
-	private static final String QUERY_TALLER_BY_CIF = "SELECT * FROM TALLER WHERE CIF = ?";
-	private static final String QUERY_TALLERS_BY_FILTER = "SELECT * FROM TALLER WHERE 1=1 ";
-	private static final String ALTA_TALLER = "INSERT INTO taller (cif, adreca, capacitat, captaller, telefon, web, actiu) " +
-			"VALUES ( ?, ?, ?, ?, ?, ?, ?)";
-	private static final String UPDATE_TALLER = "UPDATE taller SET cif=?, adreca=?, capacitat=?, captaller=?, telefon=?, web=?, " + 
-       "actiu=?,  datamodificacio=?, databaixa=?  WHERE id=?";
+	private static final String QUERY_TALLER_BY_ID = 
+			"SELECT * FROM taller WHERE id = ?";
 	
-	private static final String QUERY_ALTA_TALLER_BY_CAPTALLER = "SELECT * FROM TALLER WHERE captaller =  ? " +
-			" AND actiu IS TRUE ";
+	private static final String QUERY_TALLER_BY_CIF = 
+			"SELECT * FROM taller WHERE cif = ?";
 	
-	private static final String QUERY_UPDATE_TALLER_BY_CAPTALLER = "SELECT * FROM TALLER WHERE captaller =  ? " +
-			" AND actiu IS TRUE AND id != ?  ";
+	private static final String QUERY_TALLERS_BY_FILTER = 
+			"SELECT * FROM taller WHERE 1=1 ";
 	
+	private static final String ALTA_TALLER = 
+			"INSERT INTO taller (cif, adreca, capacitat, captaller, telefon, web, actiu, dataapertura) " +
+			"VALUES ( ?, ?, ?, ?, ?, ?, ?, now())";
+	
+	private static final String UPDATE_TALLER = 
+			"UPDATE taller " +
+			"   SET cif = ?, " +
+			"       adreca = ?, " +
+			"       capacitat = ?, " +
+			"       captaller = ?, " +
+			"       telefon = ?, " +
+			"       web = ?, " +
+			"       actiu = ?,  " +
+			"       datamodificacio = now (), " +
+			"       databaixa = ? " +
+			" WHERE id = ?";
+
+	private static final String QUERY_ALTA_TALLER_BY_CAPTALLER = 
+			"SELECT * FROM taller " +
+			" WHERE captaller =  ? " +
+			"   AND actiu IS TRUE ";
+
+	private static final String QUERY_UPDATE_TALLER_BY_CAPTALLER = 
+			"SELECT * FROM taller " +
+			" WHERE captaller =  ? " +
+			"   AND actiu IS TRUE " +
+			"   AND id != ?  ";
+
 	public GestorConexionDAOImpl (){
 		super();
 	}
@@ -437,7 +505,12 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			ps.setString(5,usuari.getUsuari().toUpperCase());
 			ps.setString(6,usuari.getContrasenya());
 			ps.setBoolean(7, usuari.isActiu());
-			ps.setInt(8,usuari.getId());
+			if (usuari.isActiu()) {
+				ps.setNull(8, Types.DATE);
+			} else {
+				ps.setDate(8, (java.sql.Date) usuari.getDataBaixa());
+			}
+			ps.setInt(9,usuari.getId());
 			ps.execute();
 		} catch (SQLException e) {
 			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);				
@@ -474,7 +547,7 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 		}
 	}
 
-	public Mecanic getMecanicById (int idMecanic)
+/*	public Mecanic getMecanicById (int idMecanic)
 			throws DAOException {
 		getConnectionDB();	
 		Mecanic result = null;
@@ -506,7 +579,8 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 				}
 			}
 		}	
-	}
+	}*/
+	
 	public void altaMecanic(Mecanic mecanic)
 			throws DAOException {
 		getConnectionDB();
@@ -514,8 +588,9 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 		try {
 			ps.setInt(1, mecanic.getId());
 			ps.setBoolean(2, mecanic.isActiu());
-			ps.setInt(3, 0);
-			ps.setInt(4, 0);		
+			ps.setNull(3, Types.INTEGER);
+			ps.setNull(4, Types.INTEGER);
+	
 			ps.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -534,30 +609,13 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 		}			
 	}
 	
-	public void disableMecanic (int id) throws DAOException {
-		getConnectionDB();
-		PreparedStatement ps = createPrepareStatment(UPDATE_DISABLE_MECANIC, ResultSet.CONCUR_UPDATABLE);
-		try {
-			ps.setInt(1, id);
-			ps.execute();
-		} catch (SQLException e){
-			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);
-		} finally {
-			if (ps != null){
-				try {
-					ps.close();
-				} catch (SQLException e){
-					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage() ,e);
-				}
-			}
-		}
-	}
 	
-	public void enableMecanic (int id) throws DAOException {
+	public void estadoMecanic (int id, boolean disponible) throws DAOException {
 		getConnectionDB();
-		PreparedStatement ps = createPrepareStatment(UPDATE_ENABLE_MECANIC, ResultSet.CONCUR_UPDATABLE);
+		PreparedStatement ps = createPrepareStatment(UPDATE_ESTADO_MECANIC, ResultSet.CONCUR_UPDATABLE);
 		try {
-			ps.setInt(1, id);
+			ps.setBoolean(1, disponible);
+			ps.setInt(2, id);
 			ps.execute();
 		} catch (SQLException e){
 			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);
@@ -684,9 +742,9 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 		if (id.length() > 0)
 			sql += " AND id = " + id;
 		if (cif.length() > 0)
-			sql += " AND cif = '" + cif +"'";
+			sql += " AND UPPER(cif) like '" + cif.replace("*", "%").toUpperCase() +"'";
 		if ((adreca.length() > 0))
-			sql += " AND adreca = '" + adreca +"'";
+			sql += " AND UPPER(adreca) like '" + adreca.replace("*", "%").toUpperCase() +"'";
 		if (capacitat.length() > 0)
 			sql += " AND capacitat = " + capacitat;
 		if (idCapTaller.length() > 0)
@@ -795,6 +853,7 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			}
 		}
 	}
+	
 	public void altaTaller (Taller taller) throws DAOException {
 		getConnectionDB();
 		PreparedStatement ps = createPrepareStatment(ALTA_TALLER);
@@ -802,7 +861,7 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			ps.setString(1, taller.getCif());
 			ps.setString(2, taller.getAdreca());
 			ps.setInt(3, taller.getCapacitat());
-			ps.setInt(4, taller.getCapacitat());
+			ps.setInt(4, taller.getCapTaller());
 			ps.setString(5, taller.getTelefon());
 			ps.setString(6, taller.getWeb());
 			ps.setBoolean(7, taller.isActiu());
@@ -828,14 +887,23 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			ps.setString(1, taller.getCif());
 			ps.setString(2, taller.getAdreca());
 			ps.setInt(3, taller.getCapacitat());
-			ps.setInt(4, taller.getCapTaller());
+			
+			if (taller.getCapTaller() == 0) {
+				ps.setNull(4, Types.INTEGER);
+			} else { 
+				ps.setInt(4, taller.getCapTaller());
+			}
 			ps.setString(5, taller.getTelefon());
 			ps.setString(6, taller.getWeb());
 			ps.setBoolean(7, taller.isActiu());
-			ps.setNull(8, Types.DATE);
-			ps.setNull(9, Types.DATE);
-//			ps.setDate(8, new java.sql.Date(taller.getDataModificacio().getTime()));
-			//ps.setDate(9, new java.sql.Date(taller.getDataBaixa().getTime()));
+			
+			if (taller.isActiu()) {
+				ps.setNull(8, Types.DATE);
+			} else {
+				ps.setDate(8, (java.sql.Date) taller.getDataBaixa()); 
+			}
+			
+			ps.setInt (9, taller.getId());
 			ps.execute();
 		} catch (SQLException e) {
 			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);

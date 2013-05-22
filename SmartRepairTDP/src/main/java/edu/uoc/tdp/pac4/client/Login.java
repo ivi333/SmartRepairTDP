@@ -164,8 +164,8 @@ public class Login extends JDialog {
 		if (actionEvent.getActionCommand().equals("BTN_ACEPTAR")){
 			try {
 				this.usuari = gestorConexion.doLogin(txtUsername.getText().toUpperCase(), String.valueOf(txtPassword.getPassword()));
-				JOptionPane.showMessageDialog(this, TDSLanguageUtils.getMessage("login.accion.OK"), 
-						this.getTitle(), JOptionPane.INFORMATION_MESSAGE);
+//				JOptionPane.showMessageDialog(this, TDSLanguageUtils.getMessage("login.accion.OK"), 
+//						this.getTitle(), JOptionPane.INFORMATION_MESSAGE);
 				dispose ();
 				if (chkPassword.isSelected()){
 					ChangePassword changePassword = new ChangePassword(gestorConexion, usuari);

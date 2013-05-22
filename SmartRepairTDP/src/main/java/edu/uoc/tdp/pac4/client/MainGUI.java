@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 import edu.uoc.tdp.pac4.beans.PerfilUsuari;
+import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionImpl;
@@ -53,8 +54,9 @@ public class MainGUI extends JFrame {
 	private final String urlRMIAdmin = new String("rmi://localhost/GestorAdministracion");
 	private final String urlRMIRepar = new String("rmi://localhost/GestorReparacion");
 	private final String urlRMIEstad = new String("rmi://localhost/GestorEstadistica");
-	private Usuari usuari;
 	
+	private Usuari usuari;
+	private Taller taller;
 	private Login login;
 	
 	private JMenu mnMantenimiento;
@@ -65,6 +67,8 @@ public class MainGUI extends JFrame {
 	private JMenuBar menuBar;
 	
 	private String perfiles[];
+	private boolean isAdministrador = false;
+
 
 	/**
 	 * Launch the application.
@@ -100,8 +104,21 @@ public class MainGUI extends JFrame {
 			winLogin();
 			doLogin();		
 			disableMenu();
-			if (usuari!= null){				
-				enableMenu ();
+			if (usuari!= null){	
+				if (isAdministrador) {
+					enableMenu();
+				} else {
+					taller = gestorConexion.getTallerById(usuari.getTaller());
+					if (taller.isActiu()) {
+						enableMenu ();
+					} else {
+						JOptionPane.showMessageDialog(this, 
+								TDSLanguageUtils.getMessage("maingui.msg.tallernoactivo"), 
+								TDSLanguageUtils.getMessage("GESCON.showmessage.aviso"), 
+								JOptionPane.WARNING_MESSAGE);
+					}
+				}
+				
 			}
 		}catch (Exception e){
 			disableMenu();
@@ -209,6 +226,11 @@ public class MainGUI extends JFrame {
 		if (login.isLogin()) {
 			usuari = login.getUsuari();
 			perfiles = usuari.getPerfil().split(";");
+			for (String perfil : perfiles) {
+				if (perfil.equals(PerfilUsuari.Administrador.toString())){
+					isAdministrador = true;
+				}
+			}
 		}
 	}
 
