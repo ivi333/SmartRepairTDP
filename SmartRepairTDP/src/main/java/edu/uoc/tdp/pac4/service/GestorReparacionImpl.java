@@ -223,6 +223,43 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 		}
 	}
 
+	public void asignarUsuarioNumeroReparacion(int idMecanico, int numeroReparaciones)
+			throws RemoteException, GestorReparacionException {
+		try {
+			gestorReparacionDAO.asignarUsuarioNumeroReparacion(idMecanico, numeroReparaciones);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public void asignarReparacionesMecanico(int idMecanico,
+			int ordenReparacion1, int ordenReparacion2) throws RemoteException,
+			GestorReparacionException {
+		try {
+			gestorReparacionDAO.asignarReparacionesMecanico(idMecanico, ordenReparacion1, ordenReparacion2);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public void asignarMecanicoReparacion(int idMecanico, int ordenReparacion)
+			throws RemoteException, GestorReparacionException {
+		try {
+			gestorReparacionDAO.asignarMecanicoReparacion(idMecanico, ordenReparacion);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public List<DetallReparacio> getDetalleReparacionesMecanico(int idMecanico)
+			throws RemoteException, GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getDetalleReparacionesMecanico(idMecanico);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
 	
 
 	

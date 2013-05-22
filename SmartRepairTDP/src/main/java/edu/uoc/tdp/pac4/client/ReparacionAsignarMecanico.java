@@ -313,18 +313,32 @@ public class ReparacionAsignarMecanico extends JFrame {
 					Usuari mecanico = gestorReparacion.getUsuario(idMecanicoAnadir);
 					mecanicosSeleccionados.add(mecanico);
 					
-					Object rowData [][] = new Object [mecanicosSeleccionados.size()][3];
-					int z=0;
-					for (Usuari bean : mecanicosSeleccionados) {
-						rowData[z][0] = String.valueOf(bean.getId());
-						rowData[z][1] = String.valueOf(bean.getNom());
-						rowData[z][2] = String.valueOf(bean.getCognoms());
-						z++;
+					if (mecanico.getReparacionsAssignades() < 2) {
+						int ordenReparacion1 = 0;
+						int ordenReparacion2 = 0;
+						if (mecanico.getReparacionsAssignades() == 0) {
+							ordenReparacion1 = Integer.valueOf(txtOrdenReparacion.getText());
+						} else {
+							Mecanic objMecanico = gestorReparacion.getMecanico(idMecanicoAnadir);
+							ordenReparacion1 = objMecanico.getIdrep1();
+							ordenReparacion2 = Integer.valueOf(txtOrdenReparacion.getText());
+						}
+						actualizarAsignacion(idMecanicoAnadir, Integer.valueOf(txtOrdenReparacion.getText()), ordenReparacion1, ordenReparacion2);
+											
+						Object rowData [][] = new Object [mecanicosSeleccionados.size()][3];
+						int z=0;
+						for (Usuari bean : mecanicosSeleccionados) {
+							rowData[z][0] = String.valueOf(bean.getId());
+							rowData[z][1] = String.valueOf(bean.getNom());
+							rowData[z][2] = String.valueOf(bean.getCognoms());
+							z++;
+						}
+						TableModel model = new DefaultTableModel(rowData, columnNames1);
+						table1.setModel(model);
+					} else {
+						JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Este mecánico ya tiene dos reparaciones asignadas. Elija otro mecánico.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
-					TableModel model = new DefaultTableModel(rowData, columnNames1);
-					table1.setModel(model);
 				}
-		
 			} else {
 				JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Debe seleccionar una fila para poder añadirla.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
@@ -348,6 +362,21 @@ public class ReparacionAsignarMecanico extends JFrame {
 						}
 					}
 				}
+				
+				int ordenReparacion = Integer.valueOf(txtOrdenReparacion.getText());
+				int ordenReparacion1 = 0;
+				int ordenReparacion2 = 0;
+				Usuari mecanico = gestorReparacion.getUsuario(idMecanico);
+				if (mecanico.getReparacionsAssignades() == 2) {
+					Mecanic objMecanico = gestorReparacion.getMecanico(idMecanico);
+					if (objMecanico.getIdrep1() == ordenReparacion) {
+						ordenReparacion1 = objMecanico.getIdrep2();
+					} else {
+						ordenReparacion1 = objMecanico.getIdrep1();
+					}
+				}
+				actualizarAsignacion(idMecanico, ordenReparacion, ordenReparacion1, ordenReparacion2);
+			
 				Object rowData [][] = new Object [mecanicosSeleccionados.size()][3];
 				int z=0;
 				for (Usuari bean : mecanicosSeleccionados) {
@@ -358,15 +387,34 @@ public class ReparacionAsignarMecanico extends JFrame {
 				}
 				TableModel model = new DefaultTableModel(rowData, columnNames1);
 				table1.setModel(model);
-		} else {
-			JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Debe seleccionar una fila para poder eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
-		}
+			} else {
+				JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Debe seleccionar una fila para poder eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
 			
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (GestorReparacionException e) {
 			e.printStackTrace();
 		}	
+	}
+	
+	private void actualizarAsignacion(int idMecanico, int ordenReparacion, int ordenReparacion1, int ordenReparacion2) {
+		try {
+			int ordenesReparacion = 0;
+			if (ordenReparacion1 > 0) {
+				ordenesReparacion = 1;
+			}
+			if (ordenReparacion2 > 0) {
+				ordenesReparacion = 2;
+			}
+			gestorReparacion.asignarReparacionesMecanico(idMecanico, ordenReparacion1, ordenReparacion2);
+			gestorReparacion.asignarUsuarioNumeroReparacion(idMecanico, ordenesReparacion);
+			gestorReparacion.asignarMecanicoReparacion(0, ordenReparacion);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (GestorReparacionException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void initCampos(int ordenReparacion) {

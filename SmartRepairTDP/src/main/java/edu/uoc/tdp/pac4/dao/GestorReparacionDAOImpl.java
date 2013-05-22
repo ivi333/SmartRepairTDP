@@ -47,6 +47,12 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 															    "inner join client cli on sol.client = cli.nif " +
 															    "where sol.finalitzada = false " +
 															    "order by rep.ordrereparacio";
+	public static final String QUERY_GET_DETALLE_REPARACIONES_MECANICO = "select rep.ordrereparacio, sol.dataalta, rep.comptador, cli.matricula, " +
+		    															 "cli.marca, cli.model, rep.observacions, rep.acceptada, rep.assignada, rep.idmecanic " +
+		    															 "from solicitud sol " +
+		    															 "inner join reparacio rep on sol.numreparacio = rep.ordrereparacio " +
+		    															 "inner join client cli on sol.client = cli.nif " +
+		    															 "where sol.finalitzada = false ";
 	public static final String QUERY_GET_DETALLE_REPARACION = "select rep.ordrereparacio, sol.dataalta, rep.comptador, cli.matricula, " +
 		    												  "cli.marca, cli.model, rep.observacions, rep.acceptada, rep.assignada, rep.idmecanic " +
 		    												  "from solicitud sol " +
@@ -78,6 +84,9 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 	public static final String QUERY_SET_REPARACION_ASIGNADA = "update reparacio set assignada = true, dataassignacio = CURRENT_DATE where ordrereparacio = ?";
 	public static final String QUERY_SET_REPARACION_ACEPTADA = "update reparacio set acceptada = true where ordrereparacio = ?";
 	public static final String QUERY_GET_USUARIOS = "select id, taller, usuari, perfil, nif, nom, cognoms, contrasenya, actiu, dataAlta, dataModificacio, dataBaixa, reparacionsAssignades from usuari ";
+	public static final String QUERY_ASIGNAR_USUARIO_NUMERO_REPARACIONES = "update usuari set reparacionsassignades = ? where id = ?";
+	public static final String QUERY_ASIGNAR_REPARACIONES_MECANICO = "update mecanic set idrep1 = ?, idrep2 = ? where idmecanic = ?";
+	public static final String QUERY_ASIGNAR_MECANICO_REPARACION = "update reparacio set idmecanic = ? where ordrereparacio = ?";
 	
 	
 	
@@ -660,7 +669,102 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			}
 		}
 	}
+	
+	public void asignarUsuarioNumeroReparacion(int idMecanico, int numeroReparaciones)
+			throws DAOException {
+		getConnectionDB();
+		PreparedStatement ps = createPrepareStatment(QUERY_ASIGNAR_USUARIO_NUMERO_REPARACIONES, ResultSet.CONCUR_UPDATABLE);
+		try {
+			ps.setInt(1, numeroReparaciones);
+			ps.setInt(2, idMecanico);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
 
 
+	public void asignarReparacionesMecanico(int idMecanico,
+			int ordenReparacion1, int ordenReparacion2) throws DAOException {
+		getConnectionDB();
+		PreparedStatement ps = createPrepareStatment(QUERY_ASIGNAR_REPARACIONES_MECANICO, ResultSet.CONCUR_UPDATABLE);
+		try {
+			ps.setInt(1, ordenReparacion1);
+			ps.setInt(2, ordenReparacion2);
+			ps.setInt(3, idMecanico);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+
+	public void asignarMecanicoReparacion(int idMecanico, int ordenReparacion)
+			throws DAOException {
+		getConnectionDB();
+		PreparedStatement ps = createPrepareStatment(QUERY_ASIGNAR_MECANICO_REPARACION, ResultSet.CONCUR_UPDATABLE);
+		try {
+			ps.setInt(1, idMecanico);
+			ps.setInt(2, ordenReparacion);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+
+	public List<DetallReparacio> getDetalleReparacionesMecanico(int idMecanico)
+			throws DAOException {
+		List<DetallReparacio> result = new LinkedList<DetallReparacio>();
+		getConnectionDB();
+		
+		Statement stm = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			String QUERY = QUERY_GET_DETALLE_REPARACIONES_MECANICO + "where rep.idmecanic = " + idMecanico + " order by rep.ordrereparacio";
+			rs = stm.executeQuery(QUERY_GET_DETALLE_REPARACIONES_MECANICO);
+			while (rs.next()){
+				result.add(new DetallReparacio(rs.getInt(1), rs.getDate(2), rs.getDouble(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getBoolean(8), rs.getBoolean(9), rs.getInt(10)));
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (stm!=null) {
+				try {stm.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
 
 }
