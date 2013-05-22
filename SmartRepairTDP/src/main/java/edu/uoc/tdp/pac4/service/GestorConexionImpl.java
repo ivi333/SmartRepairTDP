@@ -278,7 +278,16 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
 		}
 	}
-
+	
+	public Taller getTallerByCif (String cif) throws RemoteException, GestorConexionException {
+		try {
+			return gestorConexionDAO.getTallerByCif(cif);
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		}
+		
+	}
+	
 	public List<Taller> getTallersByFilter (String id, String cif, String adreca, String capacitat, String idCapTaller)
 			throws RemoteException, GestorConexionException {
 		try {
@@ -327,5 +336,21 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 		}
 	}
 	
+	public void disableTaller (int idTaller) throws RemoteException, GestorConexionException {
+		try {
+			int reparaciones = gestorConexionDAO.getNumRepPendTaller(idTaller);
+			
+			if (reparaciones == 0) {
+				//gestorConexionDAO.disableTaller(idTaller);				
+			} else {
+				throw new GestorConexionException(
+						GestorConexionException.ERR_TALLER_REPARACIONES);
+			}
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO
+					+ e.getMessage());
+		}
+		
+	}	
 
 }

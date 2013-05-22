@@ -57,6 +57,10 @@ public interface GestorConexionInterface extends Remote{
 	
 	public Taller getTallerById (int id) 
 		throws RemoteException, GestorConexionException;
+
+	public Taller getTallerByCif (String cif) 
+		throws RemoteException, GestorConexionException;
+	
 	
 	public List<Taller> getTallersByFilter (String id, String cif, String adreca, String capacitat, String idCapTaller)
 		throws RemoteException, GestorConexionException;
@@ -66,5 +70,8 @@ public interface GestorConexionInterface extends Remote{
 	
 	public Taller modificarTaller  (Taller taller)
 		throws RemoteException, GestorConexionException;
+	
+	public void disableTaller (int idTaller)
+			throws RemoteException, GestorConexionException;
 }
 

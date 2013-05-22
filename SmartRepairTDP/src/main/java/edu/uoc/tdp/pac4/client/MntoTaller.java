@@ -1,44 +1,42 @@
 package edu.uoc.tdp.pac4.client;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-
-
+import edu.uoc.tdp.pac4.beans.PerfilUsuari;
 import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.ItemCombo;
+import edu.uoc.tdp.pac4.common.Nif;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
-import edu.uoc.tdp.pac4.exception.GestorConexionException;
 import edu.uoc.tdp.pac4.service.GestorConexionInterface;
 
 import javax.swing.JButton;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
-
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JPasswordField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import java.awt.Component;
-import javax.swing.JLayeredPane;
-
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 
 public class MntoTaller extends JFrame {
 
@@ -50,24 +48,27 @@ public class MntoTaller extends JFrame {
 	private GestorConexionInterface gestorConexion;
 	
 	private JPanel contentPane;
-	private JTextField txtCif;
+	private JButton btnAceptar;
+	private JButton btnCancelar;
+
+	
+	private String accion;
+	private int idTaller;
+	private Taller taller;
+	private ArrayList<ItemCombo> cbJefeTaller;	
+	
 	private JTextField txtId;
+	private JTextField txtCif;
+	private JTextField txtFalta;
+	private JTextField txtFmodificacion;
+	private JTextField txtFbaja;
 	private JTextField txtDireccion;
 	private JTextField txtCapacidad;
 	private JTextField txtTelefono;
 	private JTextField txtWeb;
-	private JComboBox cmbJefeTaller;
 	private JCheckBox chkActivo;
-	private JTextField txtFalta;
-	private JTextField txtFmodificacion;
-	private JTextField txtFbaja;
-	
-
-	private ArrayList<ItemCombo> cbJefeTaller;
-	private int idTaller;
-	private String accion;
-
-	private Taller taller;
+	private JComboBox cmbJefeTaller;
+	private JLabel lblTitle;
 	
 	/**
 	 * Launch the application.
@@ -76,7 +77,7 @@ public class MntoTaller extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MntoUsuario frame = new MntoUsuario();
+					MntoTaller frame = new MntoTaller();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -94,26 +95,28 @@ public class MntoTaller extends JFrame {
 	
 	public MntoTaller (GestorConexionInterface gestorConexion) {
 		this.gestorConexion = gestorConexion;
-		initialize ();
-		cargarCmbJefeTaller();
 		this.accion = "NUEVO";
-
+		initialize ();
+		initCmbJefeTaller();
+		cargarOperacion ();
+		
 	}
 	
 	public MntoTaller (GestorConexionInterface gestorConexion, String accion, int idTaller){
 		this.gestorConexion = gestorConexion;
-		this.idTaller = idTaller;
 		this.accion = accion;
+		this.idTaller = idTaller;
 		initialize ();
-		cargarCmbJefeTaller();
-		leerTaller ();
-		mostrarTaller ();
-		cargarAccion ();
+		initCmbJefeTaller ();
+		leerTallerById();
+		cargarOperacion ();
+		mostrarTaller();
+		
 	}
 	
 	private void initialize (){
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 839, 521);
+		this.setTitle(TDSLanguageUtils.getMessage("mntotaller.titulo.ventana"));
+		setBounds(100, 100, 800, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -140,7 +143,7 @@ public class MntoTaller extends JFrame {
 					.addContainerGap())
 		);
 		
-		JButton btnSalir = new JButton("SALIR");
+		JButton btnSalir = new JButton(TDSLanguageUtils.getMessage("mntotaller.btn.salir"));
 		btnSalir.setActionCommand("BTN_SALIR");
 		btnSalir.addActionListener(new ActionListener() {
 			
@@ -150,7 +153,7 @@ public class MntoTaller extends JFrame {
 		});
 		panel_5.add(btnSalir);
 		
-		JButton btnAceptar = new JButton("ACEPTAR");
+		btnAceptar = new JButton(TDSLanguageUtils.getMessage("mntotaller.btn.aceptar"));
 		btnAceptar.setActionCommand("BTN_ACEPTAR");
 		btnAceptar.addActionListener(new ActionListener() {
 			
@@ -161,7 +164,7 @@ public class MntoTaller extends JFrame {
 		});
 		panel_4.add(btnAceptar);
 		
-		JButton btnCancelar = new JButton("CANCELAR");
+		btnCancelar = new JButton(TDSLanguageUtils.getMessage("mntotaller.btn.cancelar"));
 		btnCancelar.setActionCommand("BTN_CANCELAR");
 		btnCancelar.addActionListener(new ActionListener() {
 			
@@ -176,330 +179,370 @@ public class MntoTaller extends JFrame {
 		JPanel panel_2 = new JPanel();
 		contentPane.add(panel_2, BorderLayout.NORTH);
 		
-		JLabel lblTitle = new JLabel("New label");
+		lblTitle = new JLabel("Titulo");
 		panel_2.add(lblTitle);
 		
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1, BorderLayout.CENTER);
 		
-		JPanel panel_3 = new JPanel();
+		JLabel lblId = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.id"));
+		lblId.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		JLayeredPane panel_6 = new JLayeredPane();
-		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
-		gl_panel_1.setHorizontalGroup(
-			gl_panel_1.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_1.createSequentialGroup()
-					.addComponent(panel_3, GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(panel_6, GroupLayout.PREFERRED_SIZE, 404, GroupLayout.PREFERRED_SIZE))
-		);
-		gl_panel_1.setVerticalGroup(
-			gl_panel_1.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_1.createSequentialGroup()
-					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
-						.addComponent(panel_3, GroupLayout.PREFERRED_SIZE, 364, GroupLayout.PREFERRED_SIZE)
-						.addComponent(panel_6, GroupLayout.PREFERRED_SIZE, 364, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap())
-		);
+		JLabel lblCif = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.nif"));
+		lblCif.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		JLabel lblCif = new JLabel("Cif");
+		txtId = new JTextField();
+		txtId.setColumns(10);
 		
 		txtCif = new JTextField();
 		txtCif.setColumns(10);
 		
-		JLabel lblDireccion = new JLabel("Direccion");
+		JLabel lblDireccion = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.nombre"));
+		lblDireccion.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel lblCapacidad = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.apellidos"));
+		lblCapacidad.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel lblJefeTaller = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.taller"));
+		lblJefeTaller.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel lblTelefono = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.password"));
+		lblTelefono.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel lblWeb = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.repeatpass"));
+		lblWeb.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel lblFalta = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.falta"));
+		lblFalta.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel lblFmodificacion = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.fmodificacion"));
+		lblFmodificacion.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel lblFbaja = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.fbaja"));
+		lblFbaja.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		txtFalta = new JTextField();
+		txtFalta.setColumns(10);
+		
+		txtFmodificacion = new JTextField();
+		txtFmodificacion.setColumns(10);
+		
+		txtFbaja = new JTextField();
+		txtFbaja.setColumns(10);
+		
+		
+		chkActivo = new JCheckBox(TDSLanguageUtils.getMessage("mntotaller.label.activo"));
 		
 		txtDireccion = new JTextField();
 		txtDireccion.setColumns(10);
 		
-		JLabel lblCapacidad = new JLabel("Capacidad");
-		
 		txtCapacidad = new JTextField();
 		txtCapacidad.setColumns(10);
 		
-		JLabel lblJefetaller = new JLabel("JefeTaller");
-		
 		cmbJefeTaller = new JComboBox();
-				
-		JLabel lblTelefono = new JLabel("Telefono");
 		
 		txtTelefono = new JTextField();
-		txtTelefono.setColumns(10);
-		
-		JLabel lblWeb = new JLabel("Web");
 		
 		txtWeb = new JTextField();
-		txtWeb.setColumns(10);
-		
-		chkActivo = new JCheckBox("Activo");
-		GroupLayout gl_panel_6 = new GroupLayout(panel_6);
-		gl_panel_6.setHorizontalGroup(
-			gl_panel_6.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_6.createSequentialGroup()
-					.addGap(30)
-					.addGroup(gl_panel_6.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblWeb, Alignment.TRAILING)
-						.addComponent(lblTelefono, Alignment.TRAILING)
-						.addComponent(lblJefetaller, Alignment.TRAILING)
-						.addComponent(lblCapacidad, Alignment.TRAILING)
-						.addComponent(lblDireccion, Alignment.TRAILING)
-						.addComponent(lblCif, Alignment.TRAILING))
-					.addGap(5)
-					.addGroup(gl_panel_6.createParallelGroup(Alignment.LEADING)
-						.addComponent(txtCif, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtDireccion, GroupLayout.PREFERRED_SIZE, 295, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtCapacidad, GroupLayout.PREFERRED_SIZE, 295, GroupLayout.PREFERRED_SIZE)
-						.addComponent(cmbJefeTaller, GroupLayout.PREFERRED_SIZE, 295, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtTelefono, GroupLayout.PREFERRED_SIZE, 295, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtWeb, GroupLayout.PREFERRED_SIZE, 295, GroupLayout.PREFERRED_SIZE)
-						.addComponent(chkActivo)))
+		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
+		gl_panel_1.setHorizontalGroup(
+			gl_panel_1.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel_1.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_panel_1.createSequentialGroup()
+							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
+									.addComponent(lblFalta)
+									.addComponent(lblFmodificacion)
+									.addComponent(lblFbaja))
+								.addComponent(lblId, GroupLayout.PREFERRED_SIZE, 109, GroupLayout.PREFERRED_SIZE))
+							.addGap(44)
+							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_panel_1.createSequentialGroup()
+									.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED, 272, Short.MAX_VALUE)
+									.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
+										.addComponent(lblCif, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblTelefono)
+										.addComponent(lblWeb)
+										.addComponent(lblDireccion)
+										.addComponent(lblCapacidad)))
+								.addComponent(txtFbaja, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(txtFmodificacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(txtFalta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+						.addComponent(lblJefeTaller))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+						.addComponent(chkActivo)
+						.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING, false)
+							.addComponent(txtWeb)
+							.addComponent(txtDireccion)
+							.addComponent(txtCapacidad)
+							.addComponent(cmbJefeTaller, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(txtTelefono)
+							.addComponent(txtCif, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap(127, Short.MAX_VALUE))
 		);
-		gl_panel_6.setVerticalGroup(
-			gl_panel_6.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_6.createSequentialGroup()
-					.addGap(30)
-					.addGroup(gl_panel_6.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel_6.createSequentialGroup()
-							.addGap(2)
+		gl_panel_1.setVerticalGroup(
+			gl_panel_1.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panel_1.createSequentialGroup()
+					.addGap(23)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+							.addComponent(txtCif, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(lblCif))
-						.addComponent(txtCif, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(5)
-					.addGroup(gl_panel_6.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblDireccion)
-						.addComponent(txtDireccion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(5)
-					.addGroup(gl_panel_6.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblCapacidad)
-						.addComponent(txtCapacidad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(5)
-					.addGroup(gl_panel_6.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblJefetaller)
-						.addComponent(cmbJefeTaller, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(5)
-					.addGroup(gl_panel_6.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblTelefono)
-						.addComponent(txtTelefono, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(5)
-					.addGroup(gl_panel_6.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblWeb)
-						.addComponent(txtWeb, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(5)
-					.addComponent(chkActivo))
-		);
-		gl_panel_6.linkSize(SwingConstants.VERTICAL, new Component[] {lblCif, lblDireccion, lblCapacidad, lblJefetaller, lblTelefono, lblWeb});
-		panel_6.setLayout(gl_panel_6);
-		
-		JLabel lblId = new JLabel("New label");
-		
-		txtId = new JTextField();
-		txtId.setEditable(false);
-		txtId.setColumns(10);
-		
-		JLabel lblFalta = new JLabel("FAlta");
-		
-		 txtFalta = new JTextField();
-		txtFalta.setEditable(false);
-	
-		JLabel lblFmodificacion = new JLabel("FModificacion");
-		
-		txtFmodificacion = new JTextField();
-		txtFmodificacion.setEditable(false);
-		
-		JLabel lblFbaja = new JLabel("FBaja");
-		
-		txtFbaja = new JTextField();
-		txtFbaja.setEditable(false);
-		
-		GroupLayout gl_panel_3 = new GroupLayout(panel_3);
-		gl_panel_3.setHorizontalGroup(
-			gl_panel_3.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_3.createSequentialGroup()
-					.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel_3.createSequentialGroup()
-							.addGap(56)
-							.addComponent(lblId))
-						.addGroup(gl_panel_3.createSequentialGroup()
-							.addGap(90)
-							.addComponent(lblFalta))
-						.addGroup(gl_panel_3.createSequentialGroup()
-							.addGap(30)
-							.addComponent(lblFmodificacion))
-						.addGroup(gl_panel_3.createSequentialGroup()
-							.addGap(87)
-							.addComponent(lblFbaja)))
-					.addGap(5)
-					.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
-						.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtFalta, GroupLayout.PREFERRED_SIZE, 261, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtFmodificacion, GroupLayout.PREFERRED_SIZE, 261, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtFbaja, GroupLayout.PREFERRED_SIZE, 261, GroupLayout.PREFERRED_SIZE)))
-		);
-		gl_panel_3.setVerticalGroup(
-			gl_panel_3.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_3.createSequentialGroup()
-					.addGap(30)
-					.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel_3.createSequentialGroup()
-							.addGap(2)
-							.addComponent(lblId))
-						.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(160)
-					.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel_3.createSequentialGroup()
-							.addGap(2)
-							.addComponent(lblFalta))
+						.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblId)
+							.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+						.addComponent(txtDireccion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblDireccion))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+						.addComponent(txtCapacidad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblCapacidad))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+						.addComponent(cmbJefeTaller, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblJefeTaller))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+						.addComponent(txtTelefono, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblTelefono))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+						.addComponent(txtWeb, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblWeb))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(chkActivo)
+					.addGap(71)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblFalta)
 						.addComponent(txtFalta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(5)
-					.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel_3.createSequentialGroup()
-							.addGap(2)
-							.addComponent(lblFmodificacion))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblFmodificacion)
 						.addComponent(txtFmodificacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(5)
-					.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel_3.createSequentialGroup()
-							.addGap(2)
-							.addComponent(lblFbaja))
-						.addComponent(txtFbaja, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblFbaja)
+						.addComponent(txtFbaja, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(24))
 		);
-		gl_panel_3.linkSize(SwingConstants.VERTICAL, new Component[] {txtId, txtFalta, txtFmodificacion, txtFbaja});
-		gl_panel_3.linkSize(SwingConstants.VERTICAL, new Component[] {lblId, lblFalta, lblFmodificacion, lblFbaja});
-		panel_3.setLayout(gl_panel_3);
+		gl_panel_1.linkSize(SwingConstants.HORIZONTAL, new Component[] {lblId, lblFalta, lblFmodificacion, lblFbaja});
+		gl_panel_1.linkSize(SwingConstants.HORIZONTAL, new Component[] {lblCif, lblDireccion, lblCapacidad, lblJefeTaller, lblTelefono, lblWeb});
 		panel_1.setLayout(gl_panel_1);
+		setResizable(false);
+		pack();
 	}
 	
-
-	private void cargarCmbJefeTaller (){
+	private void initCmbJefeTaller () {
 		cbJefeTaller = new ArrayList<ItemCombo>();
-		DefaultComboBoxModel defaultCombo = new DefaultComboBoxModel();
+		List<Usuari> usuaris;
 		try {
-			List<Usuari> jefesTaller = gestorConexion.getUsuarisCapTaller();
-			cbJefeTaller.add(new ItemCombo(0,"","0"));
-			for (int i = 0; i < jefesTaller.size(); i++) {				
-				Usuari jefeTaller = jefesTaller.get(i);
-				cbJefeTaller.add(new ItemCombo(i+1, jefeTaller.getNomCognoms(), 
-						String.valueOf(jefeTaller.getId())));
-				cmbJefeTaller.insertItemAt(jefeTaller.getNomCognoms(), i);
+			usuaris = this.gestorConexion.getUsuarisCapTaller();
+			cbJefeTaller.add(new ItemCombo(0, "", "0"));
+			for (int i= 0; i < usuaris.size(); i ++)
+				cbJefeTaller.add(new ItemCombo(i+1,usuaris.get(i).getNomCognoms(),String.valueOf(usuaris.get(i).getId())));
+			for (int i=0; i < cbJefeTaller.size(); i++) {
+				cmbJefeTaller.insertItemAt(cbJefeTaller.get(i).getValue(), i);				
 			}
-			for (int i = 0; i < cbJefeTaller.size(); i++)
-				defaultCombo.insertElementAt(cbJefeTaller.get(i).getValue(), i);
-			cmbJefeTaller.setModel(defaultCombo);
-			cmbJefeTaller.setSelectedItem("");
-			
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (GestorConexionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			cmbJefeTaller.setSelectedIndex(0);
+
+		} catch (Exception e) {
+			showError(e.getMessage(),"");
+		} 
+		
+	}
+	
+	private void cargarOperacion () {
+		
+		txtId.setEnabled(false);
+		txtFalta.setEnabled(false);
+		txtFmodificacion.setEnabled(false);
+		txtFbaja.setEnabled(false);
+		
+		if (this.accion.equalsIgnoreCase("NUEVO")) {
+			lblTitle.setText(TDSLanguageUtils.getMessage("mntotaller.titulo.alta"));
+			txtCif.setEnabled(true);
+			txtDireccion.setEnabled(true);
+			txtCapacidad.setEnabled(true);
+			txtTelefono.setEnabled(true);
+			txtWeb.setEnabled(true);
+			cmbJefeTaller.setEnabled(true);
+			chkActivo.setEnabled(true);
+		} else if (this.accion.equalsIgnoreCase("MODIFICAR")) {
+			lblTitle.setText(TDSLanguageUtils.getMessage("mntotaller.titulo.modificacion"));
+			txtCif.setEnabled(true);
+			txtDireccion.setEnabled(true);
+			txtCapacidad.setEnabled(true);
+			txtTelefono.setEnabled(true);
+			txtWeb.setEnabled(true);
+			cmbJefeTaller.setEnabled(true);
+			if (taller.isActiu())
+				chkActivo.setEnabled(false);
+		} else if (this.accion.equalsIgnoreCase("BAJA")){
+			lblTitle.setText(TDSLanguageUtils.getMessage("mntotaller.titulo.baja"));
+			txtCif.setEnabled(false);
+			txtDireccion.setEnabled(false);
+			txtCapacidad.setEnabled(false);
+			txtTelefono.setEnabled(false);
+			txtWeb.setEnabled(false);
+			cmbJefeTaller.setEnabled(false);
+			if (taller.isActiu()) {
+				chkActivo.setEnabled(true);
+			} else {
+				chkActivo.setEnabled(false);
+				btnAceptar.setEnabled(false);
+				btnCancelar.setEnabled(false);				
+			}
 		}
 	}
-	private void leerTaller () {
+	private void leerTallerById () {
 		try {
 			taller = gestorConexion.getTallerById(idTaller);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (GestorConexionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (Exception e) {
+			showError(e.getMessage(), "");
+		} 
+	}
+	
+	private void leerTallerByCif () {
+		try {
+			taller = gestorConexion.getTallerByCif (txtCif.getText().toUpperCase());
+			idTaller = taller.getId();
+		} catch (Exception e) {
+			showError(e.getMessage(),"");
+		} 
 	}
 
-	private void mostrarTaller (){
+	private void mostrarTaller () {				
+		
 		txtId.setText(String.valueOf(taller.getId()));
 		txtCif.setText(taller.getCif());
 		txtDireccion.setText(taller.getAdreca());
 		txtCapacidad.setText(String.valueOf(taller.getCapacitat()));
-		txtTelefono.setText(taller.getTelefon());
-		txtWeb.setText(taller.getWeb());
-		chkActivo.setSelected(taller.isActiu());			
-		for (int i = 0; i < cbJefeTaller.size(); i ++){
+		chkActivo.setSelected(taller.isActiu());
+
+		for (int i = 0; i < cbJefeTaller.size(); i ++) {
 			if (Integer.valueOf(cbJefeTaller.get(i).getAux()) == taller.getCapTaller()) {
-				cmbJefeTaller.setSelectedItem(cbJefeTaller.get(i).getValue());
+				cmbJefeTaller.setSelectedIndex(Integer.valueOf(cbJefeTaller.get(i).getAux()));
 				break;
 			}
 		}
 		
+//		cmbJefeTaller.setSelectedItem(usuari.getTaller());
+		txtTelefono.setText(taller.getTelefon());
+		txtWeb.setText(taller.getWeb());
 		txtFalta.setText(taller.getDataApertura().toString());
-		if (taller.getDataModificacio()!= null)
+		if (taller.getDataModificacio() != null)
 			txtFmodificacion.setText(taller.getDataModificacio().toString());
-		if (taller.getDataBaixa()!= null)
+		if (taller.getDataBaixa() != null)
 			txtFbaja.setText(taller.getDataBaixa().toString());
+		
+		
+	}
 
-		
-	}
-	private void cargarAccion () {
-		
-	}
 	
-	private void altaTaller () {
-		taller = new Taller ();
-		taller.setCif(this.txtCif.getText());
-		taller.setAdreca(this.txtDireccion.getText());
-		taller.setCapacitat(Integer.valueOf(txtCapacidad.getText()));
-		taller.setTelefon(txtTelefono.getText());
-		taller.setWeb(txtWeb.getText());
-		taller.setActiu(chkActivo.isSelected());
-		try {
-			taller = gestorConexion.altaTaller(taller);
-			mostrarTaller();
-		} catch (RemoteException e) {
-			showError(e.getMessage(), "GESCON.showmessage.error");
-		} catch (GestorConexionException e) {
-			showError(e.getMessage(), "GESCON.showmessage.error");
-		}
-		
-	}
-	
-	private void modificarTaller () {
-		taller.setCif(this.txtCif.getText());
-		taller.setAdreca(this.txtDireccion.getText());
-		taller.setCapacitat(Integer.valueOf(txtCapacidad.getText()));
-		taller.setTelefon(txtTelefono.getText());
-		taller.setWeb(txtWeb.getText());
-		taller.setActiu(chkActivo.isSelected());
-		taller.setDataModificacio(new Date());
-		try {
-			taller = gestorConexion.modificarTaller(taller);
-			mostrarTaller();
-		} catch (RemoteException e) {
-			showError(e.getMessage(), "GESCON.showmessage.error");
-		} catch (GestorConexionException e) {
-			showError(e.getMessage(), "GESCON.showmessage.error");
-		}
-	}
-		
 	private void actions (ActionEvent action){
-		if (action.getActionCommand().toString().equals("BTN_SALIR")) {
-			dispose ();
-		} else if (action.getActionCommand().toString().equals("BTN_ACEPTAR")) {
-			if (accion.equalsIgnoreCase("NUEVO")) {
-				altaTaller ();
-			} else if (accion.equalsIgnoreCase("MODIFICAR")){
-				modificarTaller ();
+		if (action.getActionCommand().toString().equalsIgnoreCase("BTN_ACEPTAR")){
+			
+			if (this.accion.equals("NUEVO")){
+				Taller taller = new Taller ();
+				taller.setCif(txtCif.getText().toUpperCase());
+				taller.setAdreca(txtDireccion.getText());
+				taller.setCapacitat(Integer.valueOf(txtCapacidad.getText()));
+
+				taller.setActiu(chkActivo.isSelected());
+				taller.setCapTaller(Integer.valueOf(cbJefeTaller.get(cmbJefeTaller.getSelectedIndex()).getAux()));
+				String msg = validarCampos();
+				if (msg.equals("")) {
+				
+					try {
+						gestorConexion.altaTaller(taller);
+						showInfo(TDSLanguageUtils.getMessage("mntotaller.alta.ok"), lblTitle.getText());
+						this.accion = "MODIFICAR";
+						leerTallerByCif();
+						cargarOperacion();
+						mostrarTaller();					
+					} catch (Exception e) {
+						showError(e.getMessage(),lblTitle.getText());
+					}
+				} else {
+					showWarning(TDSLanguageUtils.getMessage(msg), lblTitle.getText());
+				}
+				
+				
+			}else if (this.accion.equalsIgnoreCase("MODIFICAR")){	
+				taller.setCif(txtCif.getText().toUpperCase());
+				taller.setAdreca(txtDireccion.getText());
+				taller.setCapacitat(Integer.valueOf(txtCapacidad.getText()));
+				taller.setActiu(chkActivo.isSelected());
+				taller.setCapTaller(Integer.valueOf(cbJefeTaller.get(cmbJefeTaller.getSelectedIndex()).getAux()));
+				String msg = validarCampos();
+				if (msg.equals("")) {
+					try {
+						gestorConexion.modificarTaller(taller);
+						showInfo(TDSLanguageUtils.getMessage("mntotaller.modif.ok"), lblTitle.getText());
+						leerTallerById();
+						mostrarTaller();
+					} catch (Exception e) {
+						showError(e.getMessage(),lblTitle.getText());
+					}
+				} else {
+					showWarning(TDSLanguageUtils.getMessage(msg), lblTitle.getText());
+				}
+			} else {
+				if (JOptionPane.showConfirmDialog(this, 
+						TDSLanguageUtils.getMessage("mntotaller.confimar.desactivar") + " " + taller.getCif(), 
+						TDSLanguageUtils.getMessage("mntotaller.atencion"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {					
+					try {					
+						gestorConexion.disableTaller(taller.getId());
+						showInfo(TDSLanguageUtils.getMessage("mntotaller.baja.ok"), lblTitle.getText());
+					} catch (Exception e ) {
+						showError(e.getMessage(),lblTitle.getText());
+					}				
+				}
+				leerTallerById();
+				cargarOperacion();
+				mostrarTaller();					
+
 			}
 		} else if (action.getActionCommand().toString().equals("BTN_CANCELAR")) {
-			mostrarTaller();
-			cargarAccion();
+			if (taller != null) {
+				leerTallerById();
+				cargarOperacion();
+				mostrarTaller();
+			}
+		} else {
+			dispose();
 		}
 	}
 	
-	private void showError (String message, String title){		
-		String txtTitle;		
-		txtTitle = TDSLanguageUtils.getMessage(title);
-		showMessage (message, txtTitle,JOptionPane.ERROR_MESSAGE);
+	private String validarCampos () {
+		String msg = "";
+		
+		return msg;
 	}
 	
-	private void showInfo (String message, String title){
-		String txtMessage;
-		String txtTitle;		
-		txtMessage = TDSLanguageUtils.getMessage(message);
-		txtTitle = TDSLanguageUtils.getMessage(title);
-		showMessage (txtMessage, txtTitle,JOptionPane.INFORMATION_MESSAGE);
+	private void showError (String message, String title){
+		String titulo = TDSLanguageUtils.getMessage("GESCON.showmessage.error") + " - " +title; 
+		showMessage (message, titulo, JOptionPane.ERROR_MESSAGE);
+	}
+	
+	private void showWarning (String message, String title) {
+		String titulo = TDSLanguageUtils.getMessage("GESCON.showmessage.aviso") + " - " + title;
+		showMessage(message, titulo, JOptionPane.WARNING_MESSAGE);
+	}
+	
+	private void showInfo (String message, String title){		
+		showMessage (message, title, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	private void showMessage (String message, String title, int messageType) {
 		JOptionPane.showMessageDialog(this, message, title, messageType);
 	}
+	
+
 }
