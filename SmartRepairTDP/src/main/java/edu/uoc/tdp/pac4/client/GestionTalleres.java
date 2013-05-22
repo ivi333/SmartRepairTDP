@@ -47,6 +47,7 @@ import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.exception.GestorConexionException;
 import edu.uoc.tdp.pac4.service.GestorConexionInterface;
 import javax.swing.ListSelectionModel;
+import javax.swing.JSeparator;
 
 
 public class GestionTalleres extends JFrame {
@@ -119,7 +120,7 @@ public class GestionTalleres extends JFrame {
 	
 	private void initialize (){
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 821, 408);
+		setBounds(100, 100, 950, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -188,27 +189,33 @@ public class GestionTalleres extends JFrame {
 				
 			}
 		});
+		
+		JSeparator separator = new JSeparator();
 		GroupLayout gl_panel_2 = new GroupLayout(panel_2);
 		gl_panel_2.setHorizontalGroup(
 			gl_panel_2.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_2.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnNuevo)
-						.addComponent(btnModificar))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnBaja)
-					.addContainerGap(567, Short.MAX_VALUE))
+						.addGroup(gl_panel_2.createSequentialGroup()
+							.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnNuevo)
+								.addComponent(btnModificar))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnBaja)
+							.addContainerGap(522, Short.MAX_VALUE))
+						.addComponent(separator, GroupLayout.DEFAULT_SIZE, 926, Short.MAX_VALUE)))
 		);
 		gl_panel_2.setVerticalGroup(
 			gl_panel_2.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panel_2.createSequentialGroup()
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 					.addComponent(btnNuevo)
-					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGap(12)
+					.addComponent(separator, GroupLayout.PREFERRED_SIZE, 2, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnModificar, Alignment.TRAILING)
-						.addComponent(btnBaja, Alignment.TRAILING))
+						.addComponent(btnBaja)
+						.addComponent(btnModificar))
 					.addContainerGap())
 		);
 		panel_2.setLayout(gl_panel_2);
@@ -222,18 +229,21 @@ public class GestionTalleres extends JFrame {
 		GroupLayout gl_panel_3 = new GroupLayout(panel_3);
 		gl_panel_3.setHorizontalGroup(
 			gl_panel_3.createParallelGroup(Alignment.TRAILING)
+				.addGroup(Alignment.LEADING, gl_panel_3.createSequentialGroup()
+					.addComponent(panel_4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addContainerGap())
 				.addGroup(gl_panel_3.createSequentialGroup()
-					.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 675, Short.MAX_VALUE)
-						.addComponent(panel_4, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-					.addGap(1))
+					.addGap(1)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 686, Short.MAX_VALUE))
 		);
 		gl_panel_3.setVerticalGroup(
 			gl_panel_3.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_3.createSequentialGroup()
-					.addComponent(panel_4, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE))
+				.addGroup(Alignment.TRAILING, gl_panel_3.createSequentialGroup()
+					.addGap(6)
+					.addComponent(panel_4, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+					.addGap(10))
 		);
 		
 		JLabel lblId = new JLabel(TDSLanguageUtils.getMessage("gestiontalleres.label.id"));

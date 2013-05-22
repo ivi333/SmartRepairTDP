@@ -26,6 +26,7 @@ public class GestorConexionException extends Exception {
 	public static final String ERR_JEFETALLER_ASIGN = TDSLanguageUtils.getMessage("ERR_JEFETALLER_ASIGNADO");
 	public static final String ERR_TALLER_INACTIU = TDSLanguageUtils.getMessage("ERR_TALLER_INACTIU");
 	public static final String ERR_JEFETALLER_TALLER = TDSLanguageUtils.getMessage("ERR_JEFETALLER_TALLER");
+	public static final String ERR_TALLER_REPARACIONES = TDSLanguageUtils.getMessage("ERR_TALLER_REPARACIONES");
 
 
 	public GestorConexionException() {

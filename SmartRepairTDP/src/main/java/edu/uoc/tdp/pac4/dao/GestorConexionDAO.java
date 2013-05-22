@@ -222,4 +222,5 @@ public interface GestorConexionDAO {
 	 */
 	public void updateTaller (Taller taller) throws DAOException;
 
+	public int getNumRepPendTaller (int idTaller) throws DAOException; 
 }

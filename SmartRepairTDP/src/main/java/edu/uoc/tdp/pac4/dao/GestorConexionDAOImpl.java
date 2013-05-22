@@ -134,6 +134,11 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			"   AND actiu IS TRUE " +
 			"   AND id != ?  ";
 
+	private static final String QUERY_REPPENDIENTES_BY_TALLER = 
+			"SELECT SUM(reparacionsassignades) " +
+			"  FROM usuari " +
+			" WHERE taller=?";
+	
 	public GestorConexionDAOImpl (){
 		super();
 	}
@@ -916,6 +921,39 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 				}
 			}
 		}
+	}
+	
+	public int getNumRepPendTaller (int idTaller) throws DAOException {
+		getConnectionDB();
+		int result = 0;
+		PreparedStatement ps = createPrepareStatment(QUERY_REPPENDIENTES_BY_TALLER, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			ps.setInt(1, idTaller);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				result =  rs.getInt(1);
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);
+		} finally {
+			if (ps != null){
+				try {
+					ps.close();
+				} catch (SQLException e){
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}	
+		
 	}
 }
 
