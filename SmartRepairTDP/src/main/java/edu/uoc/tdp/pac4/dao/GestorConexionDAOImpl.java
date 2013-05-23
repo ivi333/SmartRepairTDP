@@ -51,7 +51,16 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			" WHERE id = ?";
 	
 	private static final String QUERY_ALL_USUARIS_CAPTALLER = 
-			"SELECT * FROM usuari WHERE perfil='JefeTaller'";
+			"SELECT * FROM usuari " +
+			" WHERE perfil LIKE '%JefeTaller%' ";
+	
+	private static final String QUERY_CAPTALLERS_DISPONIBLES = 
+			"SELECT * FROM usuari " +
+			" WHERE perfil LIKE '%JefeTaller%' " +
+			"   AND (NOT EXISTS (SELECT 1 FROM taller " +
+			"                    WHERE taller.captaller = usuari.id)" +
+			"        OR (taller = ?))";
+
 	
 	private static final String EXIST_USUARI = 
 			"SELECT * FROM usuari WHERE UPPER(nif)=? OR UPPER(usuari)=?";
@@ -135,9 +144,18 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			"   AND id != ?  ";
 
 	private static final String QUERY_REPPENDIENTES_BY_TALLER = 
-			"SELECT SUM(reparacionsassignades) " +
-			"  FROM usuari " +
-			" WHERE taller=?";
+			"SELECT COUNT(1) FROM  solicitud, reparacio, taller, usuari " +
+			" WHERE solicitud.numreparacio = reparacio.ordrereparacio " +
+			"   AND  reparacio.captaller = usuari.id " +
+			"   AND  usuari.taller = taller.id " +
+			"   AND  solicitud.finalitzada = FALSE " +
+			"   AND  taller.id = ?";
+	private static final String UPDATE_DISABLE_TALLER = 
+			"UPDATE taller " +
+			"   SET actiu = FALSE, " +
+			"       databaixa = now (), " +
+			"       datamodificacio = now () " +
+			" WHERE id = ?";
 	
 	public GestorConexionDAOImpl (){
 		super();
@@ -388,6 +406,41 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 		}
 	}
 
+	public List<Usuari> getUsuarisCapTallerDisponbiles(int idTaller) throws DAOException{
+		getConnectionDB();
+		List<Usuari> result = new LinkedList<Usuari> ();
+		PreparedStatement ps = createPrepareStatment(QUERY_CAPTALLERS_DISPONIBLES, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			ps.setInt(1, idTaller);
+			rs = ps.executeQuery();
+			while (rs.next()){
+				result.add(
+						new Usuari(rs.getInt("id"), rs.getInt("taller"), rs.getString("usuari"), rs.getString("perfil"), 
+								rs.getString("nif"), rs.getString("nom"), rs.getString("cognoms"),
+								rs.getString("contrasenya"), rs.getBoolean("actiu"), rs.getDate("dataAlta"), rs.getDate("dataModificacio"), 
+								rs.getDate("dataBaixa"), rs.getInt("reparacionsAssignades")));	
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
 	
 	public boolean usuariExist (String nif, String usuari)
 			throws DAOException {
@@ -593,8 +646,12 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 		try {
 			ps.setInt(1, mecanic.getId());
 			ps.setBoolean(2, mecanic.isActiu());
-			ps.setNull(3, Types.INTEGER);
-			ps.setNull(4, Types.INTEGER);
+			// TODO Validar les restriccions final per aquesta taula
+			ps.setNull(3, mecanic.getIdrep1());
+			ps.setNull(4, mecanic.getIdrep1());
+
+			//ps.setNull(3, Types.INTEGER);
+			//ps.setNull(4, Types.INTEGER);
 	
 			ps.execute();
 		} catch (SQLException e) {
@@ -952,8 +1009,26 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
 				}
 			}
-		}	
-		
+		}		
 	}
+	
+	public void disableTaller (int id) throws DAOException {
+		getConnectionDB();
+		PreparedStatement ps = createPrepareStatment(UPDATE_DISABLE_TALLER, ResultSet.CONCUR_UPDATABLE);
+		try {
+			ps.setInt(1, id);
+			ps.execute();
+		} catch (SQLException e){
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);
+		} finally {
+			if (ps != null){
+				try {
+					ps.close();
+				} catch (SQLException e){
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage() ,e);
+				}
+			}
+		}
+	}	
 }
 

@@ -43,6 +43,9 @@ public interface GestorConexionInterface extends Remote{
 	public List<Usuari> getUsuarisCapTaller () 
 		throws RemoteException, GestorConexionException;
 	
+	public List<Usuari> getUsuarisCapTallerDisponibles (int idTaller) 
+			throws RemoteException, GestorConexionException;
+	
 	public void disableUser(int idUsuari)
 		throws RemoteException, GestorConexionException;
 	

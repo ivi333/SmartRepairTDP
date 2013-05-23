@@ -75,6 +75,15 @@ public interface GestorConexionDAO {
 	 * @throws DAOException
 	 */
 	public List<Usuari> getUsuarisCapTaller() throws DAOException;
+
+	
+	/**
+	 * Obtiene una lista con los usuarios que tiene el perfil de Jefe de Taller
+	 * que estan disponibles, no estan asignados a ningún taller
+	 * @return
+	 * @throws DAOException
+	 */
+	public List<Usuari> getUsuarisCapTallerDisponbiles(int idTaller) throws DAOException;
 	
 	/**
 	 * Comprueba si el usuario ya existe al realizar una alta de usuario
@@ -222,5 +231,7 @@ public interface GestorConexionDAO {
 	 */
 	public void updateTaller (Taller taller) throws DAOException;
 
-	public int getNumRepPendTaller (int idTaller) throws DAOException; 
+	public int getNumRepPendTaller (int idTaller) throws DAOException;
+	
+	public void disableTaller(int id) throws DAOException;
 }

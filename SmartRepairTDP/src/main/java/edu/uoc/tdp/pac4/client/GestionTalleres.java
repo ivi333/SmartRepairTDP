@@ -39,7 +39,6 @@ import javax.swing.JButton;
 import javax.swing.text.JTextComponent;
 
 
-import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.ItemCombo;
@@ -119,7 +118,8 @@ public class GestionTalleres extends JFrame {
 	}
 	
 	private void initialize (){
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setTitle(TDSLanguageUtils.getMessage("gestiontalleres.titulo.ventana"));
 		setBounds(100, 100, 950, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

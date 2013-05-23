@@ -8,11 +8,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import edu.uoc.tdp.pac4.beans.PerfilUsuari;
 import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.ItemCombo;
-import edu.uoc.tdp.pac4.common.Nif;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorConexionInterface;
 
@@ -25,18 +23,14 @@ import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
-import javax.swing.JPasswordField;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
+
 
 public class MntoTaller extends JFrame {
 
@@ -116,7 +110,7 @@ public class MntoTaller extends JFrame {
 	
 	private void initialize (){
 		this.setTitle(TDSLanguageUtils.getMessage("mntotaller.titulo.ventana"));
-		setBounds(100, 100, 800, 500);
+		setBounds(100, 100, 958, 529);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -188,7 +182,7 @@ public class MntoTaller extends JFrame {
 		JLabel lblId = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.id"));
 		lblId.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		JLabel lblCif = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.nif"));
+		JLabel lblCif = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.cif"));
 		lblCif.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		txtId = new JTextField();
@@ -197,19 +191,19 @@ public class MntoTaller extends JFrame {
 		txtCif = new JTextField();
 		txtCif.setColumns(10);
 		
-		JLabel lblDireccion = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.nombre"));
+		JLabel lblDireccion = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.direccion"));
 		lblDireccion.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		JLabel lblCapacidad = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.apellidos"));
+		JLabel lblCapacidad = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.capacidad"));
 		lblCapacidad.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		JLabel lblJefeTaller = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.taller"));
+		JLabel lblJefeTaller = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.jefetaller"));
 		lblJefeTaller.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		JLabel lblTelefono = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.password"));
+		JLabel lblTelefono = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.telefono"));
 		lblTelefono.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		JLabel lblWeb = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.repeatpass"));
+		JLabel lblWeb = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.web"));
 		lblWeb.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		JLabel lblFalta = new JLabel(TDSLanguageUtils.getMessage("mntotaller.label.falta"));
@@ -249,40 +243,38 @@ public class MntoTaller extends JFrame {
 			gl_panel_1.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_1.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_panel_1.createSequentialGroup()
-							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
-									.addComponent(lblFalta)
-									.addComponent(lblFmodificacion)
-									.addComponent(lblFbaja))
-								.addComponent(lblId, GroupLayout.PREFERRED_SIZE, 109, GroupLayout.PREFERRED_SIZE))
-							.addGap(44)
-							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_panel_1.createSequentialGroup()
-									.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED, 272, Short.MAX_VALUE)
-									.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
-										.addComponent(lblCif, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
-										.addComponent(lblTelefono)
-										.addComponent(lblWeb)
-										.addComponent(lblDireccion)
-										.addComponent(lblCapacidad)))
-								.addComponent(txtFbaja, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(txtFmodificacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(txtFalta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-						.addComponent(lblJefeTaller))
-					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
-						.addComponent(chkActivo)
-						.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING, false)
-							.addComponent(txtWeb)
-							.addComponent(txtDireccion)
-							.addComponent(txtCapacidad)
-							.addComponent(cmbJefeTaller, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(txtTelefono)
-							.addComponent(txtCif, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(127, Short.MAX_VALUE))
+						.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
+							.addComponent(lblFalta)
+							.addComponent(lblFmodificacion)
+							.addComponent(lblFbaja))
+						.addComponent(lblId, GroupLayout.PREFERRED_SIZE, 109, GroupLayout.PREFERRED_SIZE))
+					.addGap(44)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel_1.createSequentialGroup()
+							.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 181, Short.MAX_VALUE)
+							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblDireccion, Alignment.TRAILING)
+								.addComponent(lblCapacidad, Alignment.TRAILING)
+								.addComponent(lblJefeTaller, Alignment.TRAILING)
+								.addComponent(lblTelefono, Alignment.TRAILING)
+								.addComponent(lblWeb, Alignment.TRAILING)
+								.addComponent(lblCif, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+								.addComponent(cmbJefeTaller, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(chkActivo)
+								.addComponent(txtDireccion, GroupLayout.PREFERRED_SIZE, 281, GroupLayout.PREFERRED_SIZE)
+								.addComponent(txtCif, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
+								.addComponent(txtCapacidad, GroupLayout.PREFERRED_SIZE, 131, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING, false)
+									.addComponent(txtWeb, Alignment.LEADING)
+									.addComponent(txtTelefono, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE))))
+						.addComponent(txtFbaja, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtFmodificacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtFalta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(112))
 		);
 		gl_panel_1.setVerticalGroup(
 			gl_panel_1.createParallelGroup(Alignment.TRAILING)
@@ -290,34 +282,34 @@ public class MntoTaller extends JFrame {
 					.addGap(23)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-							.addComponent(txtCif, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblCif))
+							.addComponent(lblCif)
+							.addComponent(txtCif, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
 							.addComponent(lblId)
 							.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-						.addComponent(txtDireccion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblDireccion))
+						.addComponent(lblDireccion)
+						.addComponent(txtDireccion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-						.addComponent(txtCapacidad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblCapacidad))
+						.addComponent(lblCapacidad)
+						.addComponent(txtCapacidad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-						.addComponent(cmbJefeTaller, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblJefeTaller))
+						.addComponent(lblJefeTaller)
+						.addComponent(cmbJefeTaller, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-						.addComponent(txtTelefono, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblTelefono))
+						.addComponent(lblTelefono)
+						.addComponent(txtTelefono, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-						.addComponent(txtWeb, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblWeb))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+						.addComponent(lblWeb)
+						.addComponent(txtWeb, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(10)
 					.addComponent(chkActivo)
-					.addGap(71)
+					.addGap(69)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblFalta)
 						.addComponent(txtFalta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -331,6 +323,7 @@ public class MntoTaller extends JFrame {
 						.addComponent(txtFbaja, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(24))
 		);
+		gl_panel_1.linkSize(SwingConstants.HORIZONTAL, new Component[] {txtCif, txtCapacidad, txtTelefono, txtWeb});
 		gl_panel_1.linkSize(SwingConstants.HORIZONTAL, new Component[] {lblId, lblFalta, lblFmodificacion, lblFbaja});
 		gl_panel_1.linkSize(SwingConstants.HORIZONTAL, new Component[] {lblCif, lblDireccion, lblCapacidad, lblJefeTaller, lblTelefono, lblWeb});
 		panel_1.setLayout(gl_panel_1);
@@ -342,7 +335,8 @@ public class MntoTaller extends JFrame {
 		cbJefeTaller = new ArrayList<ItemCombo>();
 		List<Usuari> usuaris;
 		try {
-			usuaris = this.gestorConexion.getUsuarisCapTaller();
+			System.out.println("idTaller = " +idTaller);
+			usuaris = this.gestorConexion.getUsuarisCapTallerDisponibles(idTaller);
 			cbJefeTaller.add(new ItemCombo(0, "", "0"));
 			for (int i= 0; i < usuaris.size(); i ++)
 				cbJefeTaller.add(new ItemCombo(i+1,usuaris.get(i).getNomCognoms(),String.valueOf(usuaris.get(i).getId())));
@@ -426,13 +420,15 @@ public class MntoTaller extends JFrame {
 		chkActivo.setSelected(taller.isActiu());
 
 		for (int i = 0; i < cbJefeTaller.size(); i ++) {
+			System.out.println("cbJefeTaller.get(i).getAux() " + cbJefeTaller.get(i).getAux());
+			System.out.println("taller.getCapTaller() " + taller.getCapTaller());
 			if (Integer.valueOf(cbJefeTaller.get(i).getAux()) == taller.getCapTaller()) {
-				cmbJefeTaller.setSelectedIndex(Integer.valueOf(cbJefeTaller.get(i).getAux()));
+				cmbJefeTaller.setSelectedIndex(i);
 				break;
 			}
 		}
 		
-//		cmbJefeTaller.setSelectedItem(usuari.getTaller());
+
 		txtTelefono.setText(taller.getTelefon());
 		txtWeb.setText(taller.getWeb());
 		txtFalta.setText(taller.getDataApertura().toString());
@@ -488,6 +484,8 @@ public class MntoTaller extends JFrame {
 						leerTallerById();
 						mostrarTaller();
 					} catch (Exception e) {
+						System.out.println("AQUI");
+						e.printStackTrace();
 						showError(e.getMessage(),lblTitle.getText());
 					}
 				} else {

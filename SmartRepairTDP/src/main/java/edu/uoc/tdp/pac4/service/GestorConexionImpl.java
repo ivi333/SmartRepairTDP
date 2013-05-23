@@ -140,6 +140,13 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 		}
 	}
 	
+	public List<Usuari> getUsuarisCapTallerDisponibles (int idTaller) throws RemoteException, GestorConexionException {
+		try {
+			return gestorConexionDAO.getUsuarisCapTallerDisponbiles(idTaller);
+		} catch (DAOException e) {
+			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		}
+	}	
 	public void disableUser(int idUsuari) throws RemoteException,
 			GestorConexionException {
 		try {
@@ -320,6 +327,15 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 	public Taller modificarTaller(Taller taller) throws RemoteException,
 			GestorConexionException {
 		try {
+			Taller oldTaller = gestorConexionDAO.getTallerById(taller.getId());
+			if (oldTaller.getCapTaller() != taller.getCapTaller()){
+				if (oldTaller.getCapTaller() != 0) {
+					Usuari usuari = this.getUsuariById(oldTaller.getCapTaller());
+					usuari.setTaller(taller.getId());
+					gestorConexionDAO.modificarUsuari(usuari);
+				}
+			}
+			
 			if (((taller.isActiu()) && (gestorConexionDAO
 					.getTallersByCapTaller(taller.getCapTaller(),
 							taller.getId()) == null))
@@ -341,7 +357,7 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 			int reparaciones = gestorConexionDAO.getNumRepPendTaller(idTaller);
 			
 			if (reparaciones == 0) {
-				//gestorConexionDAO.disableTaller(idTaller);				
+				gestorConexionDAO.disableTaller(idTaller);				
 			} else {
 				throw new GestorConexionException(
 						GestorConexionException.ERR_TALLER_REPARACIONES);
@@ -351,6 +367,6 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 					+ e.getMessage());
 		}
 		
-	}	
+	}
 
 }
