@@ -38,6 +38,7 @@ import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.DefaultComboBoxModel;
 
 public class ReparacionGestion extends JFrame {
 
@@ -58,6 +59,8 @@ public class ReparacionGestion extends JFrame {
 	private JButton btnAceptar;
 	private JButton btnAsignar;
 	private JButton btnFinalizar;
+	private JTextField txtFiltro;
+	private JComboBox cmbFiltro;
 	
 
 	/**
@@ -97,7 +100,8 @@ public class ReparacionGestion extends JFrame {
 		lblReparaciones.setHorizontalAlignment(SwingConstants.CENTER);
 		lblReparaciones.setFont(new Font("Tahoma", Font.BOLD, 30));
 		
-		JComboBox cmbFiltro = new JComboBox();
+		cmbFiltro = new JComboBox();
+		cmbFiltro.setModel(new DefaultComboBoxModel(new String[] {"Todas", "Orden Reparación", "Matricula", "Marca", "Modelo", "Aceptadas", "No Aceptadas", "Asignadas", "No Asignadas"}));
 		
 		JLabel lblDe = new JLabel("De");
 		
@@ -125,7 +129,7 @@ public class ReparacionGestion extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				try {
-					table.setModel(getTableModel());
+					table.setModel(getTableModel(true));
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				} catch (GestorReparacionException e) {
@@ -246,6 +250,9 @@ public class ReparacionGestion extends JFrame {
 		});
 		
 		JScrollPane scrollPanel = new JScrollPane();
+		
+		txtFiltro = new JTextField();
+		txtFiltro.setColumns(10);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -253,13 +260,15 @@ public class ReparacionGestion extends JFrame {
 					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(scrollPanel, GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+							.addComponent(scrollPanel, GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)
 							.addContainerGap())
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(cmbFiltro, GroupLayout.PREFERRED_SIZE, 84, GroupLayout.PREFERRED_SIZE)
-									.addGap(48)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(cmbFiltro, GroupLayout.PREFERRED_SIZE, 84, GroupLayout.PREFERRED_SIZE)
+										.addComponent(txtFiltro, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+									.addGap(46)
 									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 										.addGroup(gl_contentPane.createSequentialGroup()
 											.addComponent(lblDe)
@@ -269,7 +278,7 @@ public class ReparacionGestion extends JFrame {
 											.addComponent(lblHasta)
 											.addGap(18)
 											.addComponent(txtHasta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-									.addPreferredGap(ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
+									.addPreferredGap(ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
 									.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 										.addGroup(gl_contentPane.createSequentialGroup()
 											.addComponent(lblNombreCliente)
@@ -278,8 +287,7 @@ public class ReparacionGestion extends JFrame {
 										.addGroup(gl_contentPane.createSequentialGroup()
 											.addComponent(lblApellidoCliente)
 											.addGap(18)
-											.addComponent(txtApellidoCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-									.addPreferredGap(ComponentPlacement.RELATED))
+											.addComponent(txtApellidoCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(btnActualizar)
 									.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -290,12 +298,11 @@ public class ReparacionGestion extends JFrame {
 									.addComponent(btnAsignar)
 									.addPreferredGap(ComponentPlacement.UNRELATED)
 									.addComponent(btnFinalizar)
-									.addPreferredGap(ComponentPlacement.RELATED, 83, Short.MAX_VALUE)
-									.addComponent(btnSalir, GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED)))
+									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addComponent(btnSalir, GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE)))
 							.addGap(95))
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblReparaciones, GroupLayout.DEFAULT_SIZE, 525, Short.MAX_VALUE)
+							.addComponent(lblReparaciones, GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
 							.addGap(106))))
 		);
 		gl_contentPane.setVerticalGroup(
@@ -318,7 +325,8 @@ public class ReparacionGestion extends JFrame {
 							.addComponent(txtHasta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(txtApellidoCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblApellidoCliente)))
+							.addComponent(lblApellidoCliente))
+						.addComponent(txtFiltro, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(scrollPanel, GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -365,7 +373,7 @@ public class ReparacionGestion extends JFrame {
 		scrollPanel.setViewportView(table);
 		
 		try {
-			table.setModel(getTableModel());
+			table.setModel(getTableModel(false));
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (GestorReparacionException e) {
@@ -377,8 +385,13 @@ public class ReparacionGestion extends JFrame {
 		contentPane.setLayout(gl_contentPane);
 	}
 	
-	private TableModel getTableModel () throws RemoteException, GestorReparacionException  {
-		List<DetallReparacio> list = gestorReparacion.getDetalleReparaciones();
+	private TableModel getTableModel (boolean filtro) throws RemoteException, GestorReparacionException  {
+		List<DetallReparacio> list = null; 
+		if (filtro) {
+			list = gestorReparacion.getDetalleReparacionesFiltro(cmbFiltro.getSelectedIndex(), String.valueOf(txtFiltro.getText()), String.valueOf(txtNombreCliente.getText()), String.valueOf(txtApellidoCliente.getText()));
+		} else {
+			list = gestorReparacion.getDetalleReparaciones();
+		}
 		Object rowData [][] = new Object [list.size()][9];
 		int z=0;
 		for (DetallReparacio bean : list) {

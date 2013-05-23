@@ -259,6 +259,37 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
 		}
 	}
+	
+	public List<DetallReparacio> getDetalleReparacionesMecanicoFiltro(
+			int idMecanico, int idFiltro, String valor) throws RemoteException,
+			GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getDetalleReparacionesMecanicoFiltro(idMecanico, idFiltro, valor);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public int getStockMinimoPieza(int idPieza) throws RemoteException,
+			GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getStockMinimoPieza(idPieza);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public List<DetallReparacio> getDetalleReparacionesFiltro(int idFiltro,
+			String valor, String nombre, String apellido)
+			throws RemoteException, GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getDetalleReparacionesFiltro(idFiltro, valor, nombre, apellido);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	
 
 	
 

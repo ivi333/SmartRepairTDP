@@ -209,4 +209,29 @@ public interface GestorReparacionDAO {
 	 */
 	public List<DetallReparacio> getDetalleReparacionesMecanico(int idMecanico) throws DAOException;
 	
+	/**
+	 * Obtiene todos los detalles de las reparaciones de un mecánico dependiendo de los filtros
+	 * @param idMecanico, idFiltro, valor
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public List<DetallReparacio> getDetalleReparacionesMecanicoFiltro(int idMecanico, int idFiltro, String valor) throws DAOException;
+	
+	/**
+	 * Obtiene el stock mínimo dada una pieza
+	 * @param idPieza
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public int getStockMinimoPieza(int idPieza) throws DAOException;
+	
+	/**
+	 * Obtiene todos los detalles de la reparación aplicando unos filtros
+	 * @param idFiltro, valor, nombre, apellido
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public List<DetallReparacio> getDetalleReparacionesFiltro(
+			int idFiltro, String valor, String nombre, String apellido) throws DAOException;
+	
 }

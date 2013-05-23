@@ -323,7 +323,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 							ordenReparacion1 = objMecanico.getIdrep1();
 							ordenReparacion2 = Integer.valueOf(txtOrdenReparacion.getText());
 						}
-						actualizarAsignacion(idMecanicoAnadir, Integer.valueOf(txtOrdenReparacion.getText()), ordenReparacion1, ordenReparacion2);
+						actualizarAsignacion(false, idMecanicoAnadir, Integer.valueOf(txtOrdenReparacion.getText()), ordenReparacion1, ordenReparacion2);
 											
 						Object rowData [][] = new Object [mecanicosSeleccionados.size()][3];
 						int z=0;
@@ -375,7 +375,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 						ordenReparacion1 = objMecanico.getIdrep1();
 					}
 				}
-				actualizarAsignacion(idMecanico, ordenReparacion, ordenReparacion1, ordenReparacion2);
+				actualizarAsignacion(true, idMecanico, ordenReparacion, ordenReparacion1, ordenReparacion2);
 			
 				Object rowData [][] = new Object [mecanicosSeleccionados.size()][3];
 				int z=0;
@@ -398,7 +398,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 		}	
 	}
 	
-	private void actualizarAsignacion(int idMecanico, int ordenReparacion, int ordenReparacion1, int ordenReparacion2) {
+	private void actualizarAsignacion(boolean eliminar, int idMecanico, int ordenReparacion, int ordenReparacion1, int ordenReparacion2) {
 		try {
 			int ordenesReparacion = 0;
 			if (ordenReparacion1 > 0) {
@@ -409,7 +409,16 @@ public class ReparacionAsignarMecanico extends JFrame {
 			}
 			gestorReparacion.asignarReparacionesMecanico(idMecanico, ordenReparacion1, ordenReparacion2);
 			gestorReparacion.asignarUsuarioNumeroReparacion(idMecanico, ordenesReparacion);
-			gestorReparacion.asignarMecanicoReparacion(0, ordenReparacion);
+			if (eliminar) {
+				gestorReparacion.asignarMecanicoReparacion(0, ordenReparacion);
+			} else {
+				gestorReparacion.asignarMecanicoReparacion(idMecanico, ordenReparacion);	
+			}
+			
+			scrollPanel2.setViewportView(table2);
+			table2.setModel(getTableModel(-1, ""));
+
+			
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (GestorReparacionException e) {
@@ -426,7 +435,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 			this.txtModelo.setText(datosReparacion.getModel());
 			
 			scrollPanel1.setViewportView(table1);
-			table1.setModel(getTableModel(datosReparacion.getIdMecanic(), ""));
+			inicializarLista(datosReparacion.getIdMecanic());
 			
 			scrollPanel2.setViewportView(table2);
 			table2.setModel(getTableModel(-1, ""));
@@ -435,6 +444,39 @@ public class ReparacionAsignarMecanico extends JFrame {
 			e.printStackTrace();
 		} catch (GestorReparacionException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private void inicializarLista(int idMecanico) {
+		try {
+			mecanicosSeleccionados.add(gestorReparacion.getUsuario(idMecanico));
+			boolean tieneMec = false;
+			Object rowData [][] = new Object [mecanicosSeleccionados.size()][3];
+			int z=0;
+			for (Usuari bean : mecanicosSeleccionados) {
+				if (bean != null) {
+					tieneMec = true;
+					rowData[z][0] = String.valueOf(bean.getId());
+					rowData[z][1] = String.valueOf(bean.getNom());
+					rowData[z][2] = String.valueOf(bean.getCognoms());
+				}
+				z++;	
+			}
+			TableModel model;
+			if (tieneMec) {
+				model = new DefaultTableModel(rowData, columnNames1);
+			}
+			else {
+				model = new DefaultTableModel(new Object [0][3], columnNames1);
+				mecanicosSeleccionados.remove(0);
+			}
+			
+			table1.setModel(model);
+			
+		} catch (RemoteException e1) {
+			e1.printStackTrace();
+		} catch (GestorReparacionException e1) {
+			e1.printStackTrace();
 		}
 	}
 }

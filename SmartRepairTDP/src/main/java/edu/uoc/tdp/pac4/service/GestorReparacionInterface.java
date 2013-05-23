@@ -213,6 +213,31 @@ public interface GestorReparacionInterface extends Remote{
 	 * @throws GestorReparacionException
 	 */
 	public List<DetallReparacio> getDetalleReparacionesMecanico(int idMecanico) throws RemoteException, GestorReparacionException;
+
+	/**
+	 * Obtiene todos los detalles de las reparaciones de un mecánico dependiendo de los filtros
+	 * @param idMecanico, idFiltro, valor
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public List<DetallReparacio> getDetalleReparacionesMecanicoFiltro(int idMecanico, int idFiltro, String valor) throws RemoteException, GestorReparacionException;
+	
+	/**
+	 * Obtiene el stock mínimo dada una pieza
+	 * @param idPieza
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public int getStockMinimoPieza(int idPieza) throws RemoteException, GestorReparacionException;
+	
+	/**
+	 * Obtiene todos los detalles de la reparación aplicando unos filtros
+	 * @param idFiltro, valor, nombre, apellido
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public List<DetallReparacio> getDetalleReparacionesFiltro(
+			int idFiltro, String valor, String nombre, String apellido) throws RemoteException, GestorReparacionException;
 }
 
 

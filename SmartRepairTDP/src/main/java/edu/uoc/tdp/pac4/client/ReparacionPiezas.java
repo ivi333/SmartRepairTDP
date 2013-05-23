@@ -393,8 +393,7 @@ public class ReparacionPiezas extends JFrame {
 						}
 					}
 					if (!piezaEncontrada) {
-						
-						DetallPeca peca = new DetallPeca(idPiezaAnadir, getDescPiezaSeleccionada(), getStockPiezaSeleccionada(), numPiezas, getPvpPiezaSeleccionada());
+						DetallPeca peca = new DetallPeca(idPiezaAnadir, getDescPiezaSeleccionada(), getStockPiezaSeleccionada(), numPiezas, getPvpPiezaSeleccionada(),gestorReparacion.getStockMinimoPieza(idPiezaAnadir));
 						piezasSeleccionadas.add(peca);
 					}
 					
@@ -467,7 +466,7 @@ public class ReparacionPiezas extends JFrame {
 				for (int i=0; i<piezasSeleccionadas.size(); i++) {
 					DetallPeca pieza = piezasSeleccionadas.get(i);
 					boolean estado = false;
-					if (pieza.getCantidad() <= pieza.getStock()) {
+					if (pieza.getCantidad() <= pieza.getStockMinim()) {
 						estado = true;
 					}
 					gestorReparacion.setPiezaComanda(estado,pieza.getCodiPeca(), usuario.getTaller(), ordenReparacion, pieza.getCantidad());
@@ -496,7 +495,7 @@ public class ReparacionPiezas extends JFrame {
 			this.txtObservaciones.setText(datosReparacion.getObservacions());
 			
 			scrollPanel1.setViewportView(table1);
-			table1.setModel(getTableModel(datosReparacion.getOrdreReparacio(), ""));
+			inicializarLista();
 			
 			scrollPanel2.setViewportView(table2);
 			table2.setModel(getTableModel(-1, ""));
@@ -505,6 +504,30 @@ public class ReparacionPiezas extends JFrame {
 			e.printStackTrace();
 		} catch (GestorReparacionException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private void inicializarLista() {
+		try {
+			piezasSeleccionadas = gestorReparacion.getPiezasReparacion(ordenReparacion);
+			Object rowData [][] = new Object [piezasSeleccionadas.size()][5];
+			int z=0;
+			for (DetallPeca bean : piezasSeleccionadas) {
+				rowData[z][0] = String.valueOf(bean.getCodiPeca());
+				rowData[z][1] = String.valueOf(bean.getDescipcio());
+				rowData[z][2] = String.valueOf(bean.getCantidad());
+				rowData[z][3] = String.valueOf(bean.getStock());
+				rowData[z][4] = String.valueOf(bean.getPvp());
+				z++;
+			}
+			
+			TableModel model = new DefaultTableModel(rowData, columnNames1);
+			table1.setModel(model);
+			
+		} catch (RemoteException e1) {
+			e1.printStackTrace();
+		} catch (GestorReparacionException e1) {
+			e1.printStackTrace();
 		}
 	}
 }

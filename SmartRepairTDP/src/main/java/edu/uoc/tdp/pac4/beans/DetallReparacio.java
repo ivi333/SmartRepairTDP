@@ -15,9 +15,12 @@ public class DetallReparacio implements java.io.Serializable {
 	boolean acceptada;
 	boolean assignada;
 	private int idMecanic;
+	private Date dataAssignacio;
+	private Date dataInici;
 	
 	public DetallReparacio(int ordreReparacio, Date dataEntrada, double comptador, String matricula,
-					 String marca, String model, String observacions, boolean acceptada, boolean assignada, int idMecanic) {
+					 String marca, String model, String observacions, boolean acceptada, boolean assignada, 
+					 int idMecanic, Date dataAssignacio, Date dataInici) {
 		this.ordreReparacio = ordreReparacio;
 		this.dataEntrada = dataEntrada;
 		this.comptador = comptador;
@@ -28,6 +31,8 @@ public class DetallReparacio implements java.io.Serializable {
 		this.acceptada = acceptada;
 		this.assignada = assignada;
 		this.idMecanic = idMecanic;
+		this.dataAssignacio = dataAssignacio;
+		this.dataInici = dataInici;
 	}
 	
 	public int getOrdreReparacio() {
@@ -108,6 +113,22 @@ public class DetallReparacio implements java.io.Serializable {
 	
 	public void setIdMecanic(int idMecanic) {
 		this.idMecanic = idMecanic;
+	}
+	
+	public Date getDataAssignacio() {
+		return dataAssignacio;
+	}
+	
+	public void setDataAssignacio(Date dataAssignacio) {
+		this.dataAssignacio = dataAssignacio;
+	}
+	
+	public Date getDataInici() {
+		return dataInici;
+	}
+	
+	public void setDataInici(Date dataInici) {
+		this.dataInici = dataInici;
 	}
 	
 }

@@ -33,6 +33,8 @@ import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTextField;
 
 public class ReparacionAsignadas extends JFrame {
 
@@ -47,6 +49,8 @@ public class ReparacionAsignadas extends JFrame {
 	};
 	
 	private Usuari usuario;
+	private JComboBox cmbFiltro;
+	private JTextField txtFiltro;
 
 	/**
 	 * Launch the application.
@@ -84,8 +88,9 @@ public class ReparacionAsignadas extends JFrame {
 		
 		JLabel lblFIltro = new JLabel("Filtro");
 		
-		JComboBox cmbFiltro = new JComboBox();
-		
+		cmbFiltro = new JComboBox();
+		cmbFiltro.setModel(new DefaultComboBoxModel(new String[] {"Todas", "Fecha Inicio", "Fecha Fin", "Fecha Asignacion", "Marca", "Modelo", "Orden Reparación"}));
+	
 		JButton btnDetalle = new JButton("Detalle");
 		btnDetalle.addMouseListener(new MouseAdapter() {
 			@Override
@@ -121,6 +126,23 @@ public class ReparacionAsignadas extends JFrame {
 		});
 		
 		scrollPane = new JScrollPane();
+		
+		txtFiltro = new JTextField();
+		txtFiltro.setColumns(10);
+		
+		JButton btnFiltrar = new JButton("Filtrar");
+		btnFiltrar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				try {
+					table.setModel(getTableModel(true));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (GestorReparacionException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -131,7 +153,11 @@ public class ReparacionAsignadas extends JFrame {
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(lblFIltro)
 							.addGap(18)
-							.addComponent(cmbFiltro, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE))
+							.addComponent(cmbFiltro, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(txtFiltro, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addGap(18)
+							.addComponent(btnFiltrar))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(btnDetalle)
 							.addPreferredGap(ComponentPlacement.RELATED, 288, Short.MAX_VALUE)
@@ -147,7 +173,9 @@ public class ReparacionAsignadas extends JFrame {
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblFIltro)
-						.addComponent(cmbFiltro, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(cmbFiltro, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtFiltro, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnFiltrar))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 74, GroupLayout.PREFERRED_SIZE)
 					.addGap(8)
@@ -165,15 +193,18 @@ public class ReparacionAsignadas extends JFrame {
 		contentPane.setLayout(gl_contentPane);
 	}
 	
-	private TableModel getTableModel () throws RemoteException, GestorReparacionException  {
-		List<DetallReparacio> list = gestorReparacion.getDetalleReparacionesMecanico(usuario.getId());
+	private TableModel getTableModel (boolean filtro) throws RemoteException, GestorReparacionException  {
+		List<DetallReparacio> list = null;
+		if (filtro) {
+			list = gestorReparacion.getDetalleReparacionesMecanicoFiltro(usuario.getId(), cmbFiltro.getSelectedIndex(), String.valueOf(txtFiltro.getText()));			
+		} else {
+			list = gestorReparacion.getDetalleReparacionesMecanico(usuario.getId());
+		}
 		Object rowData [][] = new Object [list.size()][8];
 		int z=0;
 		for (DetallReparacio bean : list) {
-			rowData[z][0] = String.valueOf(bean.getOrdreReparacio());
-			/*rowData[z][1] = String.valueOf(bean.getDataAsignacio());
-			rowData[z][2] = String.valueOf(bean.getDataInici());*/
-			rowData[z][1] = String.valueOf(bean.getDataEntrada());
+			rowData[z][1] = String.valueOf(bean.getDataAssignacio());
+			rowData[z][2] = String.valueOf(bean.getDataInici());
 			rowData[z][2] = String.valueOf(bean.getDataEntrada());
 			rowData[z][3] = String.valueOf(bean.getOrdreReparacio());
 			rowData[z][4] = String.valueOf(bean.getMatricula());
@@ -197,7 +228,7 @@ public class ReparacionAsignadas extends JFrame {
 	private void initCampos() {
 		try {
 			scrollPane.setViewportView(table);
-			table.setModel(getTableModel());
+			table.setModel(getTableModel(false));
 			
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -205,5 +236,4 @@ public class ReparacionAsignadas extends JFrame {
 			e.printStackTrace();
 		}
 	}
-	
 }
