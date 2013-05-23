@@ -467,7 +467,7 @@ public class MntoUsuario extends JFrame {
 
 		for (int i = 0; i < cbTaller.size(); i ++) {
 			if (Integer.valueOf(cbTaller.get(i).getAux()) == usuari.getTaller()) {
-				cmbTaller.setSelectedIndex(Integer.valueOf(cbTaller.get(i).getAux()));
+				cmbTaller.setSelectedIndex(i);
 				break;
 			}
 		}
