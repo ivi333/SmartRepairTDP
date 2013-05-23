@@ -181,13 +181,7 @@ public class MainGUI extends JFrame {
 		if (isAdministrador) {
 			crearMenuMantenimiento ();				
 			jLabelMain.setText("<html>Bienvenido al subsistema de Mantenimiento. <br> (Administradores)</html>");
-		} 
-		
-		if (isAdministrativo) {
-			crearMenuAdministrativos();			
-			crearMenuEstadisticas ();
-			jLabelMain.setText("<html>Subsistema de Administracion y <br> Estadisticas. <br> (Administrativos)</html>");			
-		} else if (isAdministrativo) {
+		} else 	if (isAdministrativo) {
 			crearMenuAdministrativos();			
 			crearMenuEstadisticas ();
 			jLabelMain.setText("<html>Subsistema de Administracion y <br> Estadisticas. <br> (Administrativos)</html>");			
