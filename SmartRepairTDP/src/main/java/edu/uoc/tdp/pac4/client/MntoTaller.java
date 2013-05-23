@@ -496,7 +496,8 @@ public class MntoTaller extends JFrame {
 						TDSLanguageUtils.getMessage("mntotaller.confimar.desactivar") + " " + taller.getCif(), 
 						TDSLanguageUtils.getMessage("mntotaller.atencion"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {					
 					try {					
-						gestorConexion.disableTaller(taller.getId());
+						taller.setActiu(chkActivo.isSelected());
+						gestorConexion.disableTaller(taller);
 						showInfo(TDSLanguageUtils.getMessage("mntotaller.baja.ok"), lblTitle.getText());
 					} catch (Exception e ) {
 						showError(e.getMessage(),lblTitle.getText());
@@ -520,7 +521,21 @@ public class MntoTaller extends JFrame {
 	
 	private String validarCampos () {
 		String msg = "";
-		
+		if (txtCif.getText().length() == 0 )
+			msg = "debe informar Cif";
+		if (txtDireccion.getText().length() == 0 )
+			msg = "Debe informarn direccion";
+		if (txtCapacidad.getText().length() == 0)
+			msg = "Debe informar capacidad";
+		if (txtTelefono.getText().length() == 0)
+			msg = "Debe informar telefono";
+		if (txtWeb.getText().length() == 0)
+			msg = "Debe informar la Web";
+		if (chkActivo.isSelected()) {
+			if (cbJefeTaller.get(cmbJefeTaller.getSelectedIndex()).getId()==0){
+				msg = "Debe informar Jefe de Taller";
+			}
+		}
 		return msg;
 	}
 	

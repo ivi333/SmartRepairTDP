@@ -253,6 +253,8 @@ public class ReparacionMainMenu extends JFrame {
 			mnNewMenu_2.setEnabled(true);
 			mnNewMenu_2.setVisible(true);
 		}
+		mnNewMenu_2.setEnabled(true);
+		mnNewMenu_2.setVisible(true);
 		mnNewMenu_3.setEnabled(true);
 		mnNewMenu_3.setVisible(true);
 	}

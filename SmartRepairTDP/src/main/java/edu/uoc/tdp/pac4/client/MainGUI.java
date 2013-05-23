@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -203,24 +205,6 @@ public class MainGUI extends JFrame {
 					JOptionPane.WARNING_MESSAGE);
 		}
 		
-		
-		/*for (String a : perfiles){
-			if (a.equals(PerfilUsuari.Administrador.toString())) {
-				crearMenuMantenimiento ();				
-				jLabelMain.setText("<html>Bienvenido al subsistema de Mantenimiento. <br> (Administradores)</html>");
-			} else if (a.equals(PerfilUsuari.Administracion.toString())) {
-				crearMenuAdministrativos();			
-				crearMenuEstadisticas ();
-				jLabelMain.setText("<html>Subsistema de Administracion y <br> Estadisticas. <br> (Administrativos)</html>");
-			} else if (a.equals(PerfilUsuari.JefeTaller.toString())) {
-				createMenuReparaciones(true, false);
-				jLabelMain.setText("<html>Bienvenido al subsistema de Administracion <br> (Jefe de Taller)</html>");
-				
-			} else if (a.equals(PerfilUsuari.Mecanico.toString())) {
-				createMenuReparaciones(false, true);
-				jLabelMain.setText("<html> Bienvenido al subsistema de Reparaciones. (Mecanicos) </html>");
-			}
-		}*/
 		crearMenuSalir();
 	}
 	
@@ -240,8 +224,38 @@ public class MainGUI extends JFrame {
 	}
 	
 	private void createMenuReparaciones (boolean isJefeTaller, boolean isMecanico) {
+
+		JMenu mnNewMenu_2 = new JMenu("Reparaciones");
+		mnNewMenu_2.setEnabled(true);
+		menuBar.add(mnNewMenu_2);
 		
+		JMenuItem mntmReparacinAsignada = new JMenuItem("Reparación asignada");
+		mntmReparacinAsignada.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				ReparacionAsignadas dialog = new ReparacionAsignadas(gestorReparacion, usuari);
+				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+				dialog.setSize(1000, 500);
+				dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+			}
+		});
+		mnNewMenu_2.add(mntmReparacinAsignada);
 		
+		JMenuItem mntmGestinReparaciones = new JMenuItem("Gestión reparaciones");
+		mntmGestinReparaciones.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				ReparacionGestion dialog = new ReparacionGestion(gestorReparacion, usuari);
+				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+				dialog.setSize(1000, 500);
+				dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+			}
+		});
+		mnNewMenu_2.add(mntmGestinReparaciones);
 		
 	}
 	
