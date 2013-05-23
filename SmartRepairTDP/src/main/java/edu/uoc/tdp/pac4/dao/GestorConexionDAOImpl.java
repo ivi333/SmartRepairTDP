@@ -55,12 +55,12 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			" WHERE perfil LIKE '%JefeTaller%' ";
 	
 	private static final String QUERY_CAPTALLERS_DISPONIBLES = 
-			"SELECT * FROM usuari " +
+			"SELECT * FROM usuari" +
 			" WHERE perfil LIKE '%JefeTaller%' " +
-			"   AND (NOT EXISTS (SELECT 1 FROM taller " +
-			"                    WHERE taller.captaller = usuari.id)" +
-			"        OR (taller = ?))";
-
+			"   AND ((NOT EXISTS (SELECT 1 FROM taller " +
+			"                      WHERE taller.captaller = usuari.id " +
+			"                        AND actiu IS TRUE))" +
+			"    OR (taller = ?))";
 	
 	private static final String EXIST_USUARI = 
 			"SELECT * FROM usuari WHERE UPPER(nif)=? OR UPPER(usuari)=?";
@@ -153,6 +153,7 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 	private static final String UPDATE_DISABLE_TALLER = 
 			"UPDATE taller " +
 			"   SET actiu = FALSE, " +
+			"       captaller = null, " +
 			"       databaixa = now (), " +
 			"       datamodificacio = now () " +
 			" WHERE id = ?";
@@ -646,12 +647,8 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 		try {
 			ps.setInt(1, mecanic.getId());
 			ps.setBoolean(2, mecanic.isActiu());
-			// TODO Validar les restriccions final per aquesta taula
-			ps.setNull(3, mecanic.getIdrep1());
-			ps.setNull(4, mecanic.getIdrep1());
-
-			//ps.setNull(3, Types.INTEGER);
-			//ps.setNull(4, Types.INTEGER);
+			ps.setNull(3, Types.INTEGER);
+			ps.setNull(4, Types.INTEGER);
 	
 			ps.execute();
 		} catch (SQLException e) {
@@ -942,7 +939,7 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 		
 	}
 	
-	public void updateTaller (Taller taller) throws DAOException {
+	public void modificarTaller (Taller taller) throws DAOException {
 		getConnectionDB();
 		PreparedStatement ps = createPrepareStatment(UPDATE_TALLER, ResultSet.CONCUR_UPDATABLE);
 		try {
