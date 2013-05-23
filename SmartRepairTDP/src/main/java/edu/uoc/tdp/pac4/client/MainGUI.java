@@ -1,13 +1,14 @@
 package edu.uoc.tdp.pac4.client;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -25,14 +26,11 @@ import javax.swing.SwingConstants;
 import edu.uoc.tdp.pac4.beans.PerfilUsuari;
 import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.beans.Usuari;
+import edu.uoc.tdp.pac4.client.MenuGestionAdmin.OptionFrame;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
-import edu.uoc.tdp.pac4.service.GestorAdministracionImpl;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
-import edu.uoc.tdp.pac4.service.GestorConexionImpl;
 import edu.uoc.tdp.pac4.service.GestorConexionInterface;
-import edu.uoc.tdp.pac4.service.GestorEstadisticaImpl;
 import edu.uoc.tdp.pac4.service.GestorEstadisticaInterface;
-import edu.uoc.tdp.pac4.service.GestorReparacionImpl;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 
 
@@ -58,17 +56,15 @@ public class MainGUI extends JFrame {
 	private Usuari usuari;
 	private Taller taller;
 	private Login login;
+	private JLabel jLabelMain;
 	
-	private JMenu mnMantenimiento;
-	private JMenu mnAdministracion;
-	private JMenu mnReparacion;
-	private JMenu mnEstadistica;
-	private JMenuItem mntmSalir;
 	private JMenuBar menuBar;
 	
 	private String perfiles[];
 	private boolean isAdministrador = false;
-
+	boolean isAdministrativo = false; 
+	boolean isJefeTaller = false; 
+	boolean isMecanico = false;
 
 	/**
 	 * Launch the application.
@@ -103,14 +99,13 @@ public class MainGUI extends JFrame {
 			doRegistry ();		
 			winLogin();
 			doLogin();		
-			disableMenu();
 			if (usuari!= null){	
 				if (isAdministrador) {
-					enableMenu();
+					enableMenu(isAdministrador, isAdministrativo, isJefeTaller, isMecanico);
 				} else {
 					taller = gestorConexion.getTallerById(usuari.getTaller());
 					if (taller.isActiu()) {
-						enableMenu ();
+						enableMenu(isAdministrador, isAdministrativo, isJefeTaller, isMecanico);
 					} else {
 						JOptionPane.showMessageDialog(this, 
 								TDSLanguageUtils.getMessage("maingui.msg.tallernoactivo"), 
@@ -121,7 +116,6 @@ public class MainGUI extends JFrame {
 				
 			}
 		}catch (Exception e){
-			disableMenu();
 			JOptionPane.showMessageDialog(this, TDSLanguageUtils.getMessage("mensaje.cliente.noconec"), "Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
@@ -139,7 +133,134 @@ public class MainGUI extends JFrame {
 		menuBar = new JMenuBar();
 		frmSmartRepairTdp.setJMenuBar(menuBar);
 		
-		mnMantenimiento = new JMenu("Mantenimiento");
+		jLabelMain = new JLabel("Menu Principal Smart Repair", SwingConstants.CENTER);
+		jLabelMain.setFont(new Font("Serif", Font.BOLD, 24));
+		
+		frmSmartRepairTdp.getContentPane().add(jLabelMain, BorderLayout.CENTER);
+
+	}
+
+	private void doRegistry() throws MalformedURLException, RemoteException, NotBoundException  {
+		gestorConexion = (GestorConexionInterface) Naming.lookup(urlRMIConex);
+		gestorAdministracion = (GestorAdministracionInterface) Naming.lookup(urlRMIAdmin);
+		gestorReparacion = (GestorReparacionInterface) Naming.lookup(urlRMIRepar);
+		gestorEstadistica = (GestorEstadisticaInterface) Naming.lookup(urlRMIEstad);
+
+	}
+	
+	private void winLogin(){
+		login = new Login (this.frmSmartRepairTdp,gestorConexion);
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		login.setSize(450, 300);
+		login.setLocation(dim.width/2-login.getSize().width/2, dim.height/2-login.getSize().height/2);
+		login.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		login.setModal(true);
+		login.setVisible(true);
+		login.setAlwaysOnTop(true);
+	}
+	
+	private void doLogin (){
+		if (login.isLogin()) {
+			usuari = login.getUsuari();
+			perfiles = usuari.getPerfil().split(";");
+			for (String perfil : perfiles) {
+				if (perfil.equals(PerfilUsuari.Administrador.toString())){
+					isAdministrador = true;
+				} else if (perfil.equals(PerfilUsuari.JefeTaller.toString())) {
+					isJefeTaller = true;
+				} else if (perfil.equals(PerfilUsuari.Mecanico.toString())) {
+					isMecanico = true;
+				} else if (perfil.equals(PerfilUsuari.Administracion.toString())) {
+					isAdministrativo = true;
+				}
+			}
+		} else {
+			crearMenuSalir();
+		}
+	}
+
+	private void enableMenu (boolean isAdministrador, boolean isAdministrativo, boolean isJefeTaller, boolean isMecanico){
+		if (isAdministrador) {
+			crearMenuMantenimiento ();				
+			jLabelMain.setText("<html>Bienvenido al subsistema de Mantenimiento. <br> (Administradores)</html>");
+		} else 	if (isAdministrativo) {
+			crearMenuAdministrativos();			
+			crearMenuEstadisticas ();
+			jLabelMain.setText("<html>Subsistema de Administracion y <br> Estadisticas. <br> (Administrativos)</html>");			
+		} else if (!isJefeTaller && isMecanico){
+			createMenuReparaciones(false, true);
+			jLabelMain.setText("<html> Bienvenido al subsistema de Reparaciones. (Mecanicos) </html>");			
+		} else if (isJefeTaller && !isMecanico) {
+			createMenuReparaciones(true, false);
+			jLabelMain.setText("<html>Bienvenido al subsistema Administrativo <br> (Jefe de Taller)</html>");			
+		} else if (isJefeTaller && isMecanico) {
+			createMenuReparaciones(true, false);
+			jLabelMain.setText("<html>Bienvenido al subsistema Administrativo <br> (Jefe de Taller/Mecanico)</html>");						
+		} else {
+			//No se mostrara ningun subsistema, solo la opcion de Salir
+			//El usuario no está dentro de los perfiles permitidos
+			JOptionPane.showMessageDialog(this, 
+					TDSLanguageUtils.getMessage("mensaje.cliente.perfilerror"), 
+					TDSLanguageUtils.getMessage("GESCON.showmessage.aviso"), 
+					JOptionPane.WARNING_MESSAGE);
+		}
+		
+		crearMenuSalir();
+	}
+	
+	private void crearMenuEstadisticas () {
+		JMenu mnInformes = new JMenu("Informes");
+		menuBar.add(mnInformes);
+		
+		JMenuItem mntmInfClientes = new JMenuItem("Informe Clientes");
+		mnInformes.add(mntmInfClientes);
+		
+		JMenuItem mntmInfEmpleados = new JMenuItem("Informe Empleados");
+		mnInformes.add(mntmInfEmpleados);
+		
+		JMenuItem mntmInfReparaciones = new JMenuItem("Informe Reparaciones");
+		mnInformes.add(mntmInfReparaciones);
+		
+	}
+	
+	private void createMenuReparaciones (boolean isJefeTaller, boolean isMecanico) {
+
+		JMenu mnNewMenu_2 = new JMenu("Reparaciones");
+		mnNewMenu_2.setEnabled(true);
+		menuBar.add(mnNewMenu_2);
+		
+		JMenuItem mntmReparacinAsignada = new JMenuItem("Reparación asignada");
+		mntmReparacinAsignada.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				ReparacionAsignadas dialog = new ReparacionAsignadas(gestorReparacion, usuari);
+				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+				dialog.setSize(1000, 500);
+				dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+			}
+		});
+		mnNewMenu_2.add(mntmReparacinAsignada);
+		
+		JMenuItem mntmGestinReparaciones = new JMenuItem("Gestión reparaciones");
+		mntmGestinReparaciones.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				ReparacionGestion dialog = new ReparacionGestion(gestorReparacion, usuari);
+				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+				dialog.setSize(1000, 500);
+				dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+			}
+		});
+		mnNewMenu_2.add(mntmGestinReparaciones);
+		
+	}
+	
+	private void crearMenuMantenimiento () {
+		JMenu mnMantenimiento = new JMenu("Mantenimiento");
 		mnMantenimiento.setEnabled(true);
 		menuBar.add(mnMantenimiento);
 		
@@ -174,19 +295,130 @@ public class MainGUI extends JFrame {
 			}
 		});
 		
-		mnAdministracion = new JMenu("Administración");
-		mnAdministracion.setEnabled(true);
-		menuBar.add(mnAdministracion);
-		
-		mnReparacion = new JMenu("Reparaciones");
-		mnReparacion.setEnabled(true);
-		menuBar.add(mnReparacion);
-		
-		mnEstadistica = new JMenu("Estadísticas");
-		mnEstadistica.setEnabled(true);
-		menuBar.add(mnEstadistica);
-		
-		mntmSalir = new JMenuItem("Salir");
+	}
+	
+	private void crearMenuAdministrativos () {
+		JMenu jMenuClientes;
+		JMenu jMenuSoli;
+		JMenu jMenuAvisos;
+		JMenu jMenuAlmacen;
+
+		JMenuItem jMenuItemAltaCliente;
+		JMenuItem jMenuItemConsulCliente;
+
+		JMenuItem jMenuItemAltaSol;
+		JMenuItem jMenuItemConsulSol;
+		JMenuItem jMenuItemBajaSol;
+
+		JMenuItem jMenuItemGestionAvisos;
+		JMenuItem jMenuItemPedidoAlmacen;
+
+		// ITEM 1
+		jMenuClientes = new JMenu();
+		menuBar.add(jMenuClientes);
+		jMenuClientes.setText(TDSLanguageUtils
+				.getMessage("menu.gestionAdmin.clientes"));
+		jMenuItemAltaCliente = new JMenuItem();
+		jMenuClientes.add(jMenuItemAltaCliente);
+		jMenuItemAltaCliente.setText(TDSLanguageUtils
+				.getMessage("menu.gestionAdmin.alta"));
+		jMenuItemAltaCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(
+					ActionEvent paramAnonymousActionEvent) {
+						OpenFrm_Option(OptionFrame.Frm_NewCliente);
+			}
+		});
+
+		jMenuItemConsulCliente = new JMenuItem();
+		jMenuClientes.add(jMenuItemConsulCliente);
+		jMenuItemConsulCliente.setText(TDSLanguageUtils
+				.getMessage("menu.gestionAdmin.consulta"));
+		jMenuItemConsulCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(
+					ActionEvent paramAnonymousActionEvent) {
+						OpenFrm_Option(OptionFrame.Frm_UpdCliente);
+			}
+		});
+
+		// ITEM 2
+		jMenuSoli = new JMenu();
+		menuBar.add(jMenuSoli);
+		jMenuSoli.setText(TDSLanguageUtils
+				.getMessage("menu.gestionAdmin.solicitudes"));
+		jMenuSoli.setVisible(true);
+		jMenuSoli.setEnabled(true);
+		jMenuItemAltaSol = new JMenuItem();
+		jMenuSoli.add(jMenuItemAltaSol);
+		jMenuItemAltaSol.setText(TDSLanguageUtils
+				.getMessage("menu.gestionAdmin.alta"));
+		jMenuItemAltaSol.addActionListener(new ActionListener() {
+			public void actionPerformed(
+					ActionEvent paramAnonymousActionEvent) {
+						OpenFrm_Option(OptionFrame.Frm_NewSol);
+			}
+		});
+
+		jMenuItemConsulSol = new JMenuItem();
+		jMenuSoli.add(jMenuItemConsulSol);
+		jMenuItemConsulSol.setText(TDSLanguageUtils
+				.getMessage("menu.gestionAdmin.consulta"));
+		jMenuItemConsulSol.addActionListener(new ActionListener() {
+			public void actionPerformed(
+					ActionEvent paramAnonymousActionEvent) {
+						OpenFrm_Option(OptionFrame.Frm_UpdSol);
+			}
+		});
+		jMenuItemBajaSol = new JMenuItem();
+		jMenuSoli.add(jMenuItemBajaSol);
+		jMenuItemBajaSol.setText(TDSLanguageUtils
+				.getMessage("menu.gestionAdmin.baja"));
+		jMenuItemBajaSol.addActionListener(new ActionListener() {
+			public void actionPerformed(
+					ActionEvent paramAnonymousActionEvent) {
+						OpenFrm_Option(OptionFrame.Frm_DeleteSol);
+			}
+		});
+
+		// ITEM 3
+
+		jMenuAvisos = new JMenu();
+		menuBar.add(jMenuAvisos);
+		jMenuAvisos.setText(TDSLanguageUtils
+				.getMessage("menu.gestionAdmin.avisos"));
+
+		jMenuItemGestionAvisos = new JMenuItem();
+		jMenuAvisos.add(jMenuItemGestionAvisos);
+		jMenuItemGestionAvisos.setText(TDSLanguageUtils
+				.getMessage("menu.gestionAdmin.gestion"));
+		jMenuItemGestionAvisos.addActionListener(new ActionListener() {
+			public void actionPerformed(
+					ActionEvent paramAnonymousActionEvent) {
+						OpenFrm_Option(OptionFrame.Frm_Gestion);
+			}
+		});
+		// ITEM 4
+
+		jMenuAlmacen = new JMenu();
+		menuBar.add(jMenuAlmacen);
+		jMenuAlmacen.setText(TDSLanguageUtils
+				.getMessage("menu.gestionAdmin.almacen"));
+
+		jMenuItemPedidoAlmacen = new JMenuItem();
+		jMenuAlmacen.add(jMenuItemPedidoAlmacen);
+		jMenuItemPedidoAlmacen.setText(TDSLanguageUtils
+				.getMessage("menu.gestionAdmin.recepcion"));
+
+		jMenuItemPedidoAlmacen.addActionListener(new ActionListener() {
+			public void actionPerformed(
+					ActionEvent paramAnonymousActionEvent) {
+						OpenFrm_Option(OptionFrame.Frm_Recepcion);
+			}
+		});
+	
+	}
+
+	private void crearMenuSalir () {
+		JMenuItem mntmSalir = new JMenuItem("Salir");
 		mntmSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frmSmartRepairTdp.dispose();
@@ -194,99 +426,94 @@ public class MainGUI extends JFrame {
 			}
 		});
 		menuBar.add(mntmSalir);
-		
-		JLabel jLabel = new JLabel("Menu Principal Smart Repair", SwingConstants.CENTER);
-		jLabel.setFont(new Font("Serif", Font.BOLD, 24));
-		
-		frmSmartRepairTdp.getContentPane().add(jLabel, BorderLayout.CENTER);
-
-	}
-
-	private void doRegistry() throws MalformedURLException, RemoteException, NotBoundException  {
-		gestorConexion = (GestorConexionInterface) Naming.lookup(urlRMIConex);
-		gestorAdministracion = (GestorAdministracionInterface) Naming.lookup(urlRMIAdmin);
-		gestorReparacion = (GestorReparacionInterface) Naming.lookup(urlRMIRepar);
-		gestorEstadistica = (GestorEstadisticaInterface) Naming.lookup(urlRMIEstad);
-
 	}
 	
-	private void winLogin(){
-		login = new Login (this.frmSmartRepairTdp,gestorConexion);
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		login.setSize(450, 300);
-		login.setLocation(dim.width/2-login.getSize().width/2, dim.height/2-login.getSize().height/2);
-		login.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		login.setModal(true);
-		login.setVisible(true);
-		login.setAlwaysOnTop(true);
-		
-	}
-	
-	private void doLogin (){
-		if (login.isLogin()) {
-			usuari = login.getUsuari();
-			perfiles = usuari.getPerfil().split(";");
-			for (String perfil : perfiles) {
-				if (perfil.equals(PerfilUsuari.Administrador.toString())){
-					isAdministrador = true;
-				}
+	private void OpenFrm_Option(OptionFrame Option) {
+		try {
+			final int x ;
+			final int y; 
+			switch (Option) {
+			case Frm_NewCliente:
+				AltaCliente altaCliente = new AltaCliente("NEW",this.gestorAdministracion);
+				altaCliente.setSize(422, 781);
+				final Toolkit toolkit = Toolkit.getDefaultToolkit();
+				final Dimension screenSize = toolkit.getScreenSize();
+				x = (screenSize.width - altaCliente.getWidth()) / 2;
+				 y = (screenSize.height - altaCliente.getHeight()) / 2;
+				altaCliente.setLocation(x, y);
+				altaCliente.setVisible(true);
+				
+				break;
+			case Frm_UpdCliente:
+				AltaCliente updCliente = new AltaCliente("UPD",this.gestorAdministracion);
+				updCliente.setSize(422, 781);
+				final Toolkit toolkit1 = Toolkit.getDefaultToolkit();
+				final Dimension screenSize1 = toolkit1.getScreenSize();
+				x = (screenSize1.width - updCliente.getWidth()) / 2;
+				y= (screenSize1.height - updCliente.getHeight()) / 2;
+				updCliente.setLocation(x, y);
+				updCliente.setVisible(true);
+				break;
+			case Frm_NewSol:
+
+				AltaSolicitud NewSol = new AltaSolicitud(this.gestorAdministracion);
+				NewSol.setSize(469, 426);
+				final Toolkit toolkit2 = Toolkit.getDefaultToolkit();
+				final Dimension screenSize2 = toolkit2.getScreenSize();
+				x = (screenSize2.width - NewSol.getWidth()) / 2;
+				y= (screenSize2.height - NewSol.getHeight()) / 2;
+				NewSol.setLocation(x, y);
+				NewSol.setVisible(true);
+				break;
+			case Frm_UpdSol:
+
+				ConsultaSolicitud UpdSol = new ConsultaSolicitud(this.gestorAdministracion);
+				UpdSol.setSize(398, 441);
+				final Toolkit toolkit3 = Toolkit.getDefaultToolkit();
+				final Dimension screenSize3 = toolkit3.getScreenSize();
+				x = (screenSize3.width - UpdSol.getWidth()) / 2;
+				y= (screenSize3.height - UpdSol.getHeight()) / 2;
+				UpdSol.setLocation(x, y);
+				UpdSol.setVisible(true);
+				break;
+			case Frm_DeleteSol:
+				BajaSolicitud bajaSol = new BajaSolicitud(this.gestorAdministracion);
+				bajaSol.setSize(398, 526);
+				final Toolkit toolkit4 = Toolkit.getDefaultToolkit();
+				final Dimension screenSize4= toolkit4.getScreenSize();
+				x = (screenSize4.width - bajaSol.getWidth()) / 2;
+				y= (screenSize4.height - bajaSol.getHeight()) / 2;
+				bajaSol.setLocation(x, y);
+				bajaSol.setVisible(true);
+				break;
+			case Frm_Gestion:
+				GestionAvisos gestion = new GestionAvisos(this.gestorAdministracion);
+				gestion.setSize(912,250);
+				final Toolkit toolkitgestion = Toolkit.getDefaultToolkit();
+				final Dimension screenSizetoolkitgestion = toolkitgestion
+						.getScreenSize();
+				x = (screenSizetoolkitgestion.width - gestion.getWidth()) / 2;
+				y = (screenSizetoolkitgestion.height - gestion.getHeight()) / 2;
+				gestion.setLocation(x, y);
+				gestion.setVisible(true);
+				break;
+			case Frm_Recepcion:
+				RecepcionPedidos pedidos = new RecepcionPedidos(this.gestorAdministracion);
+				pedidos.setSize(762, 250);
+				final Toolkit toolkitpedidos = Toolkit.getDefaultToolkit();
+				final Dimension screenSizetoolkitpedidos = toolkitpedidos
+						.getScreenSize();
+				x = (screenSizetoolkitpedidos.width - pedidos.getWidth()) / 2;
+				y = (screenSizetoolkitpedidos.height - pedidos.getHeight()) / 2;
+				pedidos.setLocation(x, y);
+				pedidos.setVisible(true);
+
+				break;
 			}
-		}
-	}
 
-	private void enableMenu (){
-		// TODO Pendiente montar menus segun perfil
-		for (String a : perfiles){
-			if (a.equals(PerfilUsuari.Administrador.toString())) {
-				for (Component i : mnMantenimiento.getComponents()) {
-					i.setEnabled(true);
-					i.setVisible(true);
-				}
-				mnMantenimiento.setEnabled(true);
-				mnMantenimiento.setVisible(true);
-			} else if (a.equals(PerfilUsuari.Administracion.toString())) {
-				mnAdministracion.setEnabled(true);
-				mnAdministracion.setVisible(true);
-				
-			} else if (a.equals(PerfilUsuari.JefeTaller.toString())) {
-				mnReparacion.setEnabled(true);
-				mnReparacion.setVisible(true);
-				
-			} else if (a.equals(PerfilUsuari.Mecanico.toString())) {
-				mnReparacion.setEnabled(true);
-				mnReparacion.setVisible(true);
-				
-			}
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, 
+					TDSLanguageUtils.getMessage("mensaje.cliente.createmenu"), "Error", JOptionPane.ERROR_MESSAGE);
 		}
-	}
-	
-	private void disableMenu () {
-		
-		for (Component i : mnMantenimiento.getComponents()) {
-			i.setEnabled(false);
-			i.setVisible(false);
-		}
-		for (Component i : mnAdministracion.getComponents()) {
-			i.setEnabled(false);
-			i.setVisible(false);
-		}	
-		for (Component i : mnReparacion.getComponents()) {
-			i.setEnabled(false);
-			i.setVisible(false);
-		}
-		for (Component i : mnEstadistica.getComponents()) {
-			i.setEnabled(false);
-			i.setVisible(false);
-		}
-		
-		mnMantenimiento.setEnabled(false);
-		mnMantenimiento.setVisible(false);
-		mnAdministracion.setEnabled(false);
-		mnAdministracion.setVisible(false);
-		mnReparacion.setEnabled(false);
-		mnReparacion.setVisible(false);
-		mnEstadistica.setEnabled(false);
-		mnEstadistica.setVisible(false);
-	
 	}
 }
