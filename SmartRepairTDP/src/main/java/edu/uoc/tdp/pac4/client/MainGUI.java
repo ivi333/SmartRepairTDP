@@ -183,20 +183,33 @@ public class MainGUI extends JFrame {
 		if (isAdministrador) {
 			crearMenuMantenimiento ();				
 			jLabelMain.setText("<html>Bienvenido al subsistema de Mantenimiento. <br> (Administradores)</html>");
-		} else 	if (isAdministrativo) {
-			crearMenuAdministrativos();			
-			crearMenuEstadisticas ();
+		} 
+		
+		boolean loadPerfilOK=false;
+		
+		if (isAdministrativo  || isJefeTaller) {
+			crearMenuAdministrativos(isAdministrador, isAdministrativo, isJefeTaller, isMecanico);			
+			crearMenuEstadisticas (isAdministrador, isAdministrativo, isJefeTaller, isMecanico);
 			jLabelMain.setText("<html>Subsistema de Administracion y <br> Estadisticas. <br> (Administrativos)</html>");			
-		} else if (!isJefeTaller && isMecanico){
-			createMenuReparaciones(false, true);
-			jLabelMain.setText("<html> Bienvenido al subsistema de Reparaciones. (Mecanicos) </html>");			
+			loadPerfilOK=true;
+		}
+		
+		if (!isJefeTaller && isMecanico){
+			crearMenuReparaciones(isAdministrador, isAdministrativo, isJefeTaller, isMecanico);			
+			jLabelMain.setText("<html> Bienvenido al subsistema de Reparaciones. (Mecanicos) </html>");
+			loadPerfilOK=true;
 		} else if (isJefeTaller && !isMecanico) {
-			createMenuReparaciones(true, false);
-			jLabelMain.setText("<html>Bienvenido al subsistema Administrativo <br> (Jefe de Taller)</html>");			
+			crearMenuReparaciones(isAdministrador, isAdministrativo, isJefeTaller, isMecanico);
+			crearMenuEstadisticas(isAdministrador, isAdministrativo, isJefeTaller, isMecanico);
+			jLabelMain.setText("<html>Bienvenido al subsistema Administrativo y Estadisticas<br> (Jefe de Taller)</html>");
+			loadPerfilOK=true;
 		} else if (isJefeTaller && isMecanico) {
-			createMenuReparaciones(true, false);
-			jLabelMain.setText("<html>Bienvenido al subsistema Administrativo <br> (Jefe de Taller/Mecanico)</html>");						
-		} else {
+			crearMenuReparaciones(isAdministrador, isAdministrativo, isJefeTaller, isMecanico);
+			crearMenuEstadisticas(isAdministrador, isAdministrativo, isJefeTaller, isMecanico);
+			jLabelMain.setText("<html>Bienvenido al subsistema Administrativo y Estadisticas<br> (Jefe de Taller)</html>");
+			loadPerfilOK=true;
+		} 
+		if (!loadPerfilOK) {
 			//No se mostrara ningun subsistema, solo la opcion de Salir
 			//El usuario no está dentro de los perfiles permitidos
 			JOptionPane.showMessageDialog(this, 
@@ -208,55 +221,80 @@ public class MainGUI extends JFrame {
 		crearMenuSalir();
 	}
 	
-	private void crearMenuEstadisticas () {
+	private void crearMenuEstadisticas (boolean isAdministrador, boolean isAdministrativo, boolean isJefeTaller, boolean isMecanico) {
 		JMenu mnInformes = new JMenu("Informes");
 		menuBar.add(mnInformes);
+		if (isAdministrativo) {
+			JMenuItem mntmInfClientes = new JMenuItem("Informe Clientes");
+			mnInformes.add(mntmInfClientes);
+		}
 		
-		JMenuItem mntmInfClientes = new JMenuItem("Informe Clientes");
-		mnInformes.add(mntmInfClientes);
+		if (isAdministrativo || isJefeTaller) {
+			JMenuItem mntmInfEmpleados = new JMenuItem("Informe Empleados");
+			mnInformes.add(mntmInfEmpleados);
+		}
 		
-		JMenuItem mntmInfEmpleados = new JMenuItem("Informe Empleados");
-		mnInformes.add(mntmInfEmpleados);
-		
-		JMenuItem mntmInfReparaciones = new JMenuItem("Informe Reparaciones");
-		mnInformes.add(mntmInfReparaciones);
+		if (isAdministrativo || isJefeTaller) {		
+			JMenuItem mntmInfReparaciones = new JMenuItem("Informe Reparaciones");
+			mnInformes.add(mntmInfReparaciones);
+		}
 		
 	}
 	
-	private void createMenuReparaciones (boolean isJefeTaller, boolean isMecanico) {
+	private void crearMenuReparaciones (boolean isAdministrador, boolean isAdministrativo, boolean isJefeTaller, boolean isMecanico) {
 
 		JMenu mnNewMenu_2 = new JMenu("Reparaciones");
 		mnNewMenu_2.setEnabled(true);
 		menuBar.add(mnNewMenu_2);
 		
-		JMenuItem mntmReparacinAsignada = new JMenuItem("Reparación asignada");
-		mntmReparacinAsignada.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				ReparacionAsignadas dialog = new ReparacionAsignadas(gestorReparacion, usuari);
-				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-				dialog.setSize(1000, 500);
-				dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
-				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				dialog.setVisible(true);
-			}
-		});
-		mnNewMenu_2.add(mntmReparacinAsignada);
+		if (isMecanico || isJefeTaller) {
+			JMenuItem mntmReparacinAsignada = new JMenuItem("Reparación asignada");
+			mntmReparacinAsignada.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent arg0) {
+					ReparacionAsignadas dialog = new ReparacionAsignadas(gestorReparacion, usuari);
+					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+					dialog.setSize(1000, 500);
+					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
+			mnNewMenu_2.add(mntmReparacinAsignada);
+		}
 		
-		JMenuItem mntmGestinReparaciones = new JMenuItem("Gestión reparaciones");
-		mntmGestinReparaciones.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				ReparacionGestion dialog = new ReparacionGestion(gestorReparacion, usuari);
-				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-				dialog.setSize(1000, 500);
-				dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
-				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				dialog.setVisible(true);
-			}
-		});
-		mnNewMenu_2.add(mntmGestinReparaciones);
-		
+		if (isJefeTaller || isMecanico) {
+			JMenuItem mntmGestinReparaciones = new JMenuItem("Gestión reparaciones");
+			mntmGestinReparaciones.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					ReparacionGestion dialog = new ReparacionGestion(gestorReparacion, usuari);
+					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+					dialog.setSize(1000, 500);
+					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
+			mnNewMenu_2.add(mntmGestinReparaciones);
+		}
+	
+		if (isJefeTaller) {
+			JMenuItem mntmStockPiezas = new JMenuItem("Stock Piezas");
+			mntmStockPiezas.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent arg0) {
+					ReparacionStock dialog = new ReparacionStock(gestorReparacion, usuari);
+					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+					dialog.setSize(1000, 500);
+					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
+			mnNewMenu_2.add(mntmStockPiezas);
+		}
+
 	}
 	
 	private void crearMenuMantenimiento () {
@@ -297,7 +335,7 @@ public class MainGUI extends JFrame {
 		
 	}
 	
-	private void crearMenuAdministrativos () {
+	private void crearMenuAdministrativos (boolean isAdministrador, boolean isAdministrativo, boolean isJefeTaller, boolean isMecanico) {
 		JMenu jMenuClientes;
 		JMenu jMenuSoli;
 		JMenu jMenuAvisos;
@@ -313,107 +351,112 @@ public class MainGUI extends JFrame {
 		JMenuItem jMenuItemGestionAvisos;
 		JMenuItem jMenuItemPedidoAlmacen;
 
-		// ITEM 1
-		jMenuClientes = new JMenu();
-		menuBar.add(jMenuClientes);
-		jMenuClientes.setText(TDSLanguageUtils
-				.getMessage("menu.gestionAdmin.clientes"));
-		jMenuItemAltaCliente = new JMenuItem();
-		jMenuClientes.add(jMenuItemAltaCliente);
-		jMenuItemAltaCliente.setText(TDSLanguageUtils
-				.getMessage("menu.gestionAdmin.alta"));
-		jMenuItemAltaCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(
-					ActionEvent paramAnonymousActionEvent) {
-						OpenFrm_Option(OptionFrame.Frm_NewCliente);
-			}
-		});
-
-		jMenuItemConsulCliente = new JMenuItem();
-		jMenuClientes.add(jMenuItemConsulCliente);
-		jMenuItemConsulCliente.setText(TDSLanguageUtils
-				.getMessage("menu.gestionAdmin.consulta"));
-		jMenuItemConsulCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(
-					ActionEvent paramAnonymousActionEvent) {
-						OpenFrm_Option(OptionFrame.Frm_UpdCliente);
-			}
-		});
-
-		// ITEM 2
-		jMenuSoli = new JMenu();
-		menuBar.add(jMenuSoli);
-		jMenuSoli.setText(TDSLanguageUtils
-				.getMessage("menu.gestionAdmin.solicitudes"));
-		jMenuSoli.setVisible(true);
-		jMenuSoli.setEnabled(true);
-		jMenuItemAltaSol = new JMenuItem();
-		jMenuSoli.add(jMenuItemAltaSol);
-		jMenuItemAltaSol.setText(TDSLanguageUtils
-				.getMessage("menu.gestionAdmin.alta"));
-		jMenuItemAltaSol.addActionListener(new ActionListener() {
-			public void actionPerformed(
-					ActionEvent paramAnonymousActionEvent) {
-						OpenFrm_Option(OptionFrame.Frm_NewSol);
-			}
-		});
-
-		jMenuItemConsulSol = new JMenuItem();
-		jMenuSoli.add(jMenuItemConsulSol);
-		jMenuItemConsulSol.setText(TDSLanguageUtils
-				.getMessage("menu.gestionAdmin.consulta"));
-		jMenuItemConsulSol.addActionListener(new ActionListener() {
-			public void actionPerformed(
-					ActionEvent paramAnonymousActionEvent) {
-						OpenFrm_Option(OptionFrame.Frm_UpdSol);
-			}
-		});
-		jMenuItemBajaSol = new JMenuItem();
-		jMenuSoli.add(jMenuItemBajaSol);
-		jMenuItemBajaSol.setText(TDSLanguageUtils
-				.getMessage("menu.gestionAdmin.baja"));
-		jMenuItemBajaSol.addActionListener(new ActionListener() {
-			public void actionPerformed(
-					ActionEvent paramAnonymousActionEvent) {
-						OpenFrm_Option(OptionFrame.Frm_DeleteSol);
-			}
-		});
-
-		// ITEM 3
-
-		jMenuAvisos = new JMenu();
-		menuBar.add(jMenuAvisos);
-		jMenuAvisos.setText(TDSLanguageUtils
-				.getMessage("menu.gestionAdmin.avisos"));
-
-		jMenuItemGestionAvisos = new JMenuItem();
-		jMenuAvisos.add(jMenuItemGestionAvisos);
-		jMenuItemGestionAvisos.setText(TDSLanguageUtils
-				.getMessage("menu.gestionAdmin.gestion"));
-		jMenuItemGestionAvisos.addActionListener(new ActionListener() {
-			public void actionPerformed(
-					ActionEvent paramAnonymousActionEvent) {
-						OpenFrm_Option(OptionFrame.Frm_Gestion);
-			}
-		});
+		if (isAdministrativo) {
+	
+			// ITEM 1
+			jMenuClientes = new JMenu();
+			menuBar.add(jMenuClientes);
+			jMenuClientes.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.clientes"));
+			jMenuItemAltaCliente = new JMenuItem();
+			jMenuClientes.add(jMenuItemAltaCliente);
+			jMenuItemAltaCliente.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.alta"));
+			jMenuItemAltaCliente.addActionListener(new ActionListener() {
+				public void actionPerformed(
+						ActionEvent paramAnonymousActionEvent) {
+							OpenFrm_Option(OptionFrame.Frm_NewCliente);
+				}
+			});
+	
+			jMenuItemConsulCliente = new JMenuItem();
+			jMenuClientes.add(jMenuItemConsulCliente);
+			jMenuItemConsulCliente.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.consulta"));
+			jMenuItemConsulCliente.addActionListener(new ActionListener() {
+				public void actionPerformed(
+						ActionEvent paramAnonymousActionEvent) {
+							OpenFrm_Option(OptionFrame.Frm_UpdCliente);
+				}
+			});
+	
+			// ITEM 2
+			jMenuSoli = new JMenu();
+			menuBar.add(jMenuSoli);
+			jMenuSoli.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.solicitudes"));
+			jMenuSoli.setVisible(true);
+			jMenuSoli.setEnabled(true);
+			jMenuItemAltaSol = new JMenuItem();
+			jMenuSoli.add(jMenuItemAltaSol);
+			jMenuItemAltaSol.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.alta"));
+			jMenuItemAltaSol.addActionListener(new ActionListener() {
+				public void actionPerformed(
+						ActionEvent paramAnonymousActionEvent) {
+							OpenFrm_Option(OptionFrame.Frm_NewSol);
+				}
+			});
+	
+			jMenuItemConsulSol = new JMenuItem();
+			jMenuSoli.add(jMenuItemConsulSol);
+			jMenuItemConsulSol.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.consulta"));
+			jMenuItemConsulSol.addActionListener(new ActionListener() {
+				public void actionPerformed(
+						ActionEvent paramAnonymousActionEvent) {
+							OpenFrm_Option(OptionFrame.Frm_UpdSol);
+				}
+			});
+			jMenuItemBajaSol = new JMenuItem();
+			jMenuSoli.add(jMenuItemBajaSol);
+			jMenuItemBajaSol.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.baja"));
+			jMenuItemBajaSol.addActionListener(new ActionListener() {
+				public void actionPerformed(
+						ActionEvent paramAnonymousActionEvent) {
+							OpenFrm_Option(OptionFrame.Frm_DeleteSol);
+				}
+			});
+	
+			// ITEM 3
+	
+			jMenuAvisos = new JMenu();
+			menuBar.add(jMenuAvisos);
+			jMenuAvisos.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.avisos"));
+	
+			jMenuItemGestionAvisos = new JMenuItem();
+			jMenuAvisos.add(jMenuItemGestionAvisos);
+			jMenuItemGestionAvisos.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.gestion"));
+			jMenuItemGestionAvisos.addActionListener(new ActionListener() {
+				public void actionPerformed(
+						ActionEvent paramAnonymousActionEvent) {
+							OpenFrm_Option(OptionFrame.Frm_Gestion);
+				}
+			});
+		}
 		// ITEM 4
+		if (isJefeTaller) {
+			jMenuAlmacen = new JMenu();
+			menuBar.add(jMenuAlmacen);
+			jMenuAlmacen.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.almacen"));
 
-		jMenuAlmacen = new JMenu();
-		menuBar.add(jMenuAlmacen);
-		jMenuAlmacen.setText(TDSLanguageUtils
-				.getMessage("menu.gestionAdmin.almacen"));
-
-		jMenuItemPedidoAlmacen = new JMenuItem();
-		jMenuAlmacen.add(jMenuItemPedidoAlmacen);
-		jMenuItemPedidoAlmacen.setText(TDSLanguageUtils
-				.getMessage("menu.gestionAdmin.recepcion"));
-
-		jMenuItemPedidoAlmacen.addActionListener(new ActionListener() {
-			public void actionPerformed(
-					ActionEvent paramAnonymousActionEvent) {
-						OpenFrm_Option(OptionFrame.Frm_Recepcion);
-			}
-		});
+		
+			jMenuItemPedidoAlmacen = new JMenuItem();
+			jMenuAlmacen.add(jMenuItemPedidoAlmacen);
+			jMenuItemPedidoAlmacen.setText(TDSLanguageUtils
+					.getMessage("menu.gestionAdmin.recepcion"));
+	
+			jMenuItemPedidoAlmacen.addActionListener(new ActionListener() {
+				public void actionPerformed(
+						ActionEvent paramAnonymousActionEvent) {
+							OpenFrm_Option(OptionFrame.Frm_Recepcion);
+				}
+			});
+		}
 	
 	}
 
