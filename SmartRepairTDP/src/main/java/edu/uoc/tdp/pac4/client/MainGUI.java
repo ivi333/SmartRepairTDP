@@ -180,12 +180,13 @@ public class MainGUI extends JFrame {
 	}
 
 	private void enableMenu (boolean isAdministrador, boolean isAdministrativo, boolean isJefeTaller, boolean isMecanico){
+		boolean loadPerfilOK=false;
+		
 		if (isAdministrador) {
 			crearMenuMantenimiento ();				
 			jLabelMain.setText("<html>Bienvenido al subsistema de Mantenimiento. <br> (Administradores)</html>");
+			loadPerfilOK=true;
 		} 
-		
-		boolean loadPerfilOK=false;
 		
 		if (isAdministrativo  || isJefeTaller) {
 			crearMenuAdministrativos(isAdministrador, isAdministrativo, isJefeTaller, isMecanico);			
