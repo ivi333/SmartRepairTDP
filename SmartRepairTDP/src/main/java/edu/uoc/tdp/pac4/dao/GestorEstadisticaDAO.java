@@ -27,7 +27,7 @@ public interface GestorEstadisticaDAO {
 
 	//Informe de Reparacions
 	
-	public ArrayList<Reparacio> obtenirReparacions(int intOrdreReparacio, String strNomClient, String strCognomClient, String strNomMecanic, String strCognomMecanic , boolean bPendent, boolean bAssignada, boolean bAcceptada, boolean bFinalitzada, String dataInici, String dataFi) throws DAOException;
+	public ArrayList<Reparacio> obtenirReparacions(int intOrdreReparacio, String strNomClient, String strCognomClient, String strNomMecanic, String strCognomMecanic , String strEstado, String dataInici, String dataFi) throws DAOException;
 	
 	
 	//Informe de Clients

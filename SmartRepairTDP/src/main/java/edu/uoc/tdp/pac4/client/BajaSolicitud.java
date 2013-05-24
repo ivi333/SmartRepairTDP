@@ -33,6 +33,7 @@ import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Font;
 
 public class BajaSolicitud extends JDialog {
 
@@ -216,7 +217,9 @@ public class BajaSolicitud extends JDialog {
 	contentPane.add(lblEstado);
 	
 	lblEstadoInfo = new JLabel();
-	lblEstadoInfo.setBounds(265, 62, 79, 14);
+	lblEstadoInfo.setFont(new Font("Tahoma", Font.BOLD, 12));
+	lblEstadoInfo.setForeground(new Color(0, 128, 0));
+	lblEstadoInfo.setBounds(265, 62, 101, 14);
 	contentPane.add(lblEstadoInfo);
 	
 	JLabel label = new JLabel("F.de finalización:");
@@ -234,7 +237,7 @@ public class BajaSolicitud extends JDialog {
 	contentPane.add(lblComentarioF);
 	
 	txtAreaComentarioF = new JTextArea();
-	txtAreaComentarioF.setBounds(145, 359, 199, 71);
+	txtAreaComentarioF.setBounds(127, 359, 217, 71);
 	contentPane.add(txtAreaComentarioF);
 }
 	private JButton getBtnFacturar()
@@ -447,36 +450,111 @@ public class BajaSolicitud extends JDialog {
 				
 				Reparacio r= conexionRemota.getReparacionByCodeReparacion(numreparacio);
 				String strEstado="";
-				if(r!=null){
-				if(!r.getAssignada() && !sol.isFinalitzada())
-				{
-					strEstado= TipusReparacio.EnEspera.toString();
-					lblEstadoInfo.setText(strEstado);
+				/*
+				 * En Espera Solicitud.pendent=true 
+				 * Solicitud.finalitzada=false
+				 * Reparacio.acceptada=false
+				 *  Reparacio.assignada=false 
+				 * En Curso
+				 * Solicitud.pendent=false
+				 *  Solicitud.finalitzada=false
+				 * Reparacio.acceptada=true 
+				 * Reparacio.assignada=true
+				 *  Recibidas
+				 * Solicitud.pendent=false 
+				 * Solicitud.finalitzada=false
+				 * Reparacio.acceptada=true 
+				 * Reparacio.assignada=false
+				 * Finalizadas 
+				 * Solicitud.pendent=false
+				 * Solicitud.finalitzada=true
+				 * Reparacio.acceptada=true 
+				 * Reparacio.assignada=true
+				 
+				 * Rechazadas 
+				 * Reparacio.acceptada=false
+				 * Reparacio.assignada=false
+				 * Solicitud.pendent=false 
+				 * Solicitud.finalitzada=true
+				 */
+				btnAceptar.setEnabled(true);
+				if (r != null) {
+					
+					//EN ESPERA
+					if (!r.getAssignada() && !sol.isFinalitzada()
+							&& sol.isPendent() && !r.getAcceptada()) {
+						strEstado = TipusReparacio.EnEspera.toString();
+						lblEstadoInfo.setText(strEstado);
+						btnAceptar.setEnabled(true);
+					}
+					//EN CURSO
+					if (r.getAcceptada() && r.getAssignada()
+							&& !sol.isPendent() && !sol.isFinalitzada()) {
+						strEstado = TipusReparacio.EnCurs.toString();
+						lblEstadoInfo.setText(strEstado);
+						btnAceptar.setEnabled(true);
+					}
+					//RECIBIDAS
+					if (!r.getAssignada() && !sol.isFinalitzada()
+							&& !sol.isPendent() && r.getAcceptada()) {
+						strEstado = "Recibidas";//TipusReparacio..toString();
+						lblEstadoInfo.setText(strEstado);
+						btnAceptar.setEnabled(true);
+					}
+					
+					//FINALIZADAS
+					if (r.getAssignada() && sol.isFinalitzada()
+							&& !sol.isPendent() && r.getAcceptada()) {
+						strEstado = TipusReparacio.Finalitzades.toString();
+						lblEstadoInfo.setText(strEstado);
+						btnAceptar.setEnabled(false);
+					}
+					//RECHAZADAS
+					if (!r.getAssignada() && sol.isFinalitzada()
+							&& !sol.isPendent() && !r.getAcceptada()) {
+						strEstado = TipusReparacio.Rebutjades.toString();
+						lblEstadoInfo.setText(strEstado);
+						btnAceptar.setEnabled(false);
+					}
+
 				}
-				if(!r.getAcceptada() && !r.getAssignada())
+				else
 				{
-					strEstado= TipusReparacio.EnCurs.toString();
-					lblEstadoInfo.setText(strEstado);
+					if (!sol.isFinalitzada() && sol.isPendent()) {
+						strEstado = TipusReparacio.EnEspera.toString();
+						lblEstadoInfo.setText(strEstado);
+						btnAceptar.setEnabled(true);
+					}
+					
+					if (sol.isFinalitzada() && !sol.isPendent()) {
+						strEstado = TipusReparacio.Rebutjades.toString();
+						lblEstadoInfo.setText(strEstado);
+						btnAceptar.setEnabled(false);
+					}
 				}
 				
-				}
-				//EnCurs, EnEspera, Rebudes,Finalitzades, 
-				//acceptada boolean NOT NULL DEFAULT false,
-				 //assignada boolean NOT NULL DEFAULT false,
 				
 			}
 			else
 			{
+				clearControles();
 				String title = TDSLanguageUtils
 						.getMessage("solicitud.baja.titulo");
 				String strMsg = TDSLanguageUtils
-						.getMessage("mensaje.ErrorCombo");
+						.getMessage("solicitud.msg.cliente.noexiste");
 				LeerError(strMsg, title);
+				
 			}
 			
 		}catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	private void clearControles()
+	{
+		txtAreaComentarioF.setText("");
+		textAreaComentario.setText("");
+		
 	}
 	
 	private void LeerError(String paramString1, String paramString2) {
