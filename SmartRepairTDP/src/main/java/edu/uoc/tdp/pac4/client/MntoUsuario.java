@@ -14,11 +14,13 @@ import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.ItemCombo;
 import edu.uoc.tdp.pac4.common.Nif;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
+import edu.uoc.tdp.pac4.exception.GestorConexionException;
 import edu.uoc.tdp.pac4.service.GestorConexionInterface;
 
 import javax.swing.JButton;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -497,7 +499,16 @@ public class MntoUsuario extends JFrame {
 		if (usuari.getDataBaixa() != null)
 			txtFbaja.setText(usuari.getDataBaixa().toString());
 		
-		
+		if (usuari.isActiu()){
+			try {
+				Taller taller = gestorConexion.getTallerById(usuari.getTaller());
+				if (!taller.isActiu()){
+					showWarning(TDSLanguageUtils.getMessage("mntousuario.valida.tallernoactivo"), lblTitle.getText());
+				}
+			} catch (Exception e) {
+				showError(e.getMessage(),"");
+			}
+		}
 	}
 
 	
@@ -526,7 +537,8 @@ public class MntoUsuario extends JFrame {
 						this.accion = "MODIFICAR";
 						leerUsuariByNif();
 						cargarOperacion();
-						mostrarUsuari();					
+						mostrarUsuari();
+
 					} catch (Exception e) {
 						showError(e.getMessage(),lblTitle.getText());
 					}
