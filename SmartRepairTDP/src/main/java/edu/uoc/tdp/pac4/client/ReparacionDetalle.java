@@ -2,17 +2,22 @@ package edu.uoc.tdp.pac4.client;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Image;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
@@ -29,8 +34,13 @@ import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+
 import javax.swing.JScrollPane;
 
 public class ReparacionDetalle extends JFrame {
@@ -56,6 +66,7 @@ public class ReparacionDetalle extends JFrame {
 		"C\u00F3digo", "Descripci\u00F3n", "Unidades", "Disponible"
 	};
 	private JScrollPane scrollPane;
+	private JButton btnPlay;
 
 	/**
 	 * Launch the application.
@@ -155,14 +166,29 @@ public class ReparacionDetalle extends JFrame {
 		txtFechaFin = new JTextField();
 		txtFechaFin.setColumns(10);
 		
-		JLabel lblMinutos = new JLabel("0 min");
+		lblMinutos = new JLabel("0 min");
 		lblMinutos.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		JButton btnPlay = new JButton("Play");
+		btnPlay = new JButton("Play");
+		btnPlay.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				btnPlay.setEnabled(false);
+				/* Insertar fecha inicio */
+				/* refrescar fecha inicio */
+			}
+		});
 		
-		JButton btnPause = new JButton("Pause");
-		
-		JButton btnStop = new JButton("Stop");
+		btnStop = new JButton("Stop");
+		btnStop.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				btnStop.setEnabled(false);
+				/*finalizar reparacion*/
+				/* insertar fecha fin */
+				/* refrescar fecha fin */
+			}
+		});
 		
 		JButton btnSalir = new JButton("Salir");
 		btnSalir.addMouseListener(new MouseAdapter() {
@@ -178,16 +204,17 @@ public class ReparacionDetalle extends JFrame {
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(0)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 									.addGroup(gl_contentPane.createSequentialGroup()
 										.addComponent(lblId)
 										.addPreferredGap(ComponentPlacement.UNRELATED)
 										.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-										.addComponent(lblDetalleReparacionAsignada, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(lblDetalleReparacionAsignada, GroupLayout.DEFAULT_SIZE, 631, Short.MAX_VALUE)
 										.addGroup(gl_contentPane.createSequentialGroup()
 											.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 												.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -211,7 +238,10 @@ public class ReparacionDetalle extends JFrame {
 														.addComponent(lblMarca)
 														.addPreferredGap(ComponentPlacement.UNRELATED)
 														.addComponent(txtMarca, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-												.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 246, GroupLayout.PREFERRED_SIZE))
+												.addGroup(gl_contentPane.createSequentialGroup()
+													.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 246, GroupLayout.PREFERRED_SIZE)
+													.addPreferredGap(ComponentPlacement.UNRELATED)
+													.addComponent(txtFechaAsignacion, GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)))
 											.addGap(18)
 											.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 												.addGroup(gl_contentPane.createSequentialGroup()
@@ -221,33 +251,31 @@ public class ReparacionDetalle extends JFrame {
 												.addGroup(gl_contentPane.createSequentialGroup()
 													.addGap(2)
 													.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-														.addComponent(btnStop, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-														.addComponent(btnPause, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+														.addComponent(btnStop, GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
 														.addGroup(gl_contentPane.createSequentialGroup()
 															.addPreferredGap(ComponentPlacement.RELATED)
-															.addComponent(btnPlay, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-														.addComponent(lblMinutos, GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+															.addComponent(btnPlay, GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
+														.addComponent(lblMinutos, GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
 														.addComponent(lblContador, GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)))))))
 								.addComponent(lblObservaciones)
 								.addComponent(txtObservaciones, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addContainerGap(1, Short.MAX_VALUE))
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+							.addGap(1))
+						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(lblPiezasAsignadas)
 							.addGap(102)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblFechaAsignacion, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-										.addComponent(txtFechaAsignacion, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+										.addComponent(lblFechaAsignacion, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
 										.addGroup(gl_contentPane.createSequentialGroup()
 											.addPreferredGap(ComponentPlacement.RELATED)
 											.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
 												.addComponent(txtFechaFin)
 												.addComponent(txtFechaInicio))
 											.addPreferredGap(ComponentPlacement.RELATED)
-											.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-												.addComponent(btnFechaFin, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-												.addComponent(btnFechaInicio, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))))
+											.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+												.addComponent(btnFechaFin, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE)
+												.addComponent(btnFechaInicio, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE))))
 									.addGap(66))
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(lblFechas, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
@@ -284,7 +312,7 @@ public class ReparacionDetalle extends JFrame {
 					.addComponent(lblObservaciones)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(txtObservaciones, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
+					.addPreferredGap(ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblPiezasAsignadas)
 						.addComponent(lblFechas)
@@ -297,22 +325,21 @@ public class ReparacionDetalle extends JFrame {
 								.addComponent(lblMinutos))
 							.addGap(5)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(txtFechaAsignacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnPlay))
+								.addComponent(btnPlay)
+								.addComponent(txtFechaAsignacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 							.addGap(5)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(txtFechaInicio, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnFechaInicio)
-								.addComponent(btnPause))
+								.addComponent(btnFechaInicio))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(btnFechaFin)
 								.addComponent(txtFechaFin, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnStop))
+								.addComponent(btnStop)
+								.addComponent(btnFechaFin))
 							.addGap(18)
 							.addComponent(btnSalir))
 						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addContainerGap())
 		);
 		
 		table = new JTable();
@@ -346,6 +373,7 @@ public class ReparacionDetalle extends JFrame {
 	
 	private void initCampos(int ordenReparacion) {
 		try {
+			go();
 			DetallReparacio datosDetalleReparacion = gestorReparacion.getDetalleReparacion(ordenReparacion);
 			this.txtOrdenReparacion.setText(String.valueOf(datosDetalleReparacion.getOrdreReparacio()));
 			this.txtMatricula.setText(datosDetalleReparacion.getMatricula());
@@ -373,4 +401,43 @@ public class ReparacionDetalle extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	/* Cronometro */
+	
+	JFrame frame;  
+
+	private long init;
+	JButton startStopButton;
+	private JLabel lblMinutos;
+	private JButton btnStop;
+
+
+	
+	public void go() {  
+		btnPlay.setToolTipText("Start");
+		btnPlay.addActionListener(new StartStopListener());  
+		btnStop.addActionListener(new StartStopListener());
+	}  
+
+   class StartStopListener implements ActionListener {  
+	   
+		public void actionPerformed(ActionEvent e) {
+			JButton j = (JButton)e.getSource();			
+			if ("Start".equals(j.getToolTipText())) {
+				init = System.currentTimeMillis();
+				btnPlay.setToolTipText("Stop");
+			} else {
+				long seconds = (System.currentTimeMillis() - init) / 1000;
+				int day = (int)TimeUnit.SECONDS.toDays(seconds);        
+				long hours = TimeUnit.SECONDS.toHours(seconds) - (day *24);
+				long minute = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds)* 60);
+				long second = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) *60);
+				btnPlay.setToolTipText("Start");
+				lblMinutos.setText( hours + ":" + minute + ":" + second);
+			}
+		}  
+	}  
+	
 }
+
+

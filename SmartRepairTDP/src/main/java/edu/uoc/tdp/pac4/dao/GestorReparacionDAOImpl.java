@@ -512,7 +512,11 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			ps.setInt(2, codigoPieza);
 			ps.setInt(3, idTaller);
 			ps.setInt(4, codigoPieza);
-			ps.setInt(5, ordenReparacion);
+			if (ordenReparacion == 0) {
+				ps.setObject(5, null);
+			} else {
+				ps.setInt(5, ordenReparacion);
+			}
 			ps.setBoolean(6, tipoReparacion);
 			ps.setInt(7, cantidad);
 			ps.executeUpdate();
@@ -915,6 +919,14 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 				default:
 					break;
 				}
+			}
+			
+			if (nombre != "") {
+				condiciones = condiciones + " and cli.nom like '%" + nombre + "%' ";
+			}
+			
+			if (apellido != "") {
+				condiciones = condiciones + " and cli.cognoms like '%" + apellido + "%' ";
 			}
 			
 			String QUERY = QUERY_GET_DETALLE_REPARACIONES;

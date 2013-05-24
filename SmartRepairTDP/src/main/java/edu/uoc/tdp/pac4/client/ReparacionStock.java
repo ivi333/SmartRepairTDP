@@ -47,7 +47,7 @@ public class ReparacionStock extends JFrame {
 	private Usuari usuario;
 	
 	private static final Object columnNames1[] = {
-		"C\u00F3digo", "Marca", "Modelo", "Unidades", "Precio total", "Descripci\u00F3n"
+		"C\u00F3digo", "Marca", "Modelo", "Unidades", "Precio", "Precio total", "Descripci\u00F3n"
 	};
 	private static final Object columnNames2[] = {
 		"C\u00F3digo", "Marca", "Modelo", "Stock Min.", "Stock", "Precio2", "Descripci\u00F3n"
@@ -325,6 +325,46 @@ public class ReparacionStock extends JFrame {
 					piezasSeleccionadas.add(peca);
 				}
 				
+				Object rowData [][] = new Object [piezasSeleccionadas.size()][7];
+				int z=0;
+				for (DetallPeca bean : piezasSeleccionadas) {
+					rowData[z][0] = String.valueOf(bean.getCodiPeca());
+					rowData[z][1] = String.valueOf(bean.getMarca());
+					rowData[z][2] = String.valueOf(bean.getModel());
+					rowData[z][3] = String.valueOf(unidades);
+					rowData[z][4] = String.valueOf(bean.getPvp());
+					rowData[z][5] = String.valueOf(bean.getPvp()*unidades);
+					rowData[z][6] = String.valueOf(bean.getDescipcio());
+					z++;
+				}
+				TableModel model = new DefaultTableModel(rowData, columnNames1);
+				table1.setModel(model);
+				
+				
+			} else if (table2.getSelectedRowCount() == table2.getRowCount()) {
+				
+				List<DetallPeca> listaPiezas = new ArrayList<DetallPeca>();
+				for (int i=0; i<table2.getSelectedRowCount(); i++) {
+					listaPiezas.add(new DetallPeca(Integer.valueOf(table2.getValueAt(i, 0).toString()), table2.getValueAt(i, 6).toString(), Integer.parseInt(table2.getValueAt(i, 4).toString()), unidades, Double.parseDouble(table2.getValueAt(i, 5).toString()), Integer.parseInt(table2.getValueAt(i, 3).toString()), table2.getValueAt(i, 1).toString(), table2.getValueAt(i, 2).toString()));
+				}
+				
+				for (int j=0; j<listaPiezas.size(); j++) {
+					idPiezaAnadir = listaPiezas.get(j).getCodiPeca();
+					if (piezasSeleccionadas != null) {
+						for (int i=0; i<piezasSeleccionadas.size(); i++) {
+							if (piezasSeleccionadas.get(i).getCodiPeca() == idPiezaAnadir) {
+								piezaEncontrada = true;
+							}
+						}
+					}
+					if (!piezaEncontrada) {
+						DetallPeca peca = new DetallPeca(listaPiezas.get(j).getCodiPeca(), listaPiezas.get(j).getDescipcio(), listaPiezas.get(j).getStock(), unidades, listaPiezas.get(j).getPvp(), listaPiezas.get(j).getStockMinim(), listaPiezas.get(j).getMarca(), listaPiezas.get(j).getModel());
+						piezasSeleccionadas.add(peca);
+					}
+					piezaEncontrada = false;
+
+				}
+								
 				Object rowData [][] = new Object [piezasSeleccionadas.size()][7];
 				int z=0;
 				for (DetallPeca bean : piezasSeleccionadas) {
