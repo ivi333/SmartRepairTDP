@@ -59,9 +59,7 @@ public class Servidor extends javax.swing.JFrame {
 	
 	private void initRemoteObjects () {
 		try {
-			
-				gestorAdmin = new GestorAdministracionImpl();
-		
+			gestorAdmin = new GestorAdministracionImpl ();
 			gestorConex = new GestorConexionImpl();
 			gestorEstad = new GestorEstadisticaImpl();
 			gestorRepar = new GestorReparacionImpl();
@@ -85,7 +83,6 @@ public class Servidor extends javax.swing.JFrame {
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		addWindowListener(new java.awt.event.WindowAdapter() {
-			@Override
 			public void windowClosing(java.awt.event.WindowEvent evt) {
 				formWindowClosing(evt);
 			}
