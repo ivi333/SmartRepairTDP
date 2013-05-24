@@ -737,52 +737,57 @@ public class AltaCliente extends JDialog {
 	private String ImputValues() {
 		String strResult = "";
 		try {
-			if (!txtNifNew.getText().toString().equals("")) {
-				strResult = TDSLanguageUtils.getMessage("cliente.btn.nif");
+			if (txtNifNew.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils.getMessage("cliente.msg.falta.nif");
 				return strResult;
 			}
-			if (!txtNombre.getText().toString().equals("")) {
-				strResult = TDSLanguageUtils.getMessage("cliente.btn.nombre");
+			if (txtNombre.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils.getMessage("cliente.msg.falta.nombre");
 				return strResult;
 			}
-			if (!txtApellido.getText().toString().equals("")) {
-				strResult = TDSLanguageUtils.getMessage("cliente.btn.apellido");
+			if (txtApellido.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils.getMessage("cliente.msg.falta.apellido");
 				return strResult;
 			}
-			if (!txtDireccion.getText().toString().equals("")) {
+			if (txtDireccion.getText().toString().equals("")) {
 				strResult = TDSLanguageUtils
-						.getMessage("cliente.btn.direccion");
+						.getMessage("cliente.msg.falta.direccion");
 				return strResult;
 			}
-			if (!txtCP.getText().toString().equals("")) {
+			if(txtPoblacion.getText().toString().equals("")) {
+				strResult = TDSLanguageUtils.getMessage("cliente.msg.falta.poblacion");
+				return strResult;
+			}
+			if (txtCP.getText().toString().equals("")) {
 				strResult = TDSLanguageUtils.getMessage("cliente.msg.falta.cp");
 				return strResult;
 			}
-			if (!txtModelo.getText().toString().equals("")) {
+			if (txtModelo.getText().toString().equals("")) {
 				strResult = TDSLanguageUtils
 						.getMessage("cliente.msg.falta.modelo");
 				return strResult;
 			}
-			if (cmbMarca.getSelectedIndex() == 0) {
+			if (cmbMarca.getSelectedIndex() == -1) {
 				strResult = TDSLanguageUtils
 						.getMessage("cliente.msg.falta.marca");
 				return strResult;
 			}
-			if (!txtMatricula.getText().toString().equals("")) {
+			if (txtMatricula.getText().toString().equals("")) {
 				strResult = TDSLanguageUtils
 						.getMessage("cliente.msg.falta.matricula");
 				return strResult;
 			}
-			if (!txtBastidor.getText().toString().equals("")) {
+			if (txtBastidor.getText().toString().equals("")) {
 				strResult = TDSLanguageUtils
 						.getMessage("cliente.msg.falta.bastidor");
 				return strResult;
 			}
-			if (cmbAseguradora.getSelectedIndex() == 0) {
+			if (cmbAseguradora.getSelectedIndex() == -1) {
 				strResult = TDSLanguageUtils
 						.getMessage("cliente.msg.falta.aseguradora");
 				return strResult;
 			}
+			
 			if (txtColor.getText().toString().equals("")) {
 				strResult = TDSLanguageUtils
 						.getMessage("cliente.msg.falta.color");
@@ -797,11 +802,13 @@ public class AltaCliente extends JDialog {
 			{
 				String n=txtAnyo.getText().toString();
 					
-				if (n.length()<5)
-				{
+				if (n.length() > 0) {
+
+				} else {
 					strResult = TDSLanguageUtils
 							.getMessage("cliente.msg.falta.anyo");
-					return strResult;	
+					return strResult;
+
 				}
 			}
 			
@@ -811,37 +818,38 @@ public class AltaCliente extends JDialog {
 						.getMessage("cliente.msg.falta.anyo");
 				return strResult;
 			}
-			else
+			/*else
 			{
 				String n=txtDia.getText().toString();
-				if (n.length()<3)
+				if (n.length()>1)
 				{
 					strResult = TDSLanguageUtils
 							.getMessage("cliente.msg.falta.anyo");
 					return strResult;	
 				}
-			}
+			}*/
 			
 			if (txtMes.getText().toString().equals("")) {
 				strResult = TDSLanguageUtils
 						.getMessage("cliente.msg.falta.anyo");
 				return strResult;
 			}
-			else
-			{
-				String n=txtMes.getText().toString();
-				if (n.length()==1)
-				{
-					n="0"+n;
-				}
-				
-				if (n.length()<3)
-				{
-					strResult = TDSLanguageUtils
-							.getMessage("cliente.msg.falta.anyo");
-					return strResult;	
-				}
-			}
+//			else
+//			{
+//				String n = txtMes.getText().toString();
+//				if (n.length() == 1) {
+//					n = "0" + n;
+//				}
+//
+//				if (n.length() > 1) {
+//
+//				} else {
+//					strResult = TDSLanguageUtils
+//							.getMessage("cliente.msg.falta.anyo");
+//					return strResult;
+//
+//				}
+//			}
 				
 			
 			if (txtTipo.getText().toString().equals("")) {
@@ -849,12 +857,7 @@ public class AltaCliente extends JDialog {
 						.getMessage("cliente.msg.falta.tipo");
 				return strResult;
 			}
-			if (txtPoblacion.getText().toString().equals("")) {
-
-				strResult = TDSLanguageUtils
-						.getMessage("cliente.msg.falta.poblacion");
-				return strResult;
-			}
+		
 
 		} catch (Exception ex) {
 			ex.printStackTrace();

@@ -337,10 +337,11 @@ private JPanel contentPane;
 			}
 			else
 			{
+				clearControles();
 				String title = TDSLanguageUtils
 						.getMessage("solicitud.upd.titulo");
 				String strMsg = TDSLanguageUtils
-						.getMessage("mensaje.ErrorCombo");
+						.getMessage("solicitud.msg.cliente.noexiste");
 				LeerError(strMsg, title);
 			}
 			
@@ -349,6 +350,22 @@ private JPanel contentPane;
 		}
 	}
 
+	private void clearControles()
+	{
+		
+		textAreaComentario.setText("");
+		lblInfoSolicitud.setText("");
+		lblInfoModelo.setText("");
+		lblInfoMatricula.setText("");
+		lblInfoMarca.setText("");
+		lblInfoBastidor.setText("");
+		lblEstadoInfo.setText("");
+		textAreaComentario.setText("");
+		txtAnyo.setText("");
+		txtMes.setText("");
+		txtDia.setText("");
+	}
+	
 	private void Imput(boolean b) {
 		lblInfoSolicitud.setEnabled(b);
 		lblInfoModelo.setEnabled(b);

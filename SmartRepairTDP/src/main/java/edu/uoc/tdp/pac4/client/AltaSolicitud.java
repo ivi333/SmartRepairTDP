@@ -149,7 +149,6 @@ public class AltaSolicitud extends JDialog {
 		contentPane.add(lblMatricula);
 		
 		lblInfoMatricula= new JLabel();
-		lblInfoMatricula.setText("lblInfoMatricula");
 		lblInfoMatricula.setBounds(123, 106, 150, 20);
 		contentPane.add(lblInfoMatricula);
 		
@@ -159,7 +158,6 @@ public class AltaSolicitud extends JDialog {
 		contentPane.add(lblMarca);
 		
 		lblInfoMarca = new JLabel();
-		lblInfoMarca.setText("lblInfoMarca");
 		lblInfoMarca.setBounds(123, 137, 150, 14);
 		contentPane.add(lblInfoMarca);
 		
@@ -169,7 +167,6 @@ public class AltaSolicitud extends JDialog {
 		contentPane.add(lblModelo);
 		
 		lblInfoModelo = new JLabel();
-		lblInfoModelo.setText("lblInfoModelo");
 		lblInfoModelo.setBounds(123, 171, 150, 14);
 		contentPane.add(lblInfoModelo);
 		
