@@ -37,11 +37,10 @@ public class GestorEstadisticaImpl extends java.rmi.server.UnicastRemoteObject i
 	}
 	
 
-	public ArrayList <Reparacio> obtenirReparacions(int intOrdreReparacio, String strNomClient, String strCognomClient, String strNomMecanic, String strCognomMecanic , boolean bPendent, boolean bAssignada, boolean bAcceptada, boolean bFinalitzada, String dataInici, String dataFi)
-			throws GestorEstadisticaException {
-		
+	public ArrayList <Reparacio> obtenirReparacions(int intOrdreReparacio, String strNomClient, String strCognomClient, String strNomMecanic, String strCognomMecanic , String strEstado, String dataInici, String dataFi)
+			throws RemoteException, GestorEstadisticaException {
 		try {
-			return gestorEstadisticaDAO.obtenirReparacions(intOrdreReparacio, strNomClient, strCognomClient, strNomMecanic, strCognomMecanic , bPendent, bAssignada,  bAcceptada, bFinalitzada, dataInici, dataFi);
+			return gestorEstadisticaDAO.obtenirReparacions(intOrdreReparacio, strNomClient, strCognomClient, strNomMecanic, strCognomMecanic , strEstado , dataInici, dataFi);
 			
 		} catch (DAOException e) {
 			throw new GestorEstadisticaException(GestorEstadisticaException.ERR_DAO +  e.getMessage());
@@ -55,7 +54,7 @@ public class GestorEstadisticaImpl extends java.rmi.server.UnicastRemoteObject i
 	i l'hora en la que es comença*/
 	
 	
-	public float calcularTempsMigEspera (ArrayList<Reparacio> reparacions) throws GestorEstadisticaException {
+	public float calcularTempsMigEspera (ArrayList<Reparacio> reparacions) throws  RemoteException, GestorEstadisticaException {
 		float fHoras = 0 ;
 		float fMedia = 0 ;
 		
@@ -74,7 +73,7 @@ public class GestorEstadisticaImpl extends java.rmi.server.UnicastRemoteObject i
 	}
 
 	
-	public float calcularTempsMigReparacio (ArrayList<Reparacio> reparacions) throws GestorEstadisticaException{
+	public float calcularTempsMigReparacio (ArrayList<Reparacio> reparacions) throws RemoteException, GestorEstadisticaException {
 		float fHoras = 0 ;
 		float fMedia = 0 ;
 		
@@ -93,7 +92,7 @@ public class GestorEstadisticaImpl extends java.rmi.server.UnicastRemoteObject i
 	}
 	
 	
-	public float calcularTempsMigFinalitzacio (ArrayList<Reparacio> reparacions) throws GestorEstadisticaException{
+	public float calcularTempsMigFinalitzacio (ArrayList<Reparacio> reparacions) throws RemoteException, GestorEstadisticaException {
 		float fHoras = 0 ;
 		float fMedia = 0 ;
 		
@@ -113,7 +112,7 @@ public class GestorEstadisticaImpl extends java.rmi.server.UnicastRemoteObject i
 	
 	//Informe de Clients
 	
-	public ArrayList <Client> obtenirClients(String strNomClient, String strCognom, String strMarca, String strNomAsseguradora)throws GestorEstadisticaException{
+	public ArrayList <Client> obtenirClients(String strNomClient, String strCognom, String strMarca, String strNomAsseguradora) throws RemoteException, GestorEstadisticaException {
 		
 		try {
 			return gestorEstadisticaDAO.obtenirClients(strNomClient, strCognom, strMarca, strNomAsseguradora);
@@ -135,19 +134,19 @@ public class GestorEstadisticaImpl extends java.rmi.server.UnicastRemoteObject i
 	}
 	
 	//Calcular nº de horas que un Mecanic SI ha trabajado
-	public int calcularNumHoresTreballades () throws GestorEstadisticaException{
+	public int calcularNumHoresTreballades () throws RemoteException, GestorEstadisticaException {
 		return 0;
 	
 	}
 	
 	//usuari.reparacionsAssignadades con r.dataFi 
-	public int calcularNumRepRessoltes (int intIdMecanic) throws GestorEstadisticaException{
+	public int calcularNumRepRessoltes (int intIdMecanic) throws RemoteException, GestorEstadisticaException {
 		return intIdMecanic;
 	
 	
 	}
 	//Calcular nº de horas que un Mecanic NO ha trabajado
-	public int calcularNumFaltesAssistencia () throws GestorEstadisticaException{
+	public int calcularNumFaltesAssistencia () throws RemoteException, GestorEstadisticaException {
 		return 0;
 	
 	}

@@ -645,8 +645,8 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 		getConnectionDB();
 		PreparedStatement ps = createPrepareStatment(ALTA_MECANIC,ResultSet.CONCUR_UPDATABLE);
 		try {
-			ps.setInt(1, mecanic.getId());
-			ps.setBoolean(2, mecanic.isActiu());
+			ps.setInt(1, mecanic.getIdmecanic());
+			ps.setBoolean(2, mecanic.isDisponible());
 			ps.setNull(3, Types.INTEGER);
 			ps.setNull(4, Types.INTEGER);
 	

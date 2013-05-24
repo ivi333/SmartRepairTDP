@@ -59,9 +59,7 @@ public class Servidor extends javax.swing.JFrame {
 	
 	private void initRemoteObjects () {
 		try {
-			
-				gestorAdmin = new GestorAdministracionImpl();
-		
+			gestorAdmin = new GestorAdministracionImpl();
 			gestorConex = new GestorConexionImpl();
 			gestorEstad = new GestorEstadisticaImpl();
 			gestorRepar = new GestorReparacionImpl();

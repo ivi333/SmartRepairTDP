@@ -184,9 +184,6 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 			if (!gestorConexionDAO.usuariExist(usuari.getNif(),usuari.getUsuari())) {		
 				if (usuari.isActiu()) {
 					Taller taller = gestorConexionDAO.getTallerById(usuari.getTaller());
-					if (!taller.isActiu()) {
-						throw new GestorConexionException(GestorConexionException.ERR_TALLER_INACTIU);
-					}
 					
 					for (String perfil : perfiles){
 						if (perfil.equals(PerfilUsuari.JefeTaller.toString())){
@@ -201,7 +198,7 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 
 				for (String perfil : perfiles) {
 					if (perfil.equals(PerfilUsuari.Mecanico.toString())) {
-						Usuari mecanic = getUsuariByUsuari(usuari.getUsuari());
+						Usuari mecanic = getUsuariByUsuari(usuari.getUsuari());					
 						gestorConexionDAO.altaMecanic(new Mecanic(mecanic.getId(), mecanic.isActiu(), 0, 0));
 						break;
 					}
@@ -244,9 +241,6 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 				if (!administrador) {
 					Taller taller = gestorConexionDAO.getTallerById(usuari.getTaller());
 
-					if (!taller.isActiu()){
-						throw new GestorConexionException(GestorConexionException.ERR_TALLER_INACTIU);
-					}
 					
 					if (jefeTaller && usuari.getId() != taller.getCapTaller()) {
 						throw new GestorConexionException(GestorConexionException.ERR_JEFETALLER_TALLER);
@@ -267,10 +261,7 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 			}
 		} catch (DAOException e) {
 			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
+		} 
 	}
 	
 	public List<Taller> getAllTallers () throws RemoteException, GestorConexionException {
