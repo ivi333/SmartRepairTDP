@@ -22,6 +22,11 @@ public class Mecanic extends Usuari implements java.io.Serializable{
 		this.idrep1 = idrep1;
 		this.idrep2 = idrep2;
 	}
+	
+	public Mecanic()
+	{
+		super();
+	}
 
 	public int getIdmecanic() {
 		return idmecanic;

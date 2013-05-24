@@ -22,6 +22,7 @@ public class Client implements Serializable {
 	private String matricula;
 	private String color;
 	private Date anyo;
+	private Asseguradora asseguradora;
 	
 	public Client ()
 	{
@@ -145,6 +146,14 @@ public class Client implements Serializable {
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public Asseguradora getAsseguradora() {
+		return asseguradora;
+	}
+
+	public void setAsseguradora(Asseguradora asseguradora) {
+		this.asseguradora = asseguradora;
 	}
 
 	

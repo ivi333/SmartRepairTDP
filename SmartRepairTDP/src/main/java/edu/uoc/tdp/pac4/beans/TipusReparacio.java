@@ -1,5 +1,5 @@
 package edu.uoc.tdp.pac4.beans;
 
 public enum TipusReparacio {
-	EnCurs, EnEspera, Rebudes,Finalitzades, Totes
+	EnCurs, EnEspera, Rebutjades,Finalitzades, Totes
 }

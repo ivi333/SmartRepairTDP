@@ -13,16 +13,19 @@ import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
+
 import java.awt.Font;
 
 public class InformeEmpleados extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
+	private JTextField tbxIdUsuari;
+	private JTextField tbxNomUsuari;
+	private JTextField tbxHoresTrab;
+	private JTextField tbxRepRessolt;
+	private JTextField tbxFaltasAssist;
 	private JTable table;
 
 	/**
@@ -45,7 +48,7 @@ public class InformeEmpleados extends JFrame {
 	 * Create the frame.
 	 */
 	public InformeEmpleados() {
-		setTitle("Informe de Empleados");
+		setTitle(TDSLanguageUtils.getMessage("infEmpleado.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 680, 297);
 		contentPane = new JPanel();
@@ -53,70 +56,65 @@ public class InformeEmpleados extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Id Empleado");
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblNewLabel.setBounds(157, 11, 80, 14);
-		contentPane.add(lblNewLabel);
+		JLabel lbIdUsuari = new JLabel(TDSLanguageUtils.getMessage("infEmpleado.idEmpleat"));
+		lbIdUsuari.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lbIdUsuari.setBounds(157, 11, 80, 14);
+		contentPane.add(lbIdUsuari);
 		
-		JLabel lblNewLabel_1 = new JLabel("Nombre Empleado");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblNewLabel_1.setBounds(398, 11, 117, 14);
-		contentPane.add(lblNewLabel_1);
+		JLabel lblNomUsuari = new JLabel(TDSLanguageUtils.getMessage("infEmpleado.nomEmpleat"));
+		lblNomUsuari.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblNomUsuari.setBounds(398, 11, 117, 14);
+		contentPane.add(lblNomUsuari);
 		
-		textField = new JTextField();
-		textField.setBounds(157, 28, 80, 20);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		tbxIdUsuari = new JTextField();
+		tbxIdUsuari.setBounds(157, 28, 80, 20);
+		contentPane.add(tbxIdUsuari);
+		tbxIdUsuari.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setBounds(398, 28, 155, 20);
-		contentPane.add(textField_1);
-		textField_1.setColumns(10);
+		tbxNomUsuari = new JTextField();
+		tbxNomUsuari.setBounds(398, 28, 155, 20);
+		contentPane.add(tbxNomUsuari);
+		tbxNomUsuari.setColumns(10);
 		
-		JButton btnConsultar = new JButton("Consultar");
+		JButton btnConsultar = new JButton(TDSLanguageUtils.getMessage("infEmpleado.btn.consultar"));
 		btnConsultar.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnConsultar.setBounds(276, 58, 89, 23);
 		contentPane.add(btnConsultar);
 		
-		JButton btnImprimir = new JButton("Imprimir");
-		btnImprimir.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnImprimir.setBounds(544, 174, 89, 23);
-		contentPane.add(btnImprimir);
+		JButton btnSortir = new JButton(TDSLanguageUtils.getMessage("infEmpleado.btn.sortir"));
+		btnSortir.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnSortir.setBounds(544, 222, 89, 23);
+		contentPane.add(btnSortir);
 		
-		JButton btnSalir = new JButton("Salir");
-		btnSalir.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnSalir.setBounds(544, 222, 89, 23);
-		contentPane.add(btnSalir);
-		
-		JLabel lblNHorasTrabajadas = new JLabel("Nº Horas trabajadas:");
+		JLabel lblNHorasTrabajadas = new JLabel(TDSLanguageUtils.getMessage("infEmpleado.lbl.horesTreballades"));
 		lblNHorasTrabajadas.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblNHorasTrabajadas.setBounds(59, 178, 131, 14);
 		contentPane.add(lblNHorasTrabajadas);
 		
-		JLabel lblNReparacionesResueltas = new JLabel("Nº Reparaciones resueltas:");
+		JLabel lblNReparacionesResueltas = new JLabel(TDSLanguageUtils.getMessage("infEmpleado.lbl.repRessoltes"));
 		lblNReparacionesResueltas.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblNReparacionesResueltas.setBounds(59, 203, 168, 14);
 		contentPane.add(lblNReparacionesResueltas);
 		
-		JLabel lblNFaltasDe = new JLabel("Nº Faltas de asistencia:");
+		JLabel lblNFaltasDe = new JLabel(TDSLanguageUtils.getMessage("infEmpleado.lbl.faltesAssitencia"));
 		lblNFaltasDe.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblNFaltasDe.setBounds(59, 231, 132, 14);
 		contentPane.add(lblNFaltasDe);
 		
-		textField_2 = new JTextField();
-		textField_2.setBounds(221, 175, 86, 20);
-		contentPane.add(textField_2);
-		textField_2.setColumns(10);
+		tbxHoresTrab = new JTextField();
+		tbxHoresTrab.setBounds(221, 175, 86, 20);
+		contentPane.add(tbxHoresTrab);
+		tbxHoresTrab.setColumns(10);
 		
-		textField_3 = new JTextField();
-		textField_3.setBounds(221, 200, 86, 20);
-		contentPane.add(textField_3);
-		textField_3.setColumns(10);
+		tbxRepRessolt = new JTextField();
+		tbxRepRessolt.setBounds(221, 200, 86, 20);
+		contentPane.add(tbxRepRessolt);
+		tbxRepRessolt.setColumns(10);
 		
-		textField_4 = new JTextField();
-		textField_4.setBounds(221, 228, 86, 20);
-		contentPane.add(textField_4);
-		textField_4.setColumns(10);
+		tbxFaltasAssist = new JTextField();
+		tbxFaltasAssist.setBounds(221, 228, 86, 20);
+		contentPane.add(tbxFaltasAssist);
+		tbxFaltasAssist.setColumns(10);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(59, 104, 575, 43);
@@ -125,10 +123,10 @@ public class InformeEmpleados extends JFrame {
 		table = new JTable();
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
-				{null, null, null, null},
+				{null, null, null, null, null, null},
 			},
 			new String[] {
-				"New column", "New column", "New column", "New column"
+				"New column", "New column", "New column", "New column", "New column", "New column"
 			}
 		));
 		scrollPane.setViewportView(table);

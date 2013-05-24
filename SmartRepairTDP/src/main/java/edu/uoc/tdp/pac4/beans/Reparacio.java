@@ -16,7 +16,10 @@ public class Reparacio implements java.io.Serializable{
 	private Date dataAssignacio;
 	private Date dataInici;
 	private Date dataFi;
-	private TipusReparacio tipusReparacio ;
+	private Solicitud solicitud ;
+
+	
+	private Mecanic mecanic;
 	
 	public Reparacio(int ordreReparacio, int capTaller, boolean acceptada, int idMecanic,
 					 boolean assignada, double comptador, String observacions, int numCom,
@@ -36,6 +39,14 @@ public class Reparacio implements java.io.Serializable{
 	
 	public Reparacio() {
 		
+	}
+	
+	public Solicitud getSolicitud() {
+		return solicitud;
+	}
+
+	public void setSolicitud(Solicitud solicitud) {
+		this.solicitud = solicitud;
 	}
 
 	public int getOrdreReparacio() {
@@ -126,12 +137,27 @@ public class Reparacio implements java.io.Serializable{
 		this.dataFi = dataFi;
 	}
 
-	public TipusReparacio getTipusReparacio() {
-		return tipusReparacio;
+	
+	public Mecanic getMecanic() {
+		return mecanic;
 	}
 
-	public void setTipusReparacio(TipusReparacio tipusReparacio) {
-		this.tipusReparacio = tipusReparacio;
+	public void setMecanic(Mecanic mecanic) {
+		this.mecanic = mecanic;
 	}
 	
+	public String getEstatReparacio ()
+	{
+		String strEstado = "" ;
+		
+		if (this.acceptada) strEstado = "Acceptada" ;
+		else if (this.assignada && this.acceptada && !this.solicitud.isPendent() && this.solicitud.isFinalitzada()) strEstado = "Rebudes" ;
+		else if (this.assignada && this.acceptada && this.solicitud.isPendent() && !this.solicitud.isFinalitzada()) strEstado = "En Curs" ;
+		else if (!this.acceptada && !this.assignada && this.solicitud.isPendent() && !this.solicitud.isFinalitzada()) strEstado = "En Espera" ;
+		else if (!this.assignada && !this.acceptada && !this.solicitud.isPendent() && this.solicitud.isFinalitzada()) strEstado = "Rebutjada" ;
+		else if (this.assignada && this.acceptada && !this.solicitud.isPendent() && this.solicitud.isFinalitzada()) strEstado = "Finalitzada" ;
+		else strEstado = "Totes" ;
+		
+		return ( strEstado );
+	}	
 }

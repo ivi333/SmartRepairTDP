@@ -16,6 +16,7 @@ public class Solicitud implements java.io.Serializable {
 	private boolean pendent;
 	private boolean finalitzada;
 	private String numpoliza;
+	private Client clientOb;
 	
 	public Solicitud()
 	{
@@ -77,6 +78,12 @@ public class Solicitud implements java.io.Serializable {
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	public Client getClientOb() {
+		return clientOb;
+	}
+	public void setClientOb(Client clientOb) {
+		this.clientOb = clientOb;
 	}
 	
 }
