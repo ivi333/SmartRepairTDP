@@ -267,6 +267,9 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 			}
 		} catch (DAOException e) {
 			throw new GestorConexionException(GestorConexionException.ERR_DAO + e.getMessage());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	
@@ -304,15 +307,14 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 		}	
 	}
 	
-	public Taller altaTaller(Taller taller) throws RemoteException,
+	public void altaTaller(Taller taller) throws RemoteException,
 			GestorConexionException {
 		try {
 
 			if (((taller.isActiu()) && (gestorConexionDAO
 					.getTallersByCapTaller(taller.getCapTaller()) == null))
 					|| !(taller.isActiu())) {
-
-				return gestorConexionDAO.getTallerByCif(taller.getCif());
+				gestorConexionDAO.altaTaller(taller);
 			} else {
 				throw new GestorConexionException(
 						GestorConexionException.ERR_JEFETALLER_ASIGN);
@@ -324,40 +326,56 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 		}
 	}
 	
-	public Taller modificarTaller(Taller taller) throws RemoteException,
+	public void modificarTaller(Taller taller) throws RemoteException,
 			GestorConexionException {
 		try {
 			Taller oldTaller = gestorConexionDAO.getTallerById(taller.getId());
-			if (oldTaller.getCapTaller() != taller.getCapTaller()){
-				if (oldTaller.getCapTaller() != 0) {
-					Usuari usuari = this.getUsuariById(oldTaller.getCapTaller());
-					usuari.setTaller(taller.getId());
-					gestorConexionDAO.modificarUsuari(usuari);
+			if (!oldTaller.isActiu() && taller.isActiu()) {
+				Usuari usuari = gestorConexionDAO.getUsuariById(taller.getCapTaller());
+				String perfiles[] = usuari.getPerfil().split(";");
+				if (usuari.getTaller() != taller.getCapTaller() && usuari.getTaller()!=0) {
+					throw new GestorConexionException("Jefe no esta en el mismo taller");
+				} else if (!usuari.isActiu()) {
+					throw new GestorConexionException("Jefe de taller no activo");
 				}
+				usuari.setTaller(taller.getId());				
+				gestorConexionDAO.modificarUsuari(usuari);
+				for (String perfil : perfiles){
+					if (perfil.equals(PerfilUsuari.Mecanico.toString())){
+						gestorConexionDAO.estadoMecanic(usuari.getId(), true);
+					}
+				}
+				gestorConexionDAO.modificarTaller(taller);
+
+			} else {
+				gestorConexionDAO.modificarTaller(taller);
 			}
 			
-			if (((taller.isActiu()) && (gestorConexionDAO
-					.getTallersByCapTaller(taller.getCapTaller(),
-							taller.getId()) == null))
-					|| !(taller.isActiu())) {
-				gestorConexionDAO.updateTaller(taller);
-				return gestorConexionDAO.getTallerById(taller.getId());
-			} else {
-				throw new GestorConexionException(
-						GestorConexionException.ERR_JEFETALLER_ASIGN);
-			}
 		} catch (DAOException e) {
 			throw new GestorConexionException(GestorConexionException.ERR_DAO
 					+ e.getMessage());
 		}
 	}
 	
-	public void disableTaller (int idTaller) throws RemoteException, GestorConexionException {
+	public void disableTaller (Taller taller) throws RemoteException, GestorConexionException {
 		try {
-			int reparaciones = gestorConexionDAO.getNumRepPendTaller(idTaller);
+			
+			int reparaciones = gestorConexionDAO.getNumRepPendTaller(taller.getId());
+			
 			
 			if (reparaciones == 0) {
-				gestorConexionDAO.disableTaller(idTaller);				
+				Taller oldTaller = gestorConexionDAO.getTallerById(taller.getId());
+				Usuari usuari = gestorConexionDAO.getUsuariById(oldTaller.getCapTaller());
+				String perfiles [] = usuari.getPerfil().split(";");
+				usuari.setTaller(0);				
+				gestorConexionDAO.modificarUsuari(usuari);
+				for (String perfil : perfiles){
+					if (perfil.equals(PerfilUsuari.Mecanico.toString())) {
+						gestorConexionDAO.estadoMecanic (usuari.getId(), false);
+						break;
+					}
+				}
+				gestorConexionDAO.disableTaller(taller.getId());				
 			} else {
 				throw new GestorConexionException(
 						GestorConexionException.ERR_TALLER_REPARACIONES);
@@ -368,5 +386,6 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 		}
 		
 	}
+
 
 }

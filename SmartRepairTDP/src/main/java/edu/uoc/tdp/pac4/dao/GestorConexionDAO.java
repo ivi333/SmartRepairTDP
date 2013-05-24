@@ -229,7 +229,7 @@ public interface GestorConexionDAO {
 	 * @param taller
 	 * @throws DAOException
 	 */
-	public void updateTaller (Taller taller) throws DAOException;
+	public void modificarTaller (Taller taller) throws DAOException;
 
 	public int getNumRepPendTaller (int idTaller) throws DAOException;
 	
