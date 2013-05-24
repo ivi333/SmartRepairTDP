@@ -393,7 +393,7 @@ public class ReparacionPiezas extends JFrame {
 						}
 					}
 					if (!piezaEncontrada) {
-						DetallPeca peca = new DetallPeca(idPiezaAnadir, getDescPiezaSeleccionada(), getStockPiezaSeleccionada(), numPiezas, getPvpPiezaSeleccionada(),gestorReparacion.getStockMinimoPieza(idPiezaAnadir));
+						DetallPeca peca = new DetallPeca(idPiezaAnadir, getDescPiezaSeleccionada(), getStockPiezaSeleccionada(), numPiezas, getPvpPiezaSeleccionada(),gestorReparacion.getStockMinimoPieza(idPiezaAnadir), gestorReparacion.getMarcaPieza(idPiezaAnadir), gestorReparacion.getModeloPieza(idPiezaAnadir));
 						piezasSeleccionadas.add(peca);
 					}
 					
@@ -426,38 +426,38 @@ public class ReparacionPiezas extends JFrame {
 	
 	private void eliminarPieza() {
 		
-			try {
-				if (table1.getSelectedRowCount() == 1) {
-					int idPieza;
-					idPieza = getIdPiezaSeleccionada(table1);
-					if (piezasSeleccionadas != null) {
-						for (int i=0; i<piezasSeleccionadas.size(); i++) {
-							if (piezasSeleccionadas.get(i).getCodiPeca() == idPieza) {
-								piezasSeleccionadas.remove(i);
-							}
+		try {
+			if (table1.getSelectedRowCount() == 1) {
+				int idPieza;
+				idPieza = getIdPiezaSeleccionada(table1);
+				if (piezasSeleccionadas != null) {
+					for (int i=0; i<piezasSeleccionadas.size(); i++) {
+						if (piezasSeleccionadas.get(i).getCodiPeca() == idPieza) {
+							piezasSeleccionadas.remove(i);
 						}
 					}
-					Object rowData [][] = new Object [piezasSeleccionadas.size()][5];
-					int z=0;
-					for (DetallPeca bean : piezasSeleccionadas) {
-						rowData[z][0] = String.valueOf(bean.getCodiPeca());
-						rowData[z][1] = String.valueOf(bean.getDescipcio());
-						rowData[z][2] = String.valueOf(bean.getCantidad());
-						rowData[z][3] = String.valueOf(bean.getStock());
-						rowData[z][4] = String.valueOf(bean.getPvp());
-						z++;
-					}
-					TableModel model = new DefaultTableModel(rowData, columnNames1);
-					table1.setModel(model);
-			} else {
-				JOptionPane.showMessageDialog(reparacionPiezas, "Debe seleccionar una fila para poder eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
-			}
-				
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			} catch (GestorReparacionException e) {
-				e.printStackTrace();
-			}	
+				}
+				Object rowData [][] = new Object [piezasSeleccionadas.size()][5];
+				int z=0;
+				for (DetallPeca bean : piezasSeleccionadas) {
+					rowData[z][0] = String.valueOf(bean.getCodiPeca());
+					rowData[z][1] = String.valueOf(bean.getDescipcio());
+					rowData[z][2] = String.valueOf(bean.getCantidad());
+					rowData[z][3] = String.valueOf(bean.getStock());
+					rowData[z][4] = String.valueOf(bean.getPvp());
+					z++;
+				}
+				TableModel model = new DefaultTableModel(rowData, columnNames1);
+				table1.setModel(model);
+		} else {
+			JOptionPane.showMessageDialog(reparacionPiezas, "Debe seleccionar una fila para poder eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+			
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (GestorReparacionException e) {
+			e.printStackTrace();
+		}	
 	}
 	
 	private void realizarPedido() {
@@ -469,7 +469,7 @@ public class ReparacionPiezas extends JFrame {
 					if (pieza.getCantidad() <= pieza.getStockMinim()) {
 						estado = true;
 					}
-					gestorReparacion.setPiezaComanda(estado,pieza.getCodiPeca(), usuario.getTaller(), ordenReparacion, pieza.getCantidad());
+					gestorReparacion.setPiezaComanda(estado,pieza.getCodiPeca(), usuario.getTaller(), ordenReparacion, pieza.getCantidad(), true);
 					if (estado == true) {
 						gestorReparacion.setDescontarStock(pieza.getCodiPeca(), pieza.getCantidad());
 					}

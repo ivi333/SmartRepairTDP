@@ -121,11 +121,11 @@ public interface GestorReparacionDAO {
 	
 	/**
 	 * Inserta una pieza a la comanda
-	 * @param estado, codigoPieza, idTaller, ordenReparacion, cantidad
+	 * @param estado, codigoPieza, idTaller, ordenReparacion, cantidad, tipoReparacion
 	 * @return
 	 * @throws GestorReparacionException
 	 */
-	public void setPiezaComanda(boolean estado, int codigoPieza, int idTaller, int ordenReparacion, int cantidad)
+	public void setPiezaComanda(boolean estado, int codigoPieza, int idTaller, int ordenReparacion, int cantidad, boolean tipoReparacion)
 			throws DAOException;
 	
 	/**
@@ -233,5 +233,29 @@ public interface GestorReparacionDAO {
 	 */
 	public List<DetallReparacio> getDetalleReparacionesFiltro(
 			int idFiltro, String valor, String nombre, String apellido) throws DAOException;
+	
+	/**
+	 * Obtiene la marca del coche de una pieza
+	 * @param idPieza
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public String getMarcaPieza(int idPieza) throws DAOException;
+	
+	/**
+	 * Obtiene el modelo del coche de una pieza
+	 * @param idPieza
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public String getModeloPieza(int idPieza) throws DAOException;
+	
+	/**
+	 * Obtiene una lista con todos los detalles de las piezas de un taller dado un filtro
+	 * @param idTaller, filtro, valor
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public List<DetallPeca> getDetallePiezasTallerFiltro(int idTaller, int filtro, String valor) throws DAOException;
 	
 }

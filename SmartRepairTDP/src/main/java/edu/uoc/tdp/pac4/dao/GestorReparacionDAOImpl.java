@@ -59,12 +59,12 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 		    												  "inner join client cli on sol.client = cli.nif " +
 		    												  "where sol.numreparacio = ?";
 	public static final String QUERY_SET_REPARACION_FINALIZADA = "update solicitud set finalitzada = true where numreparacio = ?";
-	public static final String QUERY_GET_PIEZAS_REPARACION = "select com.codipeca, pec.descripcio, sto.stock, com.cantidad, pec.pvp, sto.stockminim " +
+	public static final String QUERY_GET_PIEZAS_REPARACION = "select com.codipeca, pec.descripcio, sto.stock, com.cantidad, pec.pvp, sto.stockminim, pec.marca, pec.model " +
 															 "from comanda com " +
 															 "inner join peca pec on com.codipeca = pec.codipeca " +
 															 "inner join stockpeca sto on com.codipeca = sto.codipeca " +
 															 "where com.ordrereparacio = ";
-	public static final String QUERY_GET_DETALLE_PIEZAS = "select com.codipeca, pec.descripcio, sto.stock, com.cantidad, pec.pvp, sto.stockminim " +
+	public static final String QUERY_GET_DETALLE_PIEZAS = "select com.codipeca, pec.descripcio, sto.stock, com.cantidad, pec.pvp, sto.stockminim, pec.marca, pec.model " +
 			 											  "from comanda com " +
 			 											  "inner join peca pec on com.codipeca = pec.codipeca " +
 			 											  "inner join stockpeca sto on com.codipeca = sto.codipeca " +
@@ -74,9 +74,9 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 														 "(select ? as estat, CURRENT_DATE as dataalta, ? as codipeca, " +
 														 "(select id from usuari where perfil like '%JefeTaller%' and taller = ? limit 1) as idcaptaller, " +
 														 "(select idproveidor from proveidorpeca where idpeca = ? limit 1) as idproveidor, " +
-														 "? as ordrereparacio, true as tipusreparacio, ? as cantidad)";
+														 "? as ordrereparacio, ? as tipusreparacio, ? as cantidad)";
 	public static final String QUERY_DELETE_PIEZA_COMANDA = "delete from comanda where codipeca = ? and ordrereparacio = ?";
-	public static final String QUERY_GET_DETALLE_PIEZA_REPARACION = "select pec.codipeca, pec.descripcio, sto.stock, 0, pec.pvp, sto.stockminim " +
+	public static final String QUERY_GET_DETALLE_PIEZA_REPARACION = "select pec.codipeca, pec.descripcio, sto.stock, 0, pec.pvp, sto.stockminim, pec.marca, pec.model " +
 																    "from peca pec " + 
 																    "inner join stockpeca sto on pec.codipeca = sto.codipeca ";
 	public static final String QUERY_SET_DESCONTAR_STOCK = "update stockpeca set stock = stock-? where codipeca = ?";
@@ -87,8 +87,8 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 	public static final String QUERY_ASIGNAR_REPARACIONES_MECANICO = "update mecanic set idrep1 = ?, idrep2 = ? where idmecanic = ?";
 	public static final String QUERY_ASIGNAR_MECANICO_REPARACION = "update reparacio set idmecanic = ? where ordrereparacio = ?";
 	public static final String QUERY_GET_STOCK_MINIMO_PIEZA = "select stockminim from stockpeca where codipeca = ?";
-	
-	
+	public static final String QUERY_GET_MARCA_PIEZA = "select marca from peca where codipeca = ?";
+	public static final String QUERY_GET_MODELO_PIEZA = "select model from peca where codipeca = ?";
 	
 	
 	
@@ -414,7 +414,7 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			String Query = QUERY_GET_PIEZAS_REPARACION + String.valueOf(ordenReparacion);
 			rs = stm.executeQuery(Query);
 			while (rs.next()){
-				result.add(new DetallPeca(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4), rs.getDouble(5), rs.getInt(6)));
+				result.add(new DetallPeca(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4), rs.getDouble(5), rs.getInt(6), rs.getString(7), rs.getString(8)));
 			}
 			return result;
 		} catch (SQLException e) {
@@ -447,7 +447,7 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			String Query = QUERY_GET_DETALLE_PIEZAS + "'%" + nombrePieza + "%'";
 			rs = stm.executeQuery(Query);
 			while (rs.next()){
-				result.add(new DetallPeca(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4), rs.getDouble(5), rs.getInt(6)));
+				result.add(new DetallPeca(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4), rs.getDouble(5), rs.getInt(6), rs.getString(7), rs.getString(8)));
 			}
 			return result;
 		} catch (SQLException e) {
@@ -503,7 +503,7 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 	}
 
 
-	public void setPiezaComanda(boolean estado, int codigoPieza, int idTaller, int ordenReparacion, int cantidad)
+	public void setPiezaComanda(boolean estado, int codigoPieza, int idTaller, int ordenReparacion, int cantidad, boolean tipoReparacion)
 			throws DAOException {
 		getConnectionDB();
 		PreparedStatement ps = createPrepareStatment(QUERY_SET_PIEZA_COMANDA, ResultSet.CONCUR_UPDATABLE);
@@ -513,7 +513,8 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			ps.setInt(3, idTaller);
 			ps.setInt(4, codigoPieza);
 			ps.setInt(5, ordenReparacion);
-			ps.setInt(6, cantidad);
+			ps.setBoolean(6, tipoReparacion);
+			ps.setInt(7, cantidad);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
@@ -560,7 +561,7 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			String Query = QUERY_GET_DETALLE_PIEZA_REPARACION + "where sto.idtaller = " + idTaller + " and pec.descripcio like '%" + nombrePieza + "%'";
 			rs = stm.executeQuery(Query);
 			while (rs.next()){
-				result.add(new DetallPeca(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4), rs.getDouble(5), rs.getInt(6)));
+				result.add(new DetallPeca(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4), rs.getDouble(5), rs.getInt(6), rs.getString(7), rs.getString(8)));
 			}
 			return result;
 		} catch (SQLException e) {
@@ -925,6 +926,126 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			rs = stm.executeQuery(QUERY);
 			while (rs.next()){
 				result.add(new DetallReparacio(rs.getInt(1), rs.getDate(2), rs.getDouble(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getBoolean(8), rs.getBoolean(9), rs.getInt(10), rs.getDate(11), rs.getDate(12)));
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (stm!=null) {
+				try {stm.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+
+	public String getMarcaPieza(int idPieza) throws DAOException {
+		getConnectionDB();
+		String result = "";
+		PreparedStatement ps = createPrepareStatment(QUERY_GET_MARCA_PIEZA, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			ps.setInt(1, idPieza);
+			rs = ps.executeQuery();
+			if (rs.next()){
+				result = rs.getString(1);
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}		
+	}
+
+
+	public String getModeloPieza(int idPieza) throws DAOException {
+		getConnectionDB();
+		String result = "";
+		PreparedStatement ps = createPrepareStatment(QUERY_GET_MODELO_PIEZA, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			ps.setInt(1, idPieza);
+			rs = ps.executeQuery();
+			if (rs.next()){
+				result = rs.getString(1);
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}		
+	}
+
+
+	public List<DetallPeca> getDetallePiezasTallerFiltro(int idTaller,
+			int filtro, String valor) throws DAOException {
+		List<DetallPeca> result = new LinkedList<DetallPeca>();
+		getConnectionDB();
+		
+		Statement stm = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			String condiciones = "";
+			if (valor != "") {
+				switch (filtro) {
+				case 0:
+					break;
+				case 1:
+					condiciones = " and pec.codipeca like '%" + valor + "%' ";
+					break;
+				case 2:
+					condiciones = " and pec.marca like '%" + valor + "%' ";
+					break;
+				case 3:
+					condiciones = "  ";
+					break;
+				case 4:
+					condiciones = " and pec.pvp like '%" + valor + "%' ";
+					break;
+				default:
+					break;
+				}
+			}
+			
+			String Query = QUERY_GET_DETALLE_PIEZA_REPARACION + "where sto.idtaller = " + idTaller + condiciones;
+			rs = stm.executeQuery(Query);
+			while (rs.next()){
+				result.add(new DetallPeca(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4), rs.getDouble(5), rs.getInt(6), rs.getString(7), rs.getString(8)));
 			}
 			return result;
 		} catch (SQLException e) {

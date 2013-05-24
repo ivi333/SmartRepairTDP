@@ -8,14 +8,19 @@ public class DetallPeca implements java.io.Serializable {
 	private int cantidad;
 	private double pvp;
 	private int stockMinim;
+	private String marca;
+	private String model;
 	
-	public DetallPeca(int codiPeca, String descripcio, int stock, int cantidad, double pvp, int stockMinim) {
+	public DetallPeca(int codiPeca, String descripcio, int stock, int cantidad, double pvp, 
+			int stockMinim, String marca, String model) {
 		this.codiPeca = codiPeca;
 		this.descripcio = descripcio;
 		this.stock = stock;
 		this.cantidad = cantidad;
 		this.pvp = pvp;
 		this.stockMinim = stockMinim;
+		this.marca = marca;
+		this.model = model;
 	}
 	
 	public DetallPeca() {
@@ -68,5 +73,21 @@ public class DetallPeca implements java.io.Serializable {
 	
 	public void setStockMinim(int stockMinim) {
 		this.stockMinim = stockMinim;
+	}
+	
+	public String getMarca() {
+		return marca;
+	}
+	
+	public void setMarca(String marca) {
+		this.marca = marca;
+	}
+	
+	public String getModel() {
+		return model;
+	}
+	
+	public void setModel(String model) {
+		this.model = model;
 	}
 }

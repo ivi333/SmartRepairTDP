@@ -159,10 +159,10 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 		}
 	}
 
-	public void setPiezaComanda(boolean estado, int codigoPieza, int idTaller, int ordenReparacion, int cantidad)
+	public void setPiezaComanda(boolean estado, int codigoPieza, int idTaller, int ordenReparacion, int cantidad, boolean tipoReparacion)
 			throws RemoteException, GestorReparacionException {
 		try {
-			gestorReparacionDAO.setPiezaComanda(estado, codigoPieza, idTaller, ordenReparacion, cantidad);
+			gestorReparacionDAO.setPiezaComanda(estado, codigoPieza, idTaller, ordenReparacion, cantidad, tipoReparacion);
 		} catch (DAOException e) {
 			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
 		}
@@ -284,6 +284,34 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 			throws RemoteException, GestorReparacionException {
 		try {
 			return gestorReparacionDAO.getDetalleReparacionesFiltro(idFiltro, valor, nombre, apellido);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public String getMarcaPieza(int idPieza) throws RemoteException,
+			GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getMarcaPieza(idPieza);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public String getModeloPieza(int idPieza) throws RemoteException,
+			GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getModeloPieza(idPieza);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public List<DetallPeca> getDetallePiezasTallerFiltro(int idTaller,
+			int filtro, String valor) throws RemoteException,
+			GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getDetallePiezasTallerFiltro(idTaller, filtro, valor);
 		} catch (DAOException e) {
 			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
 		}

@@ -124,11 +124,11 @@ public interface GestorReparacionInterface extends Remote{
 	
 	/**
 	 * Inserta una pieza a la comanda
-	 * @param estado, codigoPieza, idTaller, ordenReparacion, cantidad
+	 * @param estado, codigoPieza, idTaller, ordenReparacion, cantidad, tipoReparacion
 	 * @return
 	 * @throws GestorReparacionException
 	 */
-	public void setPiezaComanda(boolean estado, int codigoPieza, int idTaller, int ordenReparacion, int cantidad)
+	public void setPiezaComanda(boolean estado, int codigoPieza, int idTaller, int ordenReparacion, int cantidad, boolean tipoReparacion)
 			throws RemoteException, GestorReparacionException;
 	
 	/**
@@ -238,6 +238,32 @@ public interface GestorReparacionInterface extends Remote{
 	 */
 	public List<DetallReparacio> getDetalleReparacionesFiltro(
 			int idFiltro, String valor, String nombre, String apellido) throws RemoteException, GestorReparacionException;
+
+	
+	/**
+	 * Obtiene la marca del coche de una pieza
+	 * @param idPieza
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public String getMarcaPieza(int idPieza) throws RemoteException, GestorReparacionException;
+	
+	/**
+	 * Obtiene el modelo del coche de una pieza
+	 * @param idPieza
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public String getModeloPieza(int idPieza) throws RemoteException, GestorReparacionException;
+	
+	/**
+	 * Obtiene una lista con todos los detalles de las piezas de un taller dado un filtro
+	 * @param idTaller, filtro, valor
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public List<DetallPeca> getDetallePiezasTallerFiltro(int idTaller, int filtro, String valor) 
+			throws RemoteException, GestorReparacionException;
 }
 
 
