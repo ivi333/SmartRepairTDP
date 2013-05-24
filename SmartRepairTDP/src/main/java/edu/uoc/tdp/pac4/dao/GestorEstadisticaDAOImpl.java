@@ -12,6 +12,7 @@ import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Comanda;
 import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Peca;
+import edu.uoc.tdp.pac4.beans.PerfilUsuari;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Solicitud;
 import edu.uoc.tdp.pac4.beans.Usuari;
@@ -45,7 +46,7 @@ public class GestorEstadisticaDAOImpl extends ConnectionPostgressDB implements G
 	//Informe de Reparacions
 	
 	
-	public ArrayList<Reparacio> obtenirReparacions(int intOrdreReparacio, String strNomClient, String strCognomClient, String strNomMecanic, String strCognomMecanic , boolean bPendent, boolean bAssignada, boolean bAcceptada, boolean bFinalitzada, String dataInici, String dataFi) throws DAOException {
+	public ArrayList<Reparacio> obtenirReparacions(int intOrdreReparacio, String strNomClient, String strCognomClient, String strNomMecanic, String strCognomMecanic , String strEstado, String dataInici, String dataFi) throws DAOException {
 	
 		ArrayList <Reparacio> taulaReparacions = new ArrayList <Reparacio>();
 		getConnectionDB();
@@ -58,25 +59,22 @@ public class GestorEstadisticaDAOImpl extends ConnectionPostgressDB implements G
 					" SELECT r.ordreReparacio, c.nomClient, c.cognomClient, m.nomMecanic, m.cognomMecanic, r.dataInici , r.dataFi, s.pendent, s.finalitzada, r.assignada, r.acceptada" +
 					" FROM Reparacio r, Solicitud s, Client c, Mecanic m " +
 					" WHERE r.ordreReparacio = s.numReparacio " +
-					" AND r.ordreReparacio = " + intOrdreReparacio +
+					" AND to_char(r.ordreReparacio,'999999999999') LIKE '%" + intOrdreReparacio + "%' " +
 					" AND s.client = c.nif " +
 					" AND r.ordreReparacio = m.idMecanic " +
 					" AND c.nomClient LIKE '%" + strNomClient + "%' " +
 					" AND m.nomMecanic LIKE '%" + strNomMecanic + "%' " +
 					" AND c.cognomClient LIKE '%" + strCognomClient + "%' " +
 					" AND m.cognomMecanic LIKE '%" + strCognomMecanic + "%' " ;
-			
-			
-			/*if ( tpTipusReparacio == TipusReparacio.Finalitzades)
+		
+			if ( strEstado == "Finalitzades" )
 				query += " AND s.dataAlta IS NOT NULL AND r.dataInici IS NOT NULL AND s.datafinalitzacio IS NOT NULL " ;
-			else if ( tpTipusReparacio == TipusReparacio.EnEspera)
+			else if ( strEstado == "En espera" )
 				query += " AND s.dataAlta IS NOT NULL AND r.dataAssignacio IS NULL " ;
-			else if ( tpTipusReparacio == TipusReparacio.EnCurs)
+			else if ( strEstado == "En curs" )
 				query += " AND r.dataInici IS NOT NULL AND r.DataFi IS NULL " ;
-			else if ( tpTipusReparacio == TipusReparacio.Rebutjades)
+			else if ( strEstado == "Rebujtades" )
 				query += " AND s.pendent=false AND s.finalitzada=true AND r.acceptada=false AND s.assignada=false " ;
-			else if ( tpTipusReparacio != TipusReparacio.Totes )
-				query += " AND r.tipusReparacio = " + tpTipusReparacio.toString();*/
 						
 			if ( dataInici.trim() != "" )
 				query += " AND r.datainici = '" + dataInici + "' ";
@@ -88,8 +86,7 @@ public class GestorEstadisticaDAOImpl extends ConnectionPostgressDB implements G
 			 
 			rs = st.executeQuery(query);
 			
-			while (rs.next()) {
-				
+			while (rs.next()) {				
 				Reparacio repAux = new Reparacio();
 				Solicitud solAux = new Solicitud();
 				Client cliAux = new Client();

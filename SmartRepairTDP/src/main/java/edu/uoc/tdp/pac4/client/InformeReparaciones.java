@@ -15,22 +15,34 @@ import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
+import edu.uoc.tdp.pac4.beans.Client;
+import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Reparacio;
+import edu.uoc.tdp.pac4.beans.Solicitud;
+import edu.uoc.tdp.pac4.beans.Taller;
+import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorConexionInterface;
 import edu.uoc.tdp.pac4.service.GestorEstadisticaImpl;
 import edu.uoc.tdp.pac4.service.GestorEstadisticaInterface;
 import edu.uoc.tdp.pac4.common.ItemCombo;
+import edu.uoc.tdp.pac4.exception.GestorConexionException;
+import edu.uoc.tdp.pac4.exception.GestorEstadisticaException;
 
 import java.awt.Font;
+import java.awt.color.CMMException;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Vector;
 
 public class InformeReparaciones extends JFrame {
@@ -47,6 +59,7 @@ public class InformeReparaciones extends JFrame {
 	private JTextField tbxTMigFi;
 	private JTextField tbxCognomClient;
 	private JTextField tbxCognomMecanic;
+	private final static String urlRMIEstad = new String("rmi://localhost/GestorEstadistica");
 	
 	private static final Object columnNames[] = {
 		TDSLanguageUtils.getMessage("infReparacion.ordreReparacio"),
@@ -66,7 +79,7 @@ public class InformeReparaciones extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GestorConexionInterface gestorConexion = (GestorConexionInterface) Naming.lookup("rmi://localhost/GestorConexion");
+					GestorEstadisticaInterface gestorEstadistica = (GestorEstadisticaInterface) Naming.lookup("rmi://localhost/GestorEstadistica");
 					TDSLanguageUtils.setDefaultLanguage("i18n/messages");
 					InformeReparaciones frame = new InformeReparaciones();
 					frame.setVisible(true);
@@ -134,15 +147,32 @@ public class InformeReparaciones extends JFrame {
 		contentPane.add(tbxNomMecanic);
 		tbxNomMecanic.setColumns(10);
 		
+		
+		final JComboBox comboTipusRep = new JComboBox();
+		comboTipusRep.setBounds(135, 79, 103, 20);
+		Reparacio repAux = new Reparacio();
+		
+		comboTipusRep.addItem("Rebudes");
+		comboTipusRep.addItem("En Curs");
+		comboTipusRep.addItem("En Espera");
+		comboTipusRep.addItem("Rebutjada");
+		comboTipusRep.addItem("Finalitzada");
+		comboTipusRep.addItem("Totes");
+		
+		contentPane.add(comboTipusRep);
+		
 		JButton btnConsultar = new JButton(TDSLanguageUtils.getMessage("infReparacion.btn.consultar"));
 		btnConsultar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				//TODO:
 				try{
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 				GestorEstadisticaInterface gestorEstadistica = new GestorEstadisticaImpl();
 				
-				//ArrayList<Reparacio> reparacions = gestorEstadistica.obtenirReparacions(Integer.parseInt(tbxIDReparacio.toString()),tbxNomClient.toString(),tbxCognomClient.toString(),tbxNomMecanic.toString(), tbxCognomMecanic.toString(), comboTipusRep.toString(), tbxDataAlta.toString(), tbxDataFi.toString())));
+				ArrayList<Reparacio> reparacions = gestorEstadistica.obtenirReparacions(Integer.parseInt(tbxIDReparacio.toString()),tbxNomClient.toString(),tbxCognomClient.toString(),tbxNomMecanic.toString(), tbxCognomMecanic.toString(),comboTipusRep.getSelectedItem().toString(), tbxDataAlta.toString(), tbxDataFi.toString());
+				
+				
 				//rellenarTabla(table,reparacions);
 				 /* 
 				 * table.rellenar = gestorEstadisticas.obtenerReparaciones(param1, param2, ... paramN );
@@ -155,6 +185,12 @@ public class InformeReparaciones extends JFrame {
 				catch ( RemoteException e)
 				{
 					//JOptionPane.showMessageDialog(, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (NumberFormatException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (GestorEstadisticaException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}			
 		});
@@ -162,10 +198,9 @@ public class InformeReparaciones extends JFrame {
 		btnConsultar.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnConsultar.setBounds(246, 131, 118, 23);
 		contentPane.add(btnConsultar);
+
 		
-		JComboBox comboTipusRep = new JComboBox();
-		comboTipusRep.setBounds(135, 79, 103, 20);
-		contentPane.add(comboTipusRep);
+		
 		
 		tbxDataAlta = new JTextField();
 		tbxDataAlta.setBounds(328, 79, 89, 20);
@@ -277,9 +312,33 @@ public class InformeReparaciones extends JFrame {
 		tbxCognomMecanic.setColumns(10);
 	}
 	
-	private void rellenarTabla(JTable tabla, ArrayList<Reparacio> reparacions)
+	private Object rellenarTabla(JTable tabla, ArrayList<Reparacio> reparacions)	//Obtener todos los datos de la tabla de reparación
 	{
 		//TODO: rellenar tabla
+		
+		Object rowData [][] = new Object [reparacions.size()][8];
+		Client client = null;
+		Solicitud solicitud = null;
+		Mecanic mecanic = null;
+		
+		int z=0;
+		for (Reparacio reparacio : reparacions) {
+					
+			rowData[z][0] = String.valueOf(reparacio.getOrdreReparacio());
+			rowData[z][1] = String.valueOf(client.getNom());
+			rowData[z][2] = String.valueOf(client.getCognoms());
+			rowData[z][3] = String.valueOf(mecanic.getNom());
+			rowData[z][4] = String.valueOf(mecanic.getCognoms());
+			rowData[z][5] = String.valueOf(reparacio.getEstatReparacio());
+			//rowData[z][6] = String.valueOf(reparacio.get());
+			//rowData[z][5] = String.valueOf(mecan1ic.());
+			
+			z++;						
+		}
+		
+		TableModel model = new DefaultTableModel(rowData, columnNames);
+		return model;
 	}
+
 }
 
