@@ -447,22 +447,31 @@ public class BajaSolicitud extends JDialog {
 				
 				Reparacio r= conexionRemota.getReparacionByCodeReparacion(numreparacio);
 				String strEstado="";
+				/*En Espera
+				Solicitud.pendent=true
+				Solicitud.finalitzada=false
+
+				Reparacio.acceptada=false
+				Reparacio.assignada=false
+				En Curso
+				Solicitud.pendent=false
+			    Solicitud.finalitzada=false
+				Reparacio.acceptada=true
+				Reparacio.assignada=true
+						*/
 				if(r!=null){
-				if(!r.getAssignada() && !sol.isFinalitzada())
+				if(!r.getAssignada() && !sol.isFinalitzada() && sol.isPendent() && !r.getAcceptada())
 				{
 					strEstado= TipusReparacio.EnEspera.toString();
 					lblEstadoInfo.setText(strEstado);
 				}
-				if(!r.getAcceptada() && !r.getAssignada())
+				if(r.getAcceptada() && r.getAssignada() && !sol.isPendent() && !sol.isFinalitzada())
 				{
 					strEstado= TipusReparacio.EnCurs.toString();
 					lblEstadoInfo.setText(strEstado);
 				}
 				
 				}
-				//EnCurs, EnEspera, Rebudes,Finalitzades, 
-				//acceptada boolean NOT NULL DEFAULT false,
-				 //assignada boolean NOT NULL DEFAULT false,
 				
 			}
 			else

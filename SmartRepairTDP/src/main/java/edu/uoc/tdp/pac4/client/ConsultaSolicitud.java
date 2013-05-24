@@ -318,6 +318,7 @@ private JPanel contentPane;
 				}
 				String strAnyo = String.valueOf(sol.getDatafinalitzacio());
 				String[] arrayAnyo = strAnyo.split("-");
+				
 				if (arrayAnyo != null) {
 					txtAnyo.setText(arrayAnyo[0]);
 					txtMes.setText(arrayAnyo[1]);
@@ -330,6 +331,7 @@ private JPanel contentPane;
 				}
 				if(sol.isPendent())
 				{	lblEstadoInfo.setText("Pendiente");
+				   lblEstadoInfo.setForeground(Color.GREEN);
 				Imput(true);
 				}
 			}
