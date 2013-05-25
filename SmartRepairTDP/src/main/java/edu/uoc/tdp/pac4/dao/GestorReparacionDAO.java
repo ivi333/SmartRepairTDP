@@ -258,4 +258,35 @@ public interface GestorReparacionDAO {
 	 */
 	public List<DetallPeca> getDetallePiezasTallerFiltro(int idTaller, int filtro, String valor) throws DAOException;
 	
+	/**
+	 * Actualiza la hora de unicio de una reparación
+	 * @param ordenReparacion
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void setHoraInicioReparacion(int ordenReparacion) throws DAOException;
+	
+	/**
+	 * Actualiza la hora de finalización de una reparación
+	 * @param ordenReparacion
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void setHoraFinReparacion(int ordenReparacion) throws DAOException;
+	
+	/**
+	 * Recupera la hora de unicio de una reparación
+	 * @param ordenReparacion
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public Date getHoraInicioReparacion(int ordenReparacion) throws DAOException;
+	
+	/**
+	 * Recupera la hora de finalización de una reparación
+	 * @param ordenReparacion
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public Date getHoraFinReparacion(int ordenReparacion) throws DAOException;
 }

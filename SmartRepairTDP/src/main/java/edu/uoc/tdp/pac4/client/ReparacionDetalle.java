@@ -68,6 +68,7 @@ public class ReparacionDetalle extends JFrame {
 	private JScrollPane scrollPane;
 	private JButton btnPlay;
 
+
 	/**
 	 * Launch the application.
 	 */
@@ -87,7 +88,7 @@ public class ReparacionDetalle extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ReparacionDetalle(GestorReparacionInterface conexion, final Usuari usuario, int ordenReparacion) {
+	public ReparacionDetalle(GestorReparacionInterface conexion, final Usuari usuario, final int ordenReparacion) {
 		this.gestorReparacion = conexion;
 		
 		setTitle("Detalle reparación asignada");
@@ -173,9 +174,15 @@ public class ReparacionDetalle extends JFrame {
 		btnPlay.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				btnPlay.setEnabled(false);
-				/* Insertar fecha inicio */
-				/* refrescar fecha inicio */
+				try {
+					btnPlay.setEnabled(false);
+					gestorReparacion.setHoraInicioReparacion(ordenReparacion);
+					txtFechaInicio.setText(gestorReparacion.getHoraInicioReparacion(ordenReparacion).toString());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (GestorReparacionException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		
@@ -183,10 +190,17 @@ public class ReparacionDetalle extends JFrame {
 		btnStop.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				btnStop.setEnabled(false);
-				/*finalizar reparacion*/
-				/* insertar fecha fin */
-				/* refrescar fecha fin */
+				
+				try {
+					btnStop.setEnabled(false);
+					gestorReparacion.setHoraFinReparacion(ordenReparacion);
+					txtFechaFin.setText(gestorReparacion.getHoraFinReparacion(ordenReparacion).toString());
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
+				} catch (GestorReparacionException e1) {
+					e1.printStackTrace();
+				}
+				
 			}
 		});
 		
@@ -207,83 +221,82 @@ public class ReparacionDetalle extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(0)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-									.addGroup(gl_contentPane.createSequentialGroup()
-										.addComponent(lblId)
-										.addPreferredGap(ComponentPlacement.UNRELATED)
-										.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+								.addComponent(lblDetalleReparacionAsignada, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 631, Short.MAX_VALUE)
+								.addComponent(txtObservaciones, GroupLayout.DEFAULT_SIZE, 631, Short.MAX_VALUE)
+								.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
 									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblDetalleReparacionAsignada, GroupLayout.DEFAULT_SIZE, 631, Short.MAX_VALUE)
 										.addGroup(gl_contentPane.createSequentialGroup()
-											.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-												.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-													.addGroup(gl_contentPane.createSequentialGroup()
-														.addComponent(lblNombreMecanico)
-														.addPreferredGap(ComponentPlacement.UNRELATED)
-														.addComponent(txtNombreMecanico, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-														.addGap(18)
-														.addComponent(lblApellido)
-														.addPreferredGap(ComponentPlacement.RELATED)
-														.addComponent(txtApellido, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-													.addGroup(gl_contentPane.createSequentialGroup()
-														.addComponent(lblOrdenReparacion)
-														.addPreferredGap(ComponentPlacement.UNRELATED)
-														.addComponent(txtOrdenReparacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-														.addGap(18)
-														.addComponent(lblMatricula)
-														.addPreferredGap(ComponentPlacement.UNRELATED)
-														.addComponent(txtMatricula, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-														.addGap(18)
-														.addComponent(lblMarca)
-														.addPreferredGap(ComponentPlacement.UNRELATED)
-														.addComponent(txtMarca, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+											.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 												.addGroup(gl_contentPane.createSequentialGroup()
-													.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 246, GroupLayout.PREFERRED_SIZE)
+													.addComponent(lblNombreMecanico)
+													.addGap(10)
+													.addComponent(txtNombreMecanico, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+													.addGap(18)
+													.addComponent(lblApellido)
+													.addPreferredGap(ComponentPlacement.RELATED)
+													.addComponent(txtApellido, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+												.addGroup(gl_contentPane.createSequentialGroup()
+													.addComponent(lblOrdenReparacion)
 													.addPreferredGap(ComponentPlacement.UNRELATED)
-													.addComponent(txtFechaAsignacion, GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)))
-											.addGap(18)
-											.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-												.addGroup(gl_contentPane.createSequentialGroup()
-													.addComponent(lblModelo)
+													.addComponent(txtOrdenReparacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+													.addGap(18)
+													.addComponent(lblMatricula)
+													.addGap(10)
+													.addComponent(txtMatricula, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+													.addGap(18)
+													.addComponent(lblMarca)
 													.addPreferredGap(ComponentPlacement.UNRELATED)
-													.addComponent(txtModelo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+													.addComponent(txtMarca, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+											.addGap(27)
+											.addComponent(lblModelo))
+										.addGroup(gl_contentPane.createSequentialGroup()
+											.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 246, GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(ComponentPlacement.UNRELATED)
+											.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+												.addComponent(txtFechaAsignacion, GroupLayout.PREFERRED_SIZE, 201, GroupLayout.PREFERRED_SIZE)
+												.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+													.addComponent(txtFechaInicio, Alignment.LEADING)
+													.addComponent(txtFechaFin, Alignment.LEADING))))
+										.addGroup(gl_contentPane.createSequentialGroup()
+											.addGap(525)
+											.addComponent(lblId)))
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addGroup(gl_contentPane.createSequentialGroup()
+											.addGap(20)
+											.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+												.addComponent(lblMinutos, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE)
+												.addComponent(lblContador, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE)
 												.addGroup(gl_contentPane.createSequentialGroup()
-													.addGap(2)
-													.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-														.addComponent(btnStop, GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
-														.addGroup(gl_contentPane.createSequentialGroup()
-															.addPreferredGap(ComponentPlacement.RELATED)
-															.addComponent(btnPlay, GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
-														.addComponent(lblMinutos, GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
-														.addComponent(lblContador, GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)))))))
-								.addComponent(lblObservaciones)
-								.addComponent(txtObservaciones, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+													.addPreferredGap(ComponentPlacement.RELATED)
+													.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+														.addComponent(btnStop, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+														.addComponent(btnPlay, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)))))
+										.addGroup(gl_contentPane.createSequentialGroup()
+											.addPreferredGap(ComponentPlacement.UNRELATED)
+											.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+										.addComponent(txtModelo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
 							.addGap(1))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(lblPiezasAsignadas)
 							.addGap(102)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblFechaAsignacion, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
-										.addGroup(gl_contentPane.createSequentialGroup()
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
-												.addComponent(txtFechaFin)
-												.addComponent(txtFechaInicio))
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-												.addComponent(btnFechaFin, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE)
-												.addComponent(btnFechaInicio, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE))))
-									.addGap(66))
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(lblFechas, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED)))
-							.addGap(96))
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+									.addComponent(lblFechaAsignacion, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 213, GroupLayout.PREFERRED_SIZE)
+									.addGroup(gl_contentPane.createSequentialGroup()
+										.addGap(92)
+										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+											.addComponent(btnFechaFin, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE)
+											.addComponent(btnFechaInicio, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE))))
+								.addComponent(lblFechas, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE))
+							.addGap(162))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(btnSalir)
-							.addContainerGap())))
+							.addContainerGap())
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(lblObservaciones)
+							.addContainerGap(471, Short.MAX_VALUE))))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -292,27 +305,27 @@ public class ReparacionDetalle extends JFrame {
 					.addComponent(lblDetalleReparacionAsignada, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblId)
 						.addComponent(txtApellido, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblApellido)
+						.addComponent(lblNombreMecanico)
 						.addComponent(txtNombreMecanico, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblNombreMecanico))
+						.addComponent(txtId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblOrdenReparacion)
 						.addComponent(txtOrdenReparacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblMatricula)
-						.addComponent(txtMatricula, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblMarca)
 						.addComponent(txtMarca, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtMatricula, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblModelo)
 						.addComponent(txtModelo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
 					.addComponent(lblObservaciones)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(txtObservaciones, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+					.addGap(7)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblPiezasAsignadas)
 						.addComponent(lblFechas)
@@ -329,17 +342,17 @@ public class ReparacionDetalle extends JFrame {
 								.addComponent(txtFechaAsignacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 							.addGap(5)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(txtFechaInicio, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnFechaInicio))
+								.addComponent(btnFechaInicio)
+								.addComponent(btnStop)
+								.addComponent(txtFechaInicio, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(txtFechaFin, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnStop)
-								.addComponent(btnFechaFin))
+								.addComponent(btnFechaFin)
+								.addComponent(txtFechaFin, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 							.addGap(18)
 							.addComponent(btnSalir))
 						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap())
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		
 		table = new JTable();

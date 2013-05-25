@@ -89,7 +89,10 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 	public static final String QUERY_GET_STOCK_MINIMO_PIEZA = "select stockminim from stockpeca where codipeca = ?";
 	public static final String QUERY_GET_MARCA_PIEZA = "select marca from peca where codipeca = ?";
 	public static final String QUERY_GET_MODELO_PIEZA = "select model from peca where codipeca = ?";
-	
+	public static final String QUERY_SET_HORAINI_REPARACION = "update reparacio set datainici = CURRENT_TIMESTAMP where ordrereparacio = ?";
+	public static final String QUERY_SET_HORAFIN_REPARACION = "update reparacio set datafi = CURRENT_TIMESTAMP where ordrereparacio = ?";
+	public static final String QUERY_GET_HORAINI_REPARACION = "select datainici from reparacio where ordrereparacio = ?";
+	public static final String QUERY_GET_HORAFIN_REPARACION = "select datafi from reparacio where ordrereparacio = ?";
 	
 	
 	public GestorReparacionDAOImpl() {
@@ -1065,6 +1068,109 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 		} finally {
 			if (stm!=null) {
 				try {stm.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+
+	public void setHoraInicioReparacion(int ordenReparacion) throws DAOException {
+		getConnectionDB();
+		PreparedStatement ps = createPrepareStatment(QUERY_SET_HORAINI_REPARACION, ResultSet.CONCUR_UPDATABLE);
+		try {
+			ps.setInt(1, ordenReparacion);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+
+	public void setHoraFinReparacion(int ordenReparacion) throws DAOException {
+		getConnectionDB();
+		PreparedStatement ps = createPrepareStatment(QUERY_SET_HORAFIN_REPARACION, ResultSet.CONCUR_UPDATABLE);
+		try {
+			ps.setInt(1, ordenReparacion);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+
+	public Date getHoraInicioReparacion(int ordenReparacion)
+			throws DAOException {
+		getConnectionDB();
+		Date result = null;
+		PreparedStatement ps = createPrepareStatment(QUERY_GET_HORAINI_REPARACION, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			ps.setInt(1, ordenReparacion);
+			rs = ps.executeQuery();
+			if (rs.next()){
+				result = rs.getDate(1);
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}		
+	}
+
+
+	public Date getHoraFinReparacion(int ordenReparacion) throws DAOException {
+		getConnectionDB();
+		Date result = null;
+		PreparedStatement ps = createPrepareStatment(QUERY_GET_HORAFIN_REPARACION, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			ps.setInt(1, ordenReparacion);
+			rs = ps.executeQuery();
+			if (rs.next()){
+				result = rs.getDate(1);
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
 				} catch (SQLException e) {
 					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
 				}
