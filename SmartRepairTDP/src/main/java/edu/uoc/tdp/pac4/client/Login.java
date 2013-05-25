@@ -2,6 +2,7 @@ package edu.uoc.tdp.pac4.client;
 import java.awt.*;
 import java.awt.event.*;
 import java.rmi.RemoteException;
+import java.util.Locale;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -25,6 +26,7 @@ public class Login extends JDialog {
 	private JTextField txtUsername = new JTextField();
 	private JPasswordField txtPassword = new JPasswordField();
 	private JCheckBox chkPassword;
+	private JMenuBar menuBar;
 	
 	public Login() {
 		initialize ();
@@ -47,6 +49,31 @@ public class Login extends JDialog {
 		this.getContentPane().add(panelEast(),BorderLayout.EAST);
 		this.getContentPane().add(panelCenter(),BorderLayout.CENTER);
 		
+		menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+
+		JMenu mnIdioma = new JMenu("Idioma");
+		menuBar.add(mnIdioma);
+		JRadioButtonMenuItem mn1 = new JRadioButtonMenuItem("Catalan");
+		mnIdioma.add(mn1);
+		JRadioButtonMenuItem mn2 = new JRadioButtonMenuItem("Ingles");
+		mnIdioma.add(mn2);
+		JRadioButtonMenuItem mn3 = new JRadioButtonMenuItem("Castellano", true);
+		mnIdioma.add(mn3);
+
+		ButtonGroup buttonGroup = new ButtonGroup();
+	    buttonGroup.add(mn1);
+	    buttonGroup.add(mn2);
+	    buttonGroup.add(mn3);
+		
+	    mn1.setName("mn1");
+	    mn2.setName("mn2");
+	    mn3.setName("mn3");
+	    
+	    mn1.addItemListener(new ItemHandler());
+	    mn2.addItemListener(new ItemHandler());
+	    mn3.addItemListener(new ItemHandler());
+	    
 		this.setResizable(false);
 		this.pack();
 		
@@ -196,4 +223,18 @@ public class Login extends JDialog {
 	public boolean isLogin () {
 		return (this.usuari!=null);
 	}
+  public class ItemHandler implements ItemListener {
+	    public void itemStateChanged(ItemEvent e) {	    	
+	      AbstractButton button = (AbstractButton) e.getItem();
+	      if (button.isSelected()) {
+	    	  if ("mn1".equals(button.getName())) {
+	    		  TDSLanguageUtils.setLanguage("i18n/messages", new Locale("ca"));
+	    	  } else if ("mn1".equals(button.getName())) {
+	    		  TDSLanguageUtils.setLanguage("i18n/messages", new Locale("en"));
+	    	  } else if ("mn1".equals(button.getName())) {
+	    		  TDSLanguageUtils.setLanguage("i18n/messages", new Locale("es"));
+	    	  }
+	      }
+	  }
+  }
 }
