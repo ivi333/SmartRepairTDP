@@ -175,7 +175,7 @@ public class MainGUI extends JFrame {
 				}
 			}
 		} else {
-			crearMenuLanguageSalir ();
+			crearMenuSalir ();
 		}
 	}
 
@@ -219,7 +219,7 @@ public class MainGUI extends JFrame {
 					JOptionPane.WARNING_MESSAGE);
 		}
 		
-		crearMenuLanguageSalir ();
+		crearMenuSalir ();
 	}
 	
 	private void crearMenuEstadisticas (boolean isAdministrador, boolean isAdministrativo, boolean isJefeTaller, boolean isMecanico) {
@@ -228,16 +228,49 @@ public class MainGUI extends JFrame {
 		if (isAdministrativo) {
 			JMenuItem mntmInfClientes = new JMenuItem("Informe Clientes");
 			mnInformes.add(mntmInfClientes);
+			mntmInfClientes.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent arg0) {
+					InformeClientes dialog = new InformeClientes();
+					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+					dialog.setSize(1000, 500);
+					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
 		}
 		
 		if (isAdministrativo || isJefeTaller) {
 			JMenuItem mntmInfEmpleados = new JMenuItem("Informe Empleados");
 			mnInformes.add(mntmInfEmpleados);
+			mntmInfEmpleados.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent arg0) {
+					InformeEmpleados dialog = new InformeEmpleados();
+					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+					dialog.setSize(1000, 500);
+					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
 		}
 		
 		if (isAdministrativo || isJefeTaller) {		
 			JMenuItem mntmInfReparaciones = new JMenuItem("Informe Reparaciones");
 			mnInformes.add(mntmInfReparaciones);
+			mntmInfReparaciones.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent arg0) {
+					InformeEmpleados dialog = new InformeEmpleados();
+					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+					dialog.setSize(1000, 500);
+					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				}
+			});
 		}
 		
 	}
@@ -461,30 +494,7 @@ public class MainGUI extends JFrame {
 	
 	}
 
-	private void crearMenuLanguageSalir () {
-		/*JMenu jMenuLenguages = new JMenu();
-		menuBar.add(jMenuLenguages);
-		jMenuLenguages.setText(TDSLanguageUtils
-				.getMessage("menu.general.idioma"));
-		
-		JMenuItem jm1 = new JMenuItem();
-		jm1.setText(TDSLanguageUtils
-				.getMessage("menu.general.ca"));
-
-		JMenuItem jm2 = new JMenuItem();
-		jm2.setText(TDSLanguageUtils
-				.getMessage("menu.general.es"));
-		
-		JMenuItem jm3 = new JMenuItem();
-		jm3.setText(TDSLanguageUtils
-				.getMessage("menu.general.en"));
-		
-
-		
-		jMenuLenguages.add(jm1);
-		jMenuLenguages.add(jm2);
-		jMenuLenguages.add(jm3);
-		*/
+	private void crearMenuSalir () {
 		JMenuItem mntmSalir = new JMenuItem("Salir");
 		mntmSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
