@@ -175,7 +175,7 @@ public class MainGUI extends JFrame {
 				}
 			}
 		} else {
-			crearMenuSalir();
+			crearMenuLanguageSalir ();
 		}
 	}
 
@@ -219,7 +219,7 @@ public class MainGUI extends JFrame {
 					JOptionPane.WARNING_MESSAGE);
 		}
 		
-		crearMenuSalir();
+		crearMenuLanguageSalir ();
 	}
 	
 	private void crearMenuEstadisticas (boolean isAdministrador, boolean isAdministrativo, boolean isJefeTaller, boolean isMecanico) {
@@ -461,7 +461,30 @@ public class MainGUI extends JFrame {
 	
 	}
 
-	private void crearMenuSalir () {
+	private void crearMenuLanguageSalir () {
+		/*JMenu jMenuLenguages = new JMenu();
+		menuBar.add(jMenuLenguages);
+		jMenuLenguages.setText(TDSLanguageUtils
+				.getMessage("menu.general.idioma"));
+		
+		JMenuItem jm1 = new JMenuItem();
+		jm1.setText(TDSLanguageUtils
+				.getMessage("menu.general.ca"));
+
+		JMenuItem jm2 = new JMenuItem();
+		jm2.setText(TDSLanguageUtils
+				.getMessage("menu.general.es"));
+		
+		JMenuItem jm3 = new JMenuItem();
+		jm3.setText(TDSLanguageUtils
+				.getMessage("menu.general.en"));
+		
+
+		
+		jMenuLenguages.add(jm1);
+		jMenuLenguages.add(jm2);
+		jMenuLenguages.add(jm3);
+		*/
 		JMenuItem mntmSalir = new JMenuItem("Salir");
 		mntmSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
