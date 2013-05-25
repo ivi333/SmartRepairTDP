@@ -297,6 +297,22 @@ public interface GestorReparacionInterface extends Remote{
 	 * @throws GestorReparacionException
 	 */
 	public Date getHoraFinReparacion(int ordenReparacion) throws RemoteException, GestorReparacionException;
+
+	/**
+	 * Recupera el número de comandas pendiente de recepcionar dada una reparación
+	 * @param ordenReparacion
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public int getNumComandasPendientes(int ordenReparacion) throws RemoteException, GestorReparacionException;
+
+	/**
+	 * Inserta el valor del contador de la reparación (en minutos)
+	 * @param ordenReparacion, contador
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void setContadorReparacion(int ordenReparacion, double contador) throws RemoteException, GestorReparacionException;
 }
 
 

@@ -204,9 +204,9 @@ public class ReparacionAsignadas extends JFrame {
 		Object rowData [][] = new Object [list.size()][8];
 		int z=0;
 		for (DetallReparacio bean : list) {
+			rowData[z][0] = String.valueOf(bean.getOrdreReparacio());
 			rowData[z][1] = String.valueOf(bean.getDataAssignacio());
 			rowData[z][2] = String.valueOf(bean.getDataInici());
-			rowData[z][2] = String.valueOf(bean.getDataEntrada());
 			rowData[z][3] = String.valueOf(bean.getOrdreReparacio());
 			rowData[z][4] = String.valueOf(bean.getMatricula());
 			rowData[z][5] = String.valueOf(bean.getMarca());

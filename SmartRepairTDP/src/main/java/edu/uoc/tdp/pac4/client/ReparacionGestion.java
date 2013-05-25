@@ -164,7 +164,6 @@ public class ReparacionGestion extends JFrame {
 		});
 		
 		btnDetalle = new JButton(TDSLanguageUtils.getMessage("repGestion.detalle"));
-		btnDetalle.setEnabled(false);
 		btnDetalle.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -191,7 +190,6 @@ public class ReparacionGestion extends JFrame {
 		});
 		
 		btnAceptar = new JButton(TDSLanguageUtils.getMessage("repGestion.aceptar"));
-		btnAceptar.setEnabled(false);
 		btnAceptar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -199,12 +197,17 @@ public class ReparacionGestion extends JFrame {
 				try {
 					int idFilaSeleccionada = getFilaSeleccionada();
 					if (idFilaSeleccionada >= 0) {
-						dialog = new ReparacionPiezas(gestorReparacion, usuario, getFilaSeleccionada());
-						Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-						dialog.setSize(1000, 500);
-						dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
-						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-						dialog.setVisible(true);
+						DetallReparacio reparacionAct = gestorReparacion.getDetalleReparacion(idFilaSeleccionada);
+						if (!reparacionAct.getAcceptada()) {
+							dialog = new ReparacionPiezas(gestorReparacion, usuario, getFilaSeleccionada());
+							Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+							dialog.setSize(1000, 500);
+							dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+							dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+							dialog.setVisible(true);
+						} else {
+							JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.repyaaceptada"), TDSLanguageUtils.getMessage("repPiezas.alert"), JOptionPane.ERROR_MESSAGE);
+						}
 					} else {
 						JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.seleccionarfilapiezas"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
 					}
@@ -217,7 +220,6 @@ public class ReparacionGestion extends JFrame {
 		});
 		
 		btnAsignar = new JButton(TDSLanguageUtils.getMessage("repGestion.asignar"));
-		btnAsignar.setEnabled(false);
 		btnAsignar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -225,12 +227,26 @@ public class ReparacionGestion extends JFrame {
 				try {
 					int idFilaSeleccionada = getFilaSeleccionada();
 					if (idFilaSeleccionada >= 0) {
-						dialog = new ReparacionAsignarMecanico(gestorReparacion, usuario, getFilaSeleccionada());
-						Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-						dialog.setSize(1000, 500);
-						dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
-						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-						dialog.setVisible(true);
+						DetallReparacio reparacionSel = gestorReparacion.getDetalleReparacion(getFilaSeleccionada());
+						if (reparacionSel.getAcceptada()) {
+							int comandasPendientes = gestorReparacion.getNumComandasPendientes(reparacionSel.getOrdreReparacio());
+							if (comandasPendientes == 0) {
+								if (!String.valueOf(reparacionSel.getDataInici()).contains("-")) {
+									dialog = new ReparacionAsignarMecanico(gestorReparacion, usuario, getFilaSeleccionada());
+									Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+									dialog.setSize(1000, 500);
+									dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+									dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+									dialog.setVisible(true);
+								} else {
+									JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.reparacioniniciada"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
+								}
+							} else {
+								JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.comandaspendientes"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
+							}
+						} else {
+							JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.reparacionnoaceptada"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
+						}
 					} else {
 						JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.seleccionarfilamec"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
 					}
@@ -243,7 +259,6 @@ public class ReparacionGestion extends JFrame {
 		});
 		
 		btnFinalizar = new JButton(TDSLanguageUtils.getMessage("repGestion.finalizar"));
-		btnFinalizar.setEnabled(false);
 		btnFinalizar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -362,34 +377,6 @@ public class ReparacionGestion extends JFrame {
 		);
 		
 		table = new JTable();
-		
-		table.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				try {
-					int ordenReparacion = getFilaSeleccionada();
-					Reparacio datosReparacion = gestorReparacion.getReparacion(ordenReparacion);
-					
-					btnDetalle.setEnabled(true);
-					
-					if (!datosReparacion.getAcceptada()) {
-						btnAceptar.setEnabled(true);
-					} else {
-						if (!datosReparacion.getAssignada()) {
-							btnAsignar.setEnabled(true);
-						} else {
-							btnFinalizar.setEnabled(true);
-						}
-					}
-					
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				} catch (GestorReparacionException e) {
-					e.printStackTrace();
-				}
-				
-			}
-		});
 		
 		scrollPanel.setViewportView(table);
 		

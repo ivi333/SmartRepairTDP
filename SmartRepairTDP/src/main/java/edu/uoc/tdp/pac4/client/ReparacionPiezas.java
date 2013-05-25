@@ -174,12 +174,29 @@ public class ReparacionPiezas extends JFrame {
 		btnAsignarMecanico.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ReparacionAsignarMecanico dialog = new ReparacionAsignarMecanico(gestorReparacion, usuario, ordenReparacion);
-				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-				dialog.setSize(1000, 500);
-				dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
-				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				dialog.setVisible(true);
+				ReparacionAsignarMecanico dialog;
+				try {
+					DetallReparacio reparacionSel = gestorReparacion.getDetalleReparacion(ordenReparacion);
+					if (reparacionSel.getAcceptada()) {
+						int comandasPendientes = gestorReparacion.getNumComandasPendientes(reparacionSel.getOrdreReparacio());
+						if (comandasPendientes == 0) {
+							dialog = new ReparacionAsignarMecanico(gestorReparacion, usuario, ordenReparacion);
+							Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+							dialog.setSize(1000, 500);
+							dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+							dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+							dialog.setVisible(true);
+						} else {
+							JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.comandaspendientes"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
+						}
+					} else {
+						JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.reparacionnoaceptada"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
+					} 
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
+				} catch (GestorReparacionException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		
@@ -463,22 +480,29 @@ public class ReparacionPiezas extends JFrame {
 	
 	private void realizarPedido() {
 		try {
-			if (piezasSeleccionadas != null) {
-				for (int i=0; i<piezasSeleccionadas.size(); i++) {
-					DetallPeca pieza = piezasSeleccionadas.get(i);
-					boolean estado = false;
-					if (pieza.getCantidad() <= pieza.getStockMinim()) {
-						estado = true;
+			DetallReparacio reparacionAct = gestorReparacion.getDetalleReparacion(ordenReparacion);
+			if (!reparacionAct.getAcceptada()) {
+				if (piezasSeleccionadas != null) {
+					for (int i=0; i<piezasSeleccionadas.size(); i++) {
+						DetallPeca pieza = piezasSeleccionadas.get(i);
+						boolean estado = false;
+						if (pieza.getCantidad() <= pieza.getStockMinim()) {
+							estado = true;
+						}
+						gestorReparacion.setPiezaComanda(estado,pieza.getCodiPeca(), usuario.getTaller(), ordenReparacion, pieza.getCantidad(), true);
+						if (estado == true) {
+							gestorReparacion.setDescontarStock(pieza.getCodiPeca(), pieza.getCantidad());
+						}
 					}
-					gestorReparacion.setPiezaComanda(estado,pieza.getCodiPeca(), usuario.getTaller(), ordenReparacion, pieza.getCantidad(), true);
-					if (estado == true) {
-						gestorReparacion.setDescontarStock(pieza.getCodiPeca(), pieza.getCantidad());
-					}
-				}
-				gestorReparacion.setReparacionAceptada(ordenReparacion);
+					gestorReparacion.setReparacionAceptada(ordenReparacion);
+					JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.info.pedidorealizado"), TDSLanguageUtils.getMessage("repPiezas.info"), JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.anadirpiezas"), TDSLanguageUtils.getMessage("repPiezas.alert"), JOptionPane.ERROR_MESSAGE);
+				} 	
 			} else {
-				JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.anadirpiezas"), TDSLanguageUtils.getMessage("repPiezas.alert"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.repyaaceptada"), TDSLanguageUtils.getMessage("repPiezas.alert"), JOptionPane.ERROR_MESSAGE);
 			}
+			
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
 		} catch (GestorReparacionException e1) {

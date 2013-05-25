@@ -534,6 +534,7 @@ public class ReparacionStock extends JFrame {
 					DetallPeca pieza = piezasSeleccionadas.get(i);
 					gestorReparacion.setPiezaComanda(false, pieza.getCodiPeca(), usuario.getTaller(), 0, pieza.getCantidad(), false);
 				}
+				JOptionPane.showMessageDialog(reparacionStock, TDSLanguageUtils.getMessage("repStock.info.pedidorealizado"), TDSLanguageUtils.getMessage("repStock.info"), JOptionPane.INFORMATION_MESSAGE);
 			} else {
 				JOptionPane.showMessageDialog(reparacionStock, TDSLanguageUtils.getMessage("repStock.alert.anadirpiezas"), TDSLanguageUtils.getMessage("repStock.alert"), JOptionPane.ERROR_MESSAGE);
 			}

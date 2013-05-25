@@ -62,6 +62,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 	};
 	
 	private List<Usuari> mecanicosSeleccionados = new ArrayList<Usuari>() ;
+	private int ordenReparacion;
 	
 
 	/**
@@ -85,6 +86,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 	 */
 	public ReparacionAsignarMecanico(GestorReparacionInterface conexion, final Usuari usuario, int ordenReparacion) {
 		this.gestorReparacion = conexion;
+		this.ordenReparacion = ordenReparacion;
 		
 		setTitle(TDSLanguageUtils.getMessage("repAsigMec.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -354,42 +356,47 @@ public class ReparacionAsignarMecanico extends JFrame {
 	private void eliminarMecanico() {
 		try {
 			if (table1.getSelectedRowCount() == 1) {
-				int idMecanico;
-				idMecanico = getIdMecanicoSeleccionado(table1);
-				if (mecanicosSeleccionados != null) {
-					for (int i=0; i<mecanicosSeleccionados.size(); i++) {
-						if (mecanicosSeleccionados.get(i).getId() == idMecanico) {
-							mecanicosSeleccionados.remove(i);
+				DetallReparacio reparacionAct = gestorReparacion.getDetalleReparacion(ordenReparacion);
+				if (!String.valueOf(reparacionAct.getDataInici()).contains("-")) {
+					int idMecanico;
+					idMecanico = getIdMecanicoSeleccionado(table1);
+					if (mecanicosSeleccionados != null) {
+						for (int i=0; i<mecanicosSeleccionados.size(); i++) {
+							if (mecanicosSeleccionados.get(i).getId() == idMecanico) {
+								mecanicosSeleccionados.remove(i);
+							}
 						}
 					}
-				}
-				
-				int ordenReparacion = Integer.valueOf(txtOrdenReparacion.getText());
-				int ordenReparacion1 = 0;
-				int ordenReparacion2 = 0;
-				Usuari mecanico = gestorReparacion.getUsuario(idMecanico);
-				if (mecanico.getReparacionsAssignades() == 2) {
-					Mecanic objMecanico = gestorReparacion.getMecanico(idMecanico);
-					if (objMecanico.getIdrep1() == ordenReparacion) {
-						ordenReparacion1 = objMecanico.getIdrep2();
-					} else {
-						ordenReparacion1 = objMecanico.getIdrep1();
+					
+					int ordenReparacion = Integer.valueOf(txtOrdenReparacion.getText());
+					int ordenReparacion1 = 0;
+					int ordenReparacion2 = 0;
+					Usuari mecanico = gestorReparacion.getUsuario(idMecanico);
+					if (mecanico.getReparacionsAssignades() == 2) {
+						Mecanic objMecanico = gestorReparacion.getMecanico(idMecanico);
+						if (objMecanico.getIdrep1() == ordenReparacion) {
+							ordenReparacion1 = objMecanico.getIdrep2();
+						} else {
+							ordenReparacion1 = objMecanico.getIdrep1();
+						}
 					}
+					actualizarAsignacion(true, idMecanico, ordenReparacion, ordenReparacion1, ordenReparacion2);
+				
+					Object rowData [][] = new Object [mecanicosSeleccionados.size()][3];
+					int z=0;
+					for (Usuari bean : mecanicosSeleccionados) {
+						rowData[z][0] = String.valueOf(bean.getId());
+						rowData[z][1] = String.valueOf(bean.getNom());
+						rowData[z][2] = String.valueOf(bean.getCognoms());
+						z++;
+					}
+					TableModel model = new DefaultTableModel(rowData, columnNames1);
+					table1.setModel(model);
+				} else {
+					JOptionPane.showMessageDialog(reparacionAsignarMecanico, TDSLanguageUtils.getMessage("repAsigMec.alert.reparacioniniciada"), TDSLanguageUtils.getMessage("repAsigMec.alert"), JOptionPane.ERROR_MESSAGE);
 				}
-				actualizarAsignacion(true, idMecanico, ordenReparacion, ordenReparacion1, ordenReparacion2);
-			
-				Object rowData [][] = new Object [mecanicosSeleccionados.size()][3];
-				int z=0;
-				for (Usuari bean : mecanicosSeleccionados) {
-					rowData[z][0] = String.valueOf(bean.getId());
-					rowData[z][1] = String.valueOf(bean.getNom());
-					rowData[z][2] = String.valueOf(bean.getCognoms());
-					z++;
-				}
-				TableModel model = new DefaultTableModel(rowData, columnNames1);
-				table1.setModel(model);
 			} else {
-				JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Debe seleccionar una fila para poder eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionAsignarMecanico, TDSLanguageUtils.getMessage("repAsigMec.alert.seleccionarfilaelim"), TDSLanguageUtils.getMessage("repAsigMec.alert"), JOptionPane.ERROR_MESSAGE);
 			}
 			
 		} catch (RemoteException e) {

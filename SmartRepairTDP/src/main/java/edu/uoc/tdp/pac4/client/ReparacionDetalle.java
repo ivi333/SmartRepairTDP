@@ -68,6 +68,8 @@ public class ReparacionDetalle extends JFrame {
 	};
 	private JScrollPane scrollPane;
 	private JButton btnPlay;
+	
+	private int ordenReparacion;
 
 
 	/**
@@ -91,6 +93,7 @@ public class ReparacionDetalle extends JFrame {
 	 */
 	public ReparacionDetalle(GestorReparacionInterface conexion, final Usuari usuario, final int ordenReparacion) {
 		this.gestorReparacion = conexion;
+		this.ordenReparacion = ordenReparacion;
 		
 		setTitle(TDSLanguageUtils.getMessage("repDetalle.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -176,9 +179,16 @@ public class ReparacionDetalle extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				try {
-					btnPlay.setEnabled(false);
-					gestorReparacion.setHoraInicioReparacion(ordenReparacion);
-					txtFechaInicio.setText(gestorReparacion.getHoraInicioReparacion(ordenReparacion).toString());
+					DetallReparacio reparacionAct = gestorReparacion.getDetalleReparacion(ordenReparacion);
+					if (!String.valueOf(reparacionAct.getDataInici()).contains("-")) {
+						btnPlay.setEnabled(false);
+						gestorReparacion.setHoraInicioReparacion(ordenReparacion);
+						txtFechaInicio.setText(gestorReparacion.getHoraInicioReparacion(ordenReparacion).toString());
+						JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repDetalle.info.contini"), TDSLanguageUtils.getMessage("repDetalle.info"), JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repDetalle.info.reparacionfinalizada"), TDSLanguageUtils.getMessage("repDetalle.info"), JOptionPane.INFORMATION_MESSAGE);
+					}
+					
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				} catch (GestorReparacionException e) {
@@ -193,9 +203,16 @@ public class ReparacionDetalle extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				
 				try {
-					btnStop.setEnabled(false);
-					gestorReparacion.setHoraFinReparacion(ordenReparacion);
-					txtFechaFin.setText(gestorReparacion.getHoraFinReparacion(ordenReparacion).toString());
+					Reparacio reparacionAct = gestorReparacion.getReparacion(ordenReparacion);
+					if (!String.valueOf(reparacionAct.getDataFi()).contains("-")) {
+						btnStop.setEnabled(false);
+						gestorReparacion.setHoraFinReparacion(ordenReparacion);
+						txtFechaFin.setText(gestorReparacion.getHoraFinReparacion(ordenReparacion).toString());
+						JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repDetalle.info.contfin"), TDSLanguageUtils.getMessage("repDetalle.info"), JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repDetalle.info.reparacionyafinalizada"), TDSLanguageUtils.getMessage("repDetalle.info"), JOptionPane.INFORMATION_MESSAGE);
+					}
+					
 				} catch (RemoteException e1) {
 					e1.printStackTrace();
 				} catch (GestorReparacionException e1) {
@@ -395,15 +412,19 @@ public class ReparacionDetalle extends JFrame {
 			this.txtModelo.setText(datosDetalleReparacion.getModel());
 			this.txtObservaciones.setText(datosDetalleReparacion.getObservacions());
 			
-			Usuari datosUsuario = gestorReparacion.getUsuario(datosDetalleReparacion.getIdMecanic());
-			this.txtId.setText(String.valueOf(datosUsuario.getId()));
-			this.txtNombreMecanico.setText(datosUsuario.getNom());
-			this.txtApellido.setText(datosUsuario.getCognoms());
+			if (datosDetalleReparacion.getIdMecanic() != 0) {
+				Usuari datosUsuario = gestorReparacion.getUsuario(datosDetalleReparacion.getIdMecanic());
+				this.txtId.setText(String.valueOf(datosUsuario.getId()));
+				this.txtNombreMecanico.setText(datosUsuario.getNom());
+				this.txtApellido.setText(datosUsuario.getCognoms());
+			}
 			
 			Reparacio datosReparacion = gestorReparacion.getReparacion(datosDetalleReparacion.getOrdreReparacio());
 			this.txtFechaAsignacion.setText(String.valueOf(datosReparacion.getDataAssignacio()));
 			this.txtFechaInicio.setText(String.valueOf(datosReparacion.getDataInici()));
 			this.txtFechaFin.setText(String.valueOf(datosReparacion.getDataFi()));
+			
+			this.lblMinutos.setText(String.valueOf(datosReparacion.getComptador()));
 			
 			scrollPane.setViewportView(table);
 			table.setModel(getTableModel(datosReparacion.getOrdreReparacio()));
@@ -447,7 +468,29 @@ public class ReparacionDetalle extends JFrame {
 				long minute = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds)* 60);
 				long second = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) *60);
 				btnPlay.setToolTipText("Start");
-				lblMinutos.setText( hours + ":" + minute + ":" + second);
+				
+				double contador = minute + (hours * 60);
+				String ceroHours = "";
+				String ceroMinute = "";
+				String ceroSecond = "";
+				if (hours < 10) {
+					ceroHours = "0";
+				}
+				if (minute < 10) {
+					ceroMinute = "0";
+				}
+				if (second < 10) {
+					ceroSecond = "0";
+				}
+				
+				lblMinutos.setText( ceroHours + hours + ":" + ceroMinute + minute + ":" + ceroSecond + second);
+				try {
+					gestorReparacion.setContadorReparacion(ordenReparacion, contador);
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
+				} catch (GestorReparacionException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}  
 	}  
