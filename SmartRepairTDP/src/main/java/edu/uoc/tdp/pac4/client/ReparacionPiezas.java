@@ -26,6 +26,7 @@ import javax.swing.JButton;
 import edu.uoc.tdp.pac4.beans.DetallPeca;
 import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Usuari;
+import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 import java.awt.event.MouseAdapter;
@@ -53,10 +54,10 @@ public class ReparacionPiezas extends JFrame {
 	private JTextField txtAnadir = new JTextField();
 	
 	private static final Object columnNames1[] = {
-		"C\u00F3digo", "Descripci\u00F3n", "Unidades", "Stock", "Precio"
+		TDSLanguageUtils.getMessage("repGestion.tablas.codigo"), TDSLanguageUtils.getMessage("repGestion.tablas.descripcion"), TDSLanguageUtils.getMessage("repGestion.tablas.unidades"), TDSLanguageUtils.getMessage("repGestion.tablas.stock"), TDSLanguageUtils.getMessage("repGestion.tablas.precio")
 	};
 	private static final Object columnNames2[] = {
-		"C\u00F3digo", "Descripci\u00F3n", "Stock", "Precio"
+		TDSLanguageUtils.getMessage("repGestion.tablas.codigo"), TDSLanguageUtils.getMessage("repGestion.tablas.descripción"), TDSLanguageUtils.getMessage("repGestion.tablas.stock"), TDSLanguageUtils.getMessage("repGestion.tablas.precio")
 	};
 	
 	private JScrollPane scrollPanel1;
@@ -93,42 +94,42 @@ public class ReparacionPiezas extends JFrame {
 		this.usuario = usuario;
 		this.ordenReparacion = ordenReparacion;
 		
-		setTitle("Piezas reparación");
+		setTitle(TDSLanguageUtils.getMessage("repPiezas.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 778, 424);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		JLabel lblPiezasReparacion = new JLabel("Piezas Reparación");
+		JLabel lblPiezasReparacion = new JLabel(TDSLanguageUtils.getMessage("repPiezas.titulo"));
 		lblPiezasReparacion.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblPiezasReparacion.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		JLabel lblOrdenReparacion = new JLabel("Orden reparación");
+		JLabel lblOrdenReparacion = new JLabel(TDSLanguageUtils.getMessage("repPiezas.ordenrep"));
 		
 		txtOrdenReparacion = new JTextField();
 		txtOrdenReparacion.setColumns(10);
 		
-		JLabel lblMatricula = new JLabel("Matricula");
+		JLabel lblMatricula = new JLabel(TDSLanguageUtils.getMessage("repPiezas.matricula"));
 		
 		txtMatricula = new JTextField();
 		txtMatricula.setColumns(10);
 		
-		JLabel lblMarca = new JLabel("Marca");
+		JLabel lblMarca = new JLabel(TDSLanguageUtils.getMessage("repPiezas.marca"));
 		
 		txtMarca = new JTextField();
 		txtMarca.setColumns(10);
 		
-		JLabel lblModelo = new JLabel("Modelo");
+		JLabel lblModelo = new JLabel(TDSLanguageUtils.getMessage("repPiezas.modelo"));
 		
 		txtModelo = new JTextField();
 		txtModelo.setColumns(10);
 		
-		JLabel lblObservaciones = new JLabel("Observaciones para la reparación");
+		JLabel lblObservaciones = new JLabel(TDSLanguageUtils.getMessage("repPiezas.obsrep"));
 		
 		txtObservaciones = new JTextArea();
 		
-		btnAnadir = new JButton("Añadir");
+		btnAnadir = new JButton(TDSLanguageUtils.getMessage("repPiezas.anadir"));
 		btnAnadir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -136,7 +137,7 @@ public class ReparacionPiezas extends JFrame {
 			}
 		});
 		
-		JButton btnEliminar = new JButton("Eliminar");
+		JButton btnEliminar = new JButton(TDSLanguageUtils.getMessage("repPiezas.eliminar"));
 		btnEliminar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -144,7 +145,7 @@ public class ReparacionPiezas extends JFrame {
 			}
 		});
 		
-		btnBuscarPieza = new JButton("Buscar pieza");
+		btnBuscarPieza = new JButton(TDSLanguageUtils.getMessage("repPiezas.buscarpieza"));
 		btnBuscarPieza.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -161,7 +162,7 @@ public class ReparacionPiezas extends JFrame {
 		txtBuscarPieza = new JTextField();
 		txtBuscarPieza.setColumns(10);
 		
-		JButton btnRealizarPedido = new JButton("Realizar pedido");
+		JButton btnRealizarPedido = new JButton(TDSLanguageUtils.getMessage("repPiezas.realizarpedido"));
 		btnRealizarPedido.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -169,7 +170,7 @@ public class ReparacionPiezas extends JFrame {
 			}
 		});
 		
-		JButton btnAsignarMecanico = new JButton("Asignar mecánico");
+		JButton btnAsignarMecanico = new JButton(TDSLanguageUtils.getMessage("repPiezas.asignarmec"));
 		btnAsignarMecanico.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -182,7 +183,7 @@ public class ReparacionPiezas extends JFrame {
 			}
 		});
 		
-		JButton btnSalir = new JButton("Salir");
+		JButton btnSalir = new JButton(TDSLanguageUtils.getMessage("repPiezas.salir"));
 		btnSalir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -196,7 +197,7 @@ public class ReparacionPiezas extends JFrame {
 		
 		txtAnadir.setColumns(10);
 		
-		JLabel lblUnidades = new JLabel("Unidades");
+		JLabel lblUnidades = new JLabel(TDSLanguageUtils.getMessage("repPiezas.unidades"));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -410,11 +411,11 @@ public class ReparacionPiezas extends JFrame {
 					TableModel model = new DefaultTableModel(rowData, columnNames1);
 					table1.setModel(model);
 				} else {
-					JOptionPane.showMessageDialog(reparacionPiezas, "Debe indicar el número de piezas a añadir.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.numeropiezas"), TDSLanguageUtils.getMessage("repPiezas.alert"), JOptionPane.ERROR_MESSAGE);
 				}
 				
 			} else {
-				JOptionPane.showMessageDialog(reparacionPiezas, "Debe seleccionar una fila para poder añadirla.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.seleccionarfila"), TDSLanguageUtils.getMessage("repPiezas.alert"), JOptionPane.ERROR_MESSAGE);
 			}
 			
 		} catch (RemoteException e1) {
@@ -450,7 +451,7 @@ public class ReparacionPiezas extends JFrame {
 				TableModel model = new DefaultTableModel(rowData, columnNames1);
 				table1.setModel(model);
 		} else {
-			JOptionPane.showMessageDialog(reparacionPiezas, "Debe seleccionar una fila para poder eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.seleccionarfilaelim"), TDSLanguageUtils.getMessage("repPiezas.alert"), JOptionPane.ERROR_MESSAGE);
 		}
 			
 		} catch (RemoteException e) {
@@ -476,7 +477,7 @@ public class ReparacionPiezas extends JFrame {
 				}
 				gestorReparacion.setReparacionAceptada(ordenReparacion);
 			} else {
-				JOptionPane.showMessageDialog(reparacionPiezas, "Debe añadir piezas antes de realizar el pedido.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.anadirpiezas"), TDSLanguageUtils.getMessage("repPiezas.alert"), JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (RemoteException e1) {
 			e1.printStackTrace();

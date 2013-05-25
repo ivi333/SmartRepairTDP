@@ -31,6 +31,7 @@ import javax.swing.JScrollPane;
 
 import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Usuari;
+import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 import javax.swing.DefaultComboBoxModel;
@@ -45,7 +46,7 @@ public class ReparacionAsignadas extends JFrame {
 	private static ReparacionAsignadas reparacionAsignadas;
 	private GestorReparacionInterface gestorReparacion;
 	private static final Object columnNames[] = {
-		"Orden reparaci\u00F3n", "Fecha asignaci\u00F3n", "Fecha Inicio", "Num. Orden", "Matr\u00EDcula", "Marca", "Modelo", "Contador"
+		TDSLanguageUtils.getMessage("repAsig.tablas.ordenrep"), TDSLanguageUtils.getMessage("repAsig.tablas.fasignacion"), TDSLanguageUtils.getMessage("repAsig.tablas.finicio"), TDSLanguageUtils.getMessage("repAsig.tablas.numorden"), TDSLanguageUtils.getMessage("repAsig.tablas.matricula"), TDSLanguageUtils.getMessage("repAsig.tablas.marca"), TDSLanguageUtils.getMessage("repAsig.tablas.modelo"), TDSLanguageUtils.getMessage("repAsig.tablas.contador")
 	};
 	
 	private Usuari usuario;
@@ -75,23 +76,23 @@ public class ReparacionAsignadas extends JFrame {
 		this.gestorReparacion = conexion;
 		this.usuario = usuario;
 		
-		setTitle("Reparaciones asignadas");
+		setTitle(TDSLanguageUtils.getMessage("repAsig.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 241);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		JLabel lblNewLabel = new JLabel("Reparaciones Asignadas");
+		JLabel lblNewLabel = new JLabel(TDSLanguageUtils.getMessage("repAsig.titulo"));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
 		
-		JLabel lblFIltro = new JLabel("Filtro");
+		JLabel lblFIltro = new JLabel(TDSLanguageUtils.getMessage("repAsig.filtro"));
 		
 		cmbFiltro = new JComboBox();
-		cmbFiltro.setModel(new DefaultComboBoxModel(new String[] {"Todas", "Fecha Inicio", "Fecha Fin", "Fecha Asignacion", "Marca", "Modelo", "Orden Reparación"}));
+		cmbFiltro.setModel(new DefaultComboBoxModel(new String[] {TDSLanguageUtils.getMessage("repAsig.filtro.todas"), TDSLanguageUtils.getMessage("repAsig.filtro.finicio"), TDSLanguageUtils.getMessage("repAsig.filtro.ffin"), TDSLanguageUtils.getMessage("repAsig.filtro.fasignacion"), TDSLanguageUtils.getMessage("repAsig.filtro.marca"), TDSLanguageUtils.getMessage("repAsig.filtro.modelo"), TDSLanguageUtils.getMessage("repAsig.filtro.ordenrep")}));
 	
-		JButton btnDetalle = new JButton("Detalle");
+		JButton btnDetalle = new JButton(TDSLanguageUtils.getMessage("repAsig.detalle"));
 		btnDetalle.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -106,7 +107,7 @@ public class ReparacionAsignadas extends JFrame {
 						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 						dialog.setVisible(true);
 					} else {
-						JOptionPane.showMessageDialog(reparacionAsignadas, "Debe seleccionar una fila para poder ver el detalle de la reparación", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(reparacionAsignadas, TDSLanguageUtils.getMessage("repAsig.alert.seleccionarfila"), TDSLanguageUtils.getMessage("repAsig.alert"), JOptionPane.ERROR_MESSAGE);
 					}
 					
 				} catch (RemoteException e1) {
@@ -117,7 +118,7 @@ public class ReparacionAsignadas extends JFrame {
 			}
 		});
 		
-		JButton btnSalir = new JButton("Salir");
+		JButton btnSalir = new JButton(TDSLanguageUtils.getMessage("repAsig.salir"));
 		btnSalir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -130,7 +131,7 @@ public class ReparacionAsignadas extends JFrame {
 		txtFiltro = new JTextField();
 		txtFiltro.setColumns(10);
 		
-		JButton btnFiltrar = new JButton("Filtrar");
+		JButton btnFiltrar = new JButton(TDSLanguageUtils.getMessage("repAsig.filtrar"));
 		btnFiltrar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {

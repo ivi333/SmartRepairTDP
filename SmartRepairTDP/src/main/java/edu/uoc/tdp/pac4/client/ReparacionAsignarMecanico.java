@@ -22,6 +22,7 @@ import javax.swing.table.TableModel;
 import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Usuari;
+import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 import java.awt.event.MouseAdapter;
@@ -54,10 +55,10 @@ public class ReparacionAsignarMecanico extends JFrame {
 	private JScrollPane scrollPanel2;
 	
 	private static final Object columnNames1[] = {
-		"Id", "Nombre", "Apellidos"
+		TDSLanguageUtils.getMessage("repAsigMec.tablas.id"), TDSLanguageUtils.getMessage("repAsigMec.tablas.nombre"), TDSLanguageUtils.getMessage("repAsigMec.tablas.apellidos")
 	};
 	private static final Object columnNames2[] = {
-		"Id", "Nombre", "Apellidos", "Reparaciones asignadas"
+		TDSLanguageUtils.getMessage("repAsigMec.tablas.id"), TDSLanguageUtils.getMessage("repAsigMec.tablas.nombre"), TDSLanguageUtils.getMessage("repAsigMec.tablas.apellidos"), TDSLanguageUtils.getMessage("repAsigMec.tablas.repasignadas")
 	};
 	
 	private List<Usuari> mecanicosSeleccionados = new ArrayList<Usuari>() ;
@@ -85,44 +86,44 @@ public class ReparacionAsignarMecanico extends JFrame {
 	public ReparacionAsignarMecanico(GestorReparacionInterface conexion, final Usuari usuario, int ordenReparacion) {
 		this.gestorReparacion = conexion;
 		
-		setTitle("Asignación mecánico");
+		setTitle(TDSLanguageUtils.getMessage("repAsigMec.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 665, 366);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		JLabel lblAsignacionMecanico = new JLabel("Asignación Mecánico");
+		JLabel lblAsignacionMecanico = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.titulo"));
 		lblAsignacionMecanico.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblAsignacionMecanico.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		JLabel lblOrdenReparacion = new JLabel("Orden reparación");
+		JLabel lblOrdenReparacion = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.ordenrep"));
 		
 		txtOrdenReparacion = new JTextField();
 		txtOrdenReparacion.setColumns(10);
 		
-		JLabel lblMatricula = new JLabel("Matrícula");
+		JLabel lblMatricula = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.matricula"));
 		
 		txtMatricula = new JTextField();
 		txtMatricula.setColumns(10);
 		
-		JLabel lblMarca = new JLabel("Marca");
+		JLabel lblMarca = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.marca"));
 		
 		txtMarca = new JTextField();
 		txtMarca.setColumns(10);
 		
-		JLabel lblModelo = new JLabel("Modelo");
+		JLabel lblModelo = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.modelo"));
 		
 		txtModelo = new JTextField();
 		txtModelo.setColumns(10);
 		
-		JLabel lblMecanicoAsignado = new JLabel("Mecánico asignado a la reparación");
+		JLabel lblMecanicoAsignado = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.mecasignadorep"));
 		lblMecanicoAsignado.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		JLabel lblMecanicos = new JLabel("Mecánicos");
+		JLabel lblMecanicos = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.mecanicos"));
 		lblMecanicos.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		btnEliminar = new JButton("Eliminar");
+		btnEliminar = new JButton(TDSLanguageUtils.getMessage("repAsigMec.eliminar"));
 		btnEliminar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -130,12 +131,12 @@ public class ReparacionAsignarMecanico extends JFrame {
 			}
 		});
 		
-		lblMecanico = new JLabel("Mecánico");
+		lblMecanico = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.mecanico"));
 		
 		txtMecanico = new JTextField();
 		txtMecanico.setColumns(10);
 		
-		btnBuscar = new JButton("Buscar");
+		btnBuscar = new JButton(TDSLanguageUtils.getMessage("repAsigMec.buscar"));
 		btnBuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -150,7 +151,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 
 		});
 		
-		btnAsignar = new JButton("Asignar");
+		btnAsignar = new JButton(TDSLanguageUtils.getMessage("repAsigMec.asignar"));
 		btnAsignar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -158,7 +159,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 			}
 		});
 		
-		btnSalir = new JButton("Salir");
+		btnSalir = new JButton(TDSLanguageUtils.getMessage("repAsigMec.salir"));
 		btnSalir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -305,7 +306,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 				idMecanicoAnadir = getIdMecanicoSeleccionado(table2);
 				if (mecanicosSeleccionados != null) {
 					if (mecanicosSeleccionados.size() == 1) {
-						JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Debe eliminar el mecánico asignado a la reparación antes de añadir otro.", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(reparacionAsignarMecanico, TDSLanguageUtils.getMessage("repAsigMec.alert.eliminarmecasignado"), TDSLanguageUtils.getMessage("repAsigMec.alert"), JOptionPane.ERROR_MESSAGE);
 						existeMecanicoAsignado = true;
 					}
 				}
@@ -336,11 +337,11 @@ public class ReparacionAsignarMecanico extends JFrame {
 						TableModel model = new DefaultTableModel(rowData, columnNames1);
 						table1.setModel(model);
 					} else {
-						JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Este mecánico ya tiene dos reparaciones asignadas. Elija otro mecánico.", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(reparacionAsignarMecanico, TDSLanguageUtils.getMessage("repAsigMec.alert.mecanicorepasignadas"), TDSLanguageUtils.getMessage("repAsigMec.alert"), JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			} else {
-				JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Debe seleccionar una fila para poder añadirla.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionAsignarMecanico, TDSLanguageUtils.getMessage("repAsigMec.alert.seleccionarfila"), TDSLanguageUtils.getMessage("repAsigMec.alert"), JOptionPane.ERROR_MESSAGE);
 			}
 			
 		} catch (RemoteException e1) {

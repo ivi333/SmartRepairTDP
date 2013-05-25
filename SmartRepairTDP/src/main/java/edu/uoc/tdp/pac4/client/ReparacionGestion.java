@@ -36,6 +36,7 @@ import javax.swing.UIManager;
 import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Usuari;
+import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 import java.awt.event.MouseAdapter;
@@ -53,7 +54,7 @@ public class ReparacionGestion extends JFrame {
 	private static ReparacionGestion reparacionGestion;
 	private GestorReparacionInterface gestorReparacion;
 	private static final Object columnNames[] = {
-		"Orden Reparaci\u00F3n", "Fecha Entrada", "Contador Min", "Matr\u00EDcula", "Marca", "Modelo", "Observaciones", "Aceptada", "Asignada"
+		TDSLanguageUtils.getMessage("repGestion.tablas.reparacion"), TDSLanguageUtils.getMessage("repGestion.tablas.fentrada"), TDSLanguageUtils.getMessage("repGestion.tablas.contador"), TDSLanguageUtils.getMessage("repGestion.tablas.matricula"), TDSLanguageUtils.getMessage("repGestion.tablas.marca"), TDSLanguageUtils.getMessage("repGestion.tablas.modelo"), TDSLanguageUtils.getMessage("repGestion.tablas.observaciones"), TDSLanguageUtils.getMessage("repGestion.tablas.aceptada"), TDSLanguageUtils.getMessage("repGestion.tablas.asignada")
 	};
 	
 	private JTable table;
@@ -89,7 +90,7 @@ public class ReparacionGestion extends JFrame {
 		this.gestorReparacion = conexion;
 	
 		setSize(new Dimension(580, 380));
-		setTitle("Gestión de reparaciones");
+		setTitle(TDSLanguageUtils.getMessage("repGestion.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 582, 380);
 		contentPane = new JPanel();
@@ -97,36 +98,36 @@ public class ReparacionGestion extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		JLabel lblReparaciones = new JLabel("Reparaciones");
+		JLabel lblReparaciones = new JLabel(TDSLanguageUtils.getMessage("repGestion.reparaciones"));
 		lblReparaciones.setBackground(UIManager.getColor("Button.background"));
 		lblReparaciones.setHorizontalAlignment(SwingConstants.CENTER);
 		lblReparaciones.setFont(new Font("Tahoma", Font.BOLD, 30));
 		
 		cmbFiltro = new JComboBox();
-		cmbFiltro.setModel(new DefaultComboBoxModel(new String[] {"Todas", "Orden Reparación", "Matricula", "Marca", "Modelo", "Aceptadas", "No Aceptadas", "Asignadas", "No Asignadas"}));
+		cmbFiltro.setModel(new DefaultComboBoxModel(new String[] {TDSLanguageUtils.getMessage("repGestion.filtro.todas"), TDSLanguageUtils.getMessage("repGestion.filtro.ordenrep"), TDSLanguageUtils.getMessage("repGestion.filtro.matricula"), TDSLanguageUtils.getMessage("repGestion.filtro.marca"), TDSLanguageUtils.getMessage("repGestion.filtro.modelo"), TDSLanguageUtils.getMessage("repGestion.filtro.aceptadas"), TDSLanguageUtils.getMessage("repGestion.filtro.noaceptadas"), TDSLanguageUtils.getMessage("repGestion.filtro.asignadas"), TDSLanguageUtils.getMessage("repGestion.filtro.noasignadas")}));
 		
-		JLabel lblDe = new JLabel("De");
+		JLabel lblDe = new JLabel(TDSLanguageUtils.getMessage("repGestion.filtro.de"));
 		
 		txtDe = new JTextField();
 		txtDe.setColumns(10);
 		
-		JLabel lblHasta = new JLabel("Hasta");
+		JLabel lblHasta = new JLabel(TDSLanguageUtils.getMessage("repGestion.filtro.hasta"));
 		
 		txtHasta = new JTextField();
 		txtHasta.setColumns(10);
 		
-		JLabel lblNombreCliente = new JLabel("Nombre cliente");
+		JLabel lblNombreCliente = new JLabel(TDSLanguageUtils.getMessage("repGestion.filtro.nombrecli"));
 		
 		txtNombreCliente = new JTextField();
 		txtNombreCliente.setColumns(10);
 		
-		JLabel lblApellidoCliente = new JLabel("Apellido cliente");
+		JLabel lblApellidoCliente = new JLabel(TDSLanguageUtils.getMessage("repGestion.filtro.apellidocli"));
 		
 		txtApellidoCliente = new JTextField();
 		txtApellidoCliente.setColumns(10);
 		
 		
-		JButton btnActualizar = new JButton("Actualizar");
+		JButton btnActualizar = new JButton(TDSLanguageUtils.getMessage("repGestion.actualizar"));
 		btnActualizar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -135,14 +136,14 @@ public class ReparacionGestion extends JFrame {
 					if (String.valueOf(txtDe.getText()) != "") {
 						if (!validarFecha(txtDe.getText())) {
 							fechaValida = false;
-							JOptionPane.showMessageDialog(reparacionGestion, "Debe indicar una fecha 'De' valida.", "Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.fdevalida"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					
 					if (String.valueOf(txtHasta.getText()) != "") {
 						if (!validarFecha(txtHasta.getText())) {
 							fechaValida = false;
-							JOptionPane.showMessageDialog(reparacionGestion, "Debe indicar una fecha 'Hasta' valida.", "Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.fhastavalida"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					
@@ -162,7 +163,7 @@ public class ReparacionGestion extends JFrame {
 			}
 		});
 		
-		btnDetalle = new JButton("Detalle");
+		btnDetalle = new JButton(TDSLanguageUtils.getMessage("repGestion.detalle"));
 		btnDetalle.setEnabled(false);
 		btnDetalle.addMouseListener(new MouseAdapter() {
 			@Override
@@ -178,7 +179,7 @@ public class ReparacionGestion extends JFrame {
 						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 						dialog.setVisible(true);
 					} else {
-						JOptionPane.showMessageDialog(reparacionGestion, "Debe seleccionar una fila para poder ver el detalle de la reparación", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.seleccionarfila"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
 					}
 					
 				} catch (RemoteException e1) {
@@ -189,7 +190,7 @@ public class ReparacionGestion extends JFrame {
 			}
 		});
 		
-		btnAceptar = new JButton("Aceptar");
+		btnAceptar = new JButton(TDSLanguageUtils.getMessage("repGestion.aceptar"));
 		btnAceptar.setEnabled(false);
 		btnAceptar.addMouseListener(new MouseAdapter() {
 			@Override
@@ -205,7 +206,7 @@ public class ReparacionGestion extends JFrame {
 						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 						dialog.setVisible(true);
 					} else {
-						JOptionPane.showMessageDialog(reparacionGestion, "Debe seleccionar una fila para poder ver el detalle de la reparación", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.seleccionarfilapiezas"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (RemoteException e) {
 					e.printStackTrace();
@@ -215,7 +216,7 @@ public class ReparacionGestion extends JFrame {
 			}
 		});
 		
-		btnAsignar = new JButton("Asignar");
+		btnAsignar = new JButton(TDSLanguageUtils.getMessage("repGestion.asignar"));
 		btnAsignar.setEnabled(false);
 		btnAsignar.addMouseListener(new MouseAdapter() {
 			@Override
@@ -231,7 +232,7 @@ public class ReparacionGestion extends JFrame {
 						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 						dialog.setVisible(true);
 					} else {
-						JOptionPane.showMessageDialog(reparacionGestion, "Debe seleccionar una fila para poder ver el detalle de la reparación", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.seleccionarfilamec"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (RemoteException e1) {
 					e1.printStackTrace();
@@ -241,7 +242,7 @@ public class ReparacionGestion extends JFrame {
 			}
 		});
 		
-		btnFinalizar = new JButton("Finalizar");
+		btnFinalizar = new JButton(TDSLanguageUtils.getMessage("repGestion.finalizar"));
 		btnFinalizar.setEnabled(false);
 		btnFinalizar.addMouseListener(new MouseAdapter() {
 			@Override
@@ -251,7 +252,7 @@ public class ReparacionGestion extends JFrame {
 					if (idFilaSeleccionada >= 0) {
 						gestorReparacion.setReparacionFinalizada(getFilaSeleccionada());
 					} else {
-						JOptionPane.showMessageDialog(reparacionGestion, "Debe seleccionar una fila para poder ver el detalle de la reparación", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.seleccionarfilafinalizar"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (RemoteException e1) {
 					e1.printStackTrace();
@@ -261,7 +262,7 @@ public class ReparacionGestion extends JFrame {
 			}
 		});
 		
-		JButton btnSalir = new JButton("Salir");
+		JButton btnSalir = new JButton(TDSLanguageUtils.getMessage("repGestion.salir"));
 		btnSalir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {

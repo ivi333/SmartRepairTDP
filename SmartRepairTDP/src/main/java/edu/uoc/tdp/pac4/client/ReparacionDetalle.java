@@ -32,6 +32,7 @@ import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Usuari;
+import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 
@@ -63,7 +64,7 @@ public class ReparacionDetalle extends JFrame {
 	private JTable table;
 	
 	private static final Object columnNames[] = {
-		"C\u00F3digo", "Descripci\u00F3n", "Unidades", "Disponible"
+		TDSLanguageUtils.getMessage("repDetalle.tablas.codigo"), TDSLanguageUtils.getMessage("repDetalle.tablas.descripcion"), TDSLanguageUtils.getMessage("repDetalle.tablas.unidades"), TDSLanguageUtils.getMessage("repDetalle.tablas.disponible")
 	};
 	private JScrollPane scrollPane;
 	private JButton btnPlay;
@@ -91,74 +92,74 @@ public class ReparacionDetalle extends JFrame {
 	public ReparacionDetalle(GestorReparacionInterface conexion, final Usuari usuario, final int ordenReparacion) {
 		this.gestorReparacion = conexion;
 		
-		setTitle("Detalle reparación asignada");
+		setTitle(TDSLanguageUtils.getMessage("repDetalle.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 668, 446);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		JLabel lblDetalleReparacionAsignada = new JLabel("Detalle Reparación Asignada");
+		JLabel lblDetalleReparacionAsignada = new JLabel(TDSLanguageUtils.getMessage("repDetalle.titulo"));
 		lblDetalleReparacionAsignada.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblDetalleReparacionAsignada.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		JLabel lblNombreMecanico = new JLabel("Nombre Mecánico");
+		JLabel lblNombreMecanico = new JLabel(TDSLanguageUtils.getMessage("repDetalle.nombremec"));
 		
 		txtNombreMecanico = new JTextField();
 		txtNombreMecanico.setColumns(10);
 		
-		JLabel lblApellido = new JLabel("Apellido");
+		JLabel lblApellido = new JLabel(TDSLanguageUtils.getMessage("repDetalle.apellido"));
 		
 		txtApellido = new JTextField();
 		txtApellido.setColumns(10);
 		
-		JLabel lblId = new JLabel("Id");
+		JLabel lblId = new JLabel(TDSLanguageUtils.getMessage("repDetalle.id"));
 		
 		txtId = new JTextField();
 		txtId.setColumns(10);
 		
-		JLabel lblOrdenReparacion = new JLabel("Orden Reparación");
+		JLabel lblOrdenReparacion = new JLabel(TDSLanguageUtils.getMessage("repDetalle.ordenrep"));
 		
 		txtOrdenReparacion = new JTextField();
 		txtOrdenReparacion.setColumns(10);
 		
-		JLabel lblMatricula = new JLabel("Matrícula");
+		JLabel lblMatricula = new JLabel(TDSLanguageUtils.getMessage("repDetalle.matricula"));
 		
 		txtMatricula = new JTextField();
 		txtMatricula.setColumns(10);
 		
-		JLabel lblMarca = new JLabel("Marca");
+		JLabel lblMarca = new JLabel(TDSLanguageUtils.getMessage("repDetalle.marca"));
 		
 		txtMarca = new JTextField();
 		txtMarca.setColumns(10);
 		
-		JLabel lblModelo = new JLabel("Modelo");
+		JLabel lblModelo = new JLabel(TDSLanguageUtils.getMessage("repDetalle.modelo"));
 		
 		txtModelo = new JTextField();
 		txtModelo.setColumns(10);
 		
-		JLabel lblObservaciones = new JLabel("Observaciones para la reparación");
+		JLabel lblObservaciones = new JLabel(TDSLanguageUtils.getMessage("repDetalle.obsrep"));
 		
 		txtObservaciones = new JTextArea();
 		
-		JLabel lblPiezasAsignadas = new JLabel("Piezas asignadas a la reparación");
+		JLabel lblPiezasAsignadas = new JLabel(TDSLanguageUtils.getMessage("repDetalle.piezasrep"));
 		
-		JLabel lblFechas = new JLabel("Fechas");
+		JLabel lblFechas = new JLabel(TDSLanguageUtils.getMessage("repDetalle.fechas"));
 		lblFechas.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		JLabel lblContador = new JLabel("Contador");
+		JLabel lblContador = new JLabel(TDSLanguageUtils.getMessage("repDetalle.contador"));
 		lblContador.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		JLabel lblFechaAsignacion = new JLabel("Fecha Asignación");
+		JLabel lblFechaAsignacion = new JLabel(TDSLanguageUtils.getMessage("repDetalle.fasignacion"));
 		lblFechaAsignacion.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		txtFechaAsignacion = new JTextField();
 		txtFechaAsignacion.setColumns(10);
 		
-		JButton btnFechaInicio = new JButton("Fecha inicio");
+		JButton btnFechaInicio = new JButton(TDSLanguageUtils.getMessage("repDetalle.finicio"));
 		btnFechaInicio.setEnabled(false);
 		
-		JButton btnFechaFin = new JButton("Fecha Fin");
+		JButton btnFechaFin = new JButton(TDSLanguageUtils.getMessage("repDetalle.ffin"));
 		btnFechaFin.setEnabled(false);
 		
 		txtFechaInicio = new JTextField();
@@ -167,10 +168,10 @@ public class ReparacionDetalle extends JFrame {
 		txtFechaFin = new JTextField();
 		txtFechaFin.setColumns(10);
 		
-		lblMinutos = new JLabel("0 min");
+		lblMinutos = new JLabel(TDSLanguageUtils.getMessage("repDetalle.ceromin"));
 		lblMinutos.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		btnPlay = new JButton("Play");
+		btnPlay = new JButton(TDSLanguageUtils.getMessage("repDetalle.play"));
 		btnPlay.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -186,7 +187,7 @@ public class ReparacionDetalle extends JFrame {
 			}
 		});
 		
-		btnStop = new JButton("Stop");
+		btnStop = new JButton(TDSLanguageUtils.getMessage("repDetalle.stop"));
 		btnStop.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -204,7 +205,7 @@ public class ReparacionDetalle extends JFrame {
 			}
 		});
 		
-		JButton btnSalir = new JButton("Salir");
+		JButton btnSalir = new JButton(TDSLanguageUtils.getMessage("repDetalle.salir"));
 		btnSalir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -374,9 +375,9 @@ public class ReparacionDetalle extends JFrame {
 			rowData[z][1] = String.valueOf(bean.getDescipcio());
 			rowData[z][2] = String.valueOf(bean.getCantidad());
 			if (bean.getCantidad() <= bean.getStock()) {
-				rowData[z][3] = "Si";
+				rowData[z][3] = TDSLanguageUtils.getMessage("repDetalle.si");
 			} else {
-				rowData[z][3] = "No";
+				rowData[z][3] = TDSLanguageUtils.getMessage("repDetalle.no");
 			}
 			z++;
 		}

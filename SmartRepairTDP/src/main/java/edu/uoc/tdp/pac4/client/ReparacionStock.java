@@ -30,6 +30,7 @@ import javax.swing.JScrollPane;
 
 import edu.uoc.tdp.pac4.beans.DetallPeca;
 import edu.uoc.tdp.pac4.beans.Usuari;
+import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 import javax.swing.DefaultComboBoxModel;
@@ -83,7 +84,7 @@ public class ReparacionStock extends JFrame {
 		this.gestorReparacion = conexion;
 		this.usuario = usuario;
 		
-		setTitle("Stock Piezas");
+		setTitle(TDSLanguageUtils.getMessage("repStock.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 502, 413);
 		contentPane = new JPanel();
@@ -91,17 +92,18 @@ public class ReparacionStock extends JFrame {
 		setContentPane(contentPane);
 		
 		lblStockPiezas = new JTextField();
+		lblStockPiezas.setEditable(false);
 		lblStockPiezas.setHorizontalAlignment(SwingConstants.CENTER);
-		lblStockPiezas.setText("Stock Piezas");
+		lblStockPiezas.setText(TDSLanguageUtils.getMessage("repStock.titulo"));
 		lblStockPiezas.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblStockPiezas.setColumns(10);
 		
-		JLabel lblFiltrar = new JLabel("Filtrar");
+		JLabel lblFiltrar = new JLabel(TDSLanguageUtils.getMessage("repStock.filtrar"));
 		
 		cmbFiltrar = new JComboBox();
-		cmbFiltrar.setModel(new DefaultComboBoxModel(new String[] {"Todas", "Código", "Marca", "Stock Mín => Stock", "Precio"}));
+		cmbFiltrar.setModel(new DefaultComboBoxModel(new String[] {TDSLanguageUtils.getMessage("repGestion.filtro.todas"), TDSLanguageUtils.getMessage("repGestion.filtro.codigo"), TDSLanguageUtils.getMessage("repGestion.filtro.marca"), TDSLanguageUtils.getMessage("repGestion.filtro.stockmin"), TDSLanguageUtils.getMessage("repGestion.filtro.precio")}));
 		
-		JButton btnSeleccionarTodos = new JButton("Seleccionar todos");
+		JButton btnSeleccionarTodos = new JButton(TDSLanguageUtils.getMessage("repStock.seltodos"));
 		btnSeleccionarTodos.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -109,7 +111,7 @@ public class ReparacionStock extends JFrame {
 			}
 		});
 		
-		JButton btnAnadir = new JButton("Añadir");
+		JButton btnAnadir = new JButton(TDSLanguageUtils.getMessage("repStock.anadir"));
 		btnAnadir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -117,7 +119,7 @@ public class ReparacionStock extends JFrame {
 			}
 		});
 		
-		JLabel lblPiezasAnadidas = new JLabel("Piezas añadidas para realizar el pedido");
+		JLabel lblPiezasAnadidas = new JLabel(TDSLanguageUtils.getMessage("repStock.piezasanadidas"));
 		lblPiezasAnadidas.setFont(new Font("Tahoma", Font.BOLD, 20));
 		lblPiezasAnadidas.setHorizontalAlignment(SwingConstants.CENTER);
 		
@@ -132,7 +134,7 @@ public class ReparacionStock extends JFrame {
 		txtNumero = new JTextField();
 		txtNumero.setColumns(10);
 		
-		JButton btnRealizarPedido = new JButton("Realizar pedido");
+		JButton btnRealizarPedido = new JButton(TDSLanguageUtils.getMessage("repStock.realizarpedido"));
 		btnRealizarPedido.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -140,7 +142,7 @@ public class ReparacionStock extends JFrame {
 			}
 		});
 		
-		JButton btnEliminar = new JButton("Eliminar");
+		JButton btnEliminar = new JButton(TDSLanguageUtils.getMessage("repStock.eliminar"));
 		btnEliminar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -148,7 +150,7 @@ public class ReparacionStock extends JFrame {
 			}
 		});
 		
-		JButton btnSalir = new JButton("Salir");
+		JButton btnSalir = new JButton(TDSLanguageUtils.getMessage("repStock.salir"));
 		btnSalir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -163,7 +165,7 @@ public class ReparacionStock extends JFrame {
 		txtFiltrar = new JTextField();
 		txtFiltrar.setColumns(10);
 		
-		JButton btnFiltrar = new JButton("Filtrar");
+		JButton btnFiltrar = new JButton(TDSLanguageUtils.getMessage("repStock.filtrar"));
 		btnFiltrar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -315,7 +317,7 @@ public class ReparacionStock extends JFrame {
 				if (piezasSeleccionadas != null) {
 					for (int i=0; i<piezasSeleccionadas.size(); i++) {
 						if (piezasSeleccionadas.get(i).getCodiPeca() == idPiezaAnadir) {
-							JOptionPane.showMessageDialog(reparacionStock, "Esta pieza ya ha sido añadida anteriormente. Puede aumentar el número de piezas si lo desea.", "Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(reparacionStock, TDSLanguageUtils.getMessage("repStock.alert.piezayaanadida"), TDSLanguageUtils.getMessage("repStock.alert"), JOptionPane.ERROR_MESSAGE);
 							piezaEncontrada = true;
 						}
 					}
@@ -382,7 +384,7 @@ public class ReparacionStock extends JFrame {
 				
 				
 			} else {
-				JOptionPane.showMessageDialog(reparacionStock, "Debe seleccionar una fila para poder añadirla.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionStock, TDSLanguageUtils.getMessage("repStock.alert.seleccionarfila"), TDSLanguageUtils.getMessage("repStock.alert"), JOptionPane.ERROR_MESSAGE);
 			}
 			
 		} catch (RemoteException e1) {
@@ -475,7 +477,7 @@ public class ReparacionStock extends JFrame {
 				TableModel model = new DefaultTableModel(rowData, columnNames1);
 				table1.setModel(model);
 		} else {
-			JOptionPane.showMessageDialog(reparacionStock, "Debe seleccionar una fila para poder eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(reparacionStock, TDSLanguageUtils.getMessage("repStock.alert.seleccionarfilaelim"), TDSLanguageUtils.getMessage("repStock.alert"), JOptionPane.ERROR_MESSAGE);
 		}
 			
 		} catch (RemoteException e) {
@@ -515,7 +517,7 @@ public class ReparacionStock extends JFrame {
 				
 				
 			} else {
-				JOptionPane.showMessageDialog(reparacionStock, "Debe seleccionar una fila para poder añadir más unidades.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionStock, TDSLanguageUtils.getMessage("repStock.alert.anadirunidades"), TDSLanguageUtils.getMessage("repStock.alert"), JOptionPane.ERROR_MESSAGE);
 			}
 			
 		} catch (RemoteException e1) {
@@ -533,7 +535,7 @@ public class ReparacionStock extends JFrame {
 					gestorReparacion.setPiezaComanda(false, pieza.getCodiPeca(), usuario.getTaller(), 0, pieza.getCantidad(), false);
 				}
 			} else {
-				JOptionPane.showMessageDialog(reparacionStock, "Debe añadir piezas antes de realizar el pedido.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionStock, TDSLanguageUtils.getMessage("repStock.alert.anadirpiezas"), TDSLanguageUtils.getMessage("repStock.alert"), JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
