@@ -85,7 +85,7 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 	public static final String QUERY_GET_USUARIOS = "select id, taller, usuari, perfil, nif, nom, cognoms, contrasenya, actiu, dataAlta, dataModificacio, dataBaixa, reparacionsAssignades from usuari ";
 	public static final String QUERY_ASIGNAR_USUARIO_NUMERO_REPARACIONES = "update usuari set reparacionsassignades = ? where id = ?";
 	public static final String QUERY_ASIGNAR_REPARACIONES_MECANICO = "update mecanic set idrep1 = ?, idrep2 = ? where idmecanic = ?";
-	public static final String QUERY_ASIGNAR_MECANICO_REPARACION = "update reparacio set idmecanic = ? where ordrereparacio = ?";
+	public static final String QUERY_ASIGNAR_MECANICO_REPARACION = "update reparacio set idmecanic = ?, dataassignacio = CURRENT_DATE where ordrereparacio = ?";
 	public static final String QUERY_GET_STOCK_MINIMO_PIEZA = "select stockminim from stockpeca where codipeca = ?";
 	public static final String QUERY_GET_MARCA_PIEZA = "select marca from peca where codipeca = ?";
 	public static final String QUERY_GET_MODELO_PIEZA = "select model from peca where codipeca = ?";
@@ -93,6 +93,8 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 	public static final String QUERY_SET_HORAFIN_REPARACION = "update reparacio set datafi = CURRENT_TIMESTAMP where ordrereparacio = ?";
 	public static final String QUERY_GET_HORAINI_REPARACION = "select datainici from reparacio where ordrereparacio = ?";
 	public static final String QUERY_GET_HORAFIN_REPARACION = "select datafi from reparacio where ordrereparacio = ?";
+	public static final String QUERY_GET_NUMCOMANDAS_PENDIENTES = "select count(*) from comanda where ordrereparacio = ? and estat = false";
+	public static final String QUERY_SET_CONTADOR_REPARACION = "update reparacio set comptador = ? where ordrereparacio = ?";
 	
 	
 	public GestorReparacionDAOImpl() {
@@ -1186,6 +1188,59 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			if (rs!=null) {
 				try {
 					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+
+	public int getNumComandasPendientes(int ordenReparacion)
+			throws DAOException {
+		getConnectionDB();
+		int result = 0;
+		PreparedStatement ps = createPrepareStatment(QUERY_GET_NUMCOMANDAS_PENDIENTES, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			ps.setInt(1, ordenReparacion);
+			rs = ps.executeQuery();
+			if (rs.next()){
+				result = rs.getInt(1);
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+
+	public void setContadorReparacion(int ordenReparacion, double contador) throws DAOException {
+		getConnectionDB();
+		PreparedStatement ps = createPrepareStatment(QUERY_SET_CONTADOR_REPARACION, ResultSet.CONCUR_UPDATABLE);
+		try {
+			ps.setDouble(1, contador);
+			ps.setInt(2, ordenReparacion);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (ps!=null) {
+				try {ps.close();
 				} catch (SQLException e) {
 					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
 				}

@@ -63,6 +63,7 @@ public class ReparacionMainMenu extends JFrame {
 	private JMenu mnNewMenu_3;
 	private JMenuItem mntmReparacinAsignada;
 	private JMenuItem mntmGestinReparaciones;
+	private JMenuItem mntmStockPiezas;
 
 	/**
 	 * Launch the application.
@@ -191,6 +192,20 @@ public class ReparacionMainMenu extends JFrame {
 			}
 		});
 		mnNewMenu_2.add(mntmGestinReparaciones);
+		
+		mntmStockPiezas = new JMenuItem("Stock piezas");
+		mntmStockPiezas.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				ReparacionStock dialog = new ReparacionStock(gestorReparacion, usuari);
+				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+				dialog.setSize(1000, 500);
+				dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+			}
+		});
+		mnNewMenu_2.add(mntmStockPiezas);
 		
 		mnNewMenu_3 = new JMenu("Estadísticas");
 		mnNewMenu_3.setEnabled(true);

@@ -22,6 +22,7 @@ import javax.swing.table.TableModel;
 import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Mecanic;
 import edu.uoc.tdp.pac4.beans.Usuari;
+import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 import java.awt.event.MouseAdapter;
@@ -40,7 +41,6 @@ public class ReparacionAsignarMecanico extends JFrame {
 	private JTextField txtMarca;
 	private JTextField txtModelo;
 	private JButton btnEliminar;
-	private JLabel lblMecanico;
 	private JTextField txtMecanico;
 	private JButton btnBuscar;
 	private JButton btnAsignar;
@@ -54,13 +54,14 @@ public class ReparacionAsignarMecanico extends JFrame {
 	private JScrollPane scrollPanel2;
 	
 	private static final Object columnNames1[] = {
-		"Id", "Nombre", "Apellidos"
+		TDSLanguageUtils.getMessage("repAsigMec.tablas.id"), TDSLanguageUtils.getMessage("repAsigMec.tablas.nombre"), TDSLanguageUtils.getMessage("repAsigMec.tablas.apellidos")
 	};
 	private static final Object columnNames2[] = {
-		"Id", "Nombre", "Apellidos", "Reparaciones asignadas"
+		TDSLanguageUtils.getMessage("repAsigMec.tablas.id"), TDSLanguageUtils.getMessage("repAsigMec.tablas.nombre"), TDSLanguageUtils.getMessage("repAsigMec.tablas.apellidos"), TDSLanguageUtils.getMessage("repAsigMec.tablas.repasignadas")
 	};
 	
 	private List<Usuari> mecanicosSeleccionados = new ArrayList<Usuari>() ;
+	private int ordenReparacion;
 	
 
 	/**
@@ -84,45 +85,46 @@ public class ReparacionAsignarMecanico extends JFrame {
 	 */
 	public ReparacionAsignarMecanico(GestorReparacionInterface conexion, final Usuari usuario, int ordenReparacion) {
 		this.gestorReparacion = conexion;
+		this.ordenReparacion = ordenReparacion;
 		
-		setTitle("Asignación mecánico");
+		setTitle(TDSLanguageUtils.getMessage("repAsigMec.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 665, 366);
+		setBounds(100, 100, 665, 460);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		JLabel lblAsignacionMecanico = new JLabel("Asignación Mecánico");
+		JLabel lblAsignacionMecanico = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.titulo"));
 		lblAsignacionMecanico.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblAsignacionMecanico.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		JLabel lblOrdenReparacion = new JLabel("Orden reparación");
+		JLabel lblOrdenReparacion = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.ordenrep"));
 		
 		txtOrdenReparacion = new JTextField();
 		txtOrdenReparacion.setColumns(10);
 		
-		JLabel lblMatricula = new JLabel("Matrícula");
+		JLabel lblMatricula = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.matricula"));
 		
 		txtMatricula = new JTextField();
 		txtMatricula.setColumns(10);
 		
-		JLabel lblMarca = new JLabel("Marca");
+		JLabel lblMarca = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.marca"));
 		
 		txtMarca = new JTextField();
 		txtMarca.setColumns(10);
 		
-		JLabel lblModelo = new JLabel("Modelo");
+		JLabel lblModelo = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.modelo"));
 		
 		txtModelo = new JTextField();
 		txtModelo.setColumns(10);
 		
-		JLabel lblMecanicoAsignado = new JLabel("Mecánico asignado a la reparación");
+		JLabel lblMecanicoAsignado = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.mecasignadorep"));
 		lblMecanicoAsignado.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		JLabel lblMecanicos = new JLabel("Mecánicos");
+		JLabel lblMecanicos = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.mecanicos"));
 		lblMecanicos.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		btnEliminar = new JButton("Eliminar");
+		btnEliminar = new JButton(TDSLanguageUtils.getMessage("repAsigMec.eliminar"));
 		btnEliminar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -130,12 +132,10 @@ public class ReparacionAsignarMecanico extends JFrame {
 			}
 		});
 		
-		lblMecanico = new JLabel("Mecánico");
-		
 		txtMecanico = new JTextField();
 		txtMecanico.setColumns(10);
 		
-		btnBuscar = new JButton("Buscar");
+		btnBuscar = new JButton(TDSLanguageUtils.getMessage("repAsigMec.buscar"));
 		btnBuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -150,7 +150,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 
 		});
 		
-		btnAsignar = new JButton("Asignar");
+		btnAsignar = new JButton(TDSLanguageUtils.getMessage("repAsigMec.asignar"));
 		btnAsignar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -158,7 +158,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 			}
 		});
 		
-		btnSalir = new JButton("Salir");
+		btnSalir = new JButton(TDSLanguageUtils.getMessage("repAsigMec.salir"));
 		btnSalir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -169,12 +169,13 @@ public class ReparacionAsignarMecanico extends JFrame {
 		scrollPanel1 = new JScrollPane();
 		
 		scrollPanel2 = new JScrollPane();
+		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 							.addComponent(lblAsignacionMecanico, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 							.addGroup(gl_contentPane.createSequentialGroup()
@@ -194,28 +195,30 @@ public class ReparacionAsignarMecanico extends JFrame {
 								.addPreferredGap(ComponentPlacement.UNRELATED)
 								.addComponent(txtModelo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblMecanicoAsignado, GroupLayout.PREFERRED_SIZE, 298, GroupLayout.PREFERRED_SIZE)
-							.addGap(36)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblMecanicos, GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
+								.addComponent(scrollPanel1, GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+								.addComponent(lblMecanicoAsignado, GroupLayout.PREFERRED_SIZE, 298, GroupLayout.PREFERRED_SIZE)
 								.addGroup(gl_contentPane.createSequentialGroup()
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(lblMecanico)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addGap(10)
+									.addComponent(btnEliminar)))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(10)
 									.addComponent(txtMecanico, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED)
+									.addPreferredGap(ComponentPlacement.UNRELATED)
 									.addComponent(btnBuscar)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnAsignar))
-								.addComponent(btnSalir, Alignment.TRAILING)))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(220)
-							.addComponent(btnEliminar))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(scrollPanel1, GroupLayout.PREFERRED_SIZE, 296, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(scrollPanel2, GroupLayout.PREFERRED_SIZE, 320, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap())
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+										.addComponent(lblMecanicos, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
+										.addComponent(btnAsignar)))
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+									.addComponent(scrollPanel2, GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
+									.addGroup(gl_contentPane.createSequentialGroup()
+										.addPreferredGap(ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
+										.addComponent(btnSalir))))
+							.addGap(43)))
+					.addGap(0))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -237,19 +240,18 @@ public class ReparacionAsignarMecanico extends JFrame {
 						.addComponent(lblMecanicoAsignado)
 						.addComponent(lblMecanicos))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+						.addComponent(scrollPanel2, 0, 0, Short.MAX_VALUE)
+						.addComponent(scrollPanel1, GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPanel1, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
-						.addComponent(scrollPanel2, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE))
-					.addGap(9)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnEliminar)
-						.addComponent(txtMecanico, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblMecanico)
-						.addComponent(btnBuscar)
-						.addComponent(btnAsignar))
-					.addGap(18)
-					.addComponent(btnSalir)
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+							.addComponent(txtMecanico, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(btnBuscar)
+							.addComponent(btnAsignar)))
+					.addPreferredGap(ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+					.addComponent(btnSalir))
 		);
 		
 		table2 = new JTable();
@@ -305,7 +307,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 				idMecanicoAnadir = getIdMecanicoSeleccionado(table2);
 				if (mecanicosSeleccionados != null) {
 					if (mecanicosSeleccionados.size() == 1) {
-						JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Debe eliminar el mecánico asignado a la reparación antes de añadir otro.", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(reparacionAsignarMecanico, TDSLanguageUtils.getMessage("repAsigMec.alert.eliminarmecasignado"), TDSLanguageUtils.getMessage("repAsigMec.alert"), JOptionPane.ERROR_MESSAGE);
 						existeMecanicoAsignado = true;
 					}
 				}
@@ -336,11 +338,11 @@ public class ReparacionAsignarMecanico extends JFrame {
 						TableModel model = new DefaultTableModel(rowData, columnNames1);
 						table1.setModel(model);
 					} else {
-						JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Este mecánico ya tiene dos reparaciones asignadas. Elija otro mecánico.", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(reparacionAsignarMecanico, TDSLanguageUtils.getMessage("repAsigMec.alert.mecanicorepasignadas"), TDSLanguageUtils.getMessage("repAsigMec.alert"), JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			} else {
-				JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Debe seleccionar una fila para poder añadirla.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionAsignarMecanico, TDSLanguageUtils.getMessage("repAsigMec.alert.seleccionarfila"), TDSLanguageUtils.getMessage("repAsigMec.alert"), JOptionPane.ERROR_MESSAGE);
 			}
 			
 		} catch (RemoteException e1) {
@@ -353,42 +355,47 @@ public class ReparacionAsignarMecanico extends JFrame {
 	private void eliminarMecanico() {
 		try {
 			if (table1.getSelectedRowCount() == 1) {
-				int idMecanico;
-				idMecanico = getIdMecanicoSeleccionado(table1);
-				if (mecanicosSeleccionados != null) {
-					for (int i=0; i<mecanicosSeleccionados.size(); i++) {
-						if (mecanicosSeleccionados.get(i).getId() == idMecanico) {
-							mecanicosSeleccionados.remove(i);
+				DetallReparacio reparacionAct = gestorReparacion.getDetalleReparacion(ordenReparacion);
+				if (!String.valueOf(reparacionAct.getDataInici()).contains("-")) {
+					int idMecanico;
+					idMecanico = getIdMecanicoSeleccionado(table1);
+					if (mecanicosSeleccionados != null) {
+						for (int i=0; i<mecanicosSeleccionados.size(); i++) {
+							if (mecanicosSeleccionados.get(i).getId() == idMecanico) {
+								mecanicosSeleccionados.remove(i);
+							}
 						}
 					}
-				}
-				
-				int ordenReparacion = Integer.valueOf(txtOrdenReparacion.getText());
-				int ordenReparacion1 = 0;
-				int ordenReparacion2 = 0;
-				Usuari mecanico = gestorReparacion.getUsuario(idMecanico);
-				if (mecanico.getReparacionsAssignades() == 2) {
-					Mecanic objMecanico = gestorReparacion.getMecanico(idMecanico);
-					if (objMecanico.getIdrep1() == ordenReparacion) {
-						ordenReparacion1 = objMecanico.getIdrep2();
-					} else {
-						ordenReparacion1 = objMecanico.getIdrep1();
+					
+					int ordenReparacion = Integer.valueOf(txtOrdenReparacion.getText());
+					int ordenReparacion1 = 0;
+					int ordenReparacion2 = 0;
+					Usuari mecanico = gestorReparacion.getUsuario(idMecanico);
+					if (mecanico.getReparacionsAssignades() == 2) {
+						Mecanic objMecanico = gestorReparacion.getMecanico(idMecanico);
+						if (objMecanico.getIdrep1() == ordenReparacion) {
+							ordenReparacion1 = objMecanico.getIdrep2();
+						} else {
+							ordenReparacion1 = objMecanico.getIdrep1();
+						}
 					}
+					actualizarAsignacion(true, idMecanico, ordenReparacion, ordenReparacion1, ordenReparacion2);
+				
+					Object rowData [][] = new Object [mecanicosSeleccionados.size()][3];
+					int z=0;
+					for (Usuari bean : mecanicosSeleccionados) {
+						rowData[z][0] = String.valueOf(bean.getId());
+						rowData[z][1] = String.valueOf(bean.getNom());
+						rowData[z][2] = String.valueOf(bean.getCognoms());
+						z++;
+					}
+					TableModel model = new DefaultTableModel(rowData, columnNames1);
+					table1.setModel(model);
+				} else {
+					JOptionPane.showMessageDialog(reparacionAsignarMecanico, TDSLanguageUtils.getMessage("repAsigMec.alert.reparacioniniciada"), TDSLanguageUtils.getMessage("repAsigMec.alert"), JOptionPane.ERROR_MESSAGE);
 				}
-				actualizarAsignacion(true, idMecanico, ordenReparacion, ordenReparacion1, ordenReparacion2);
-			
-				Object rowData [][] = new Object [mecanicosSeleccionados.size()][3];
-				int z=0;
-				for (Usuari bean : mecanicosSeleccionados) {
-					rowData[z][0] = String.valueOf(bean.getId());
-					rowData[z][1] = String.valueOf(bean.getNom());
-					rowData[z][2] = String.valueOf(bean.getCognoms());
-					z++;
-				}
-				TableModel model = new DefaultTableModel(rowData, columnNames1);
-				table1.setModel(model);
 			} else {
-				JOptionPane.showMessageDialog(reparacionAsignarMecanico, "Debe seleccionar una fila para poder eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionAsignarMecanico, TDSLanguageUtils.getMessage("repAsigMec.alert.seleccionarfilaelim"), TDSLanguageUtils.getMessage("repAsigMec.alert"), JOptionPane.ERROR_MESSAGE);
 			}
 			
 		} catch (RemoteException e) {

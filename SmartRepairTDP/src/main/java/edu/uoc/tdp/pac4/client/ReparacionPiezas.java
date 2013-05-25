@@ -26,6 +26,7 @@ import javax.swing.JButton;
 import edu.uoc.tdp.pac4.beans.DetallPeca;
 import edu.uoc.tdp.pac4.beans.DetallReparacio;
 import edu.uoc.tdp.pac4.beans.Usuari;
+import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.exception.GestorReparacionException;
 import edu.uoc.tdp.pac4.service.GestorReparacionInterface;
 import java.awt.event.MouseAdapter;
@@ -53,10 +54,10 @@ public class ReparacionPiezas extends JFrame {
 	private JTextField txtAnadir = new JTextField();
 	
 	private static final Object columnNames1[] = {
-		"C\u00F3digo", "Descripci\u00F3n", "Unidades", "Stock", "Precio"
+		TDSLanguageUtils.getMessage("repGestion.tablas.codigo"), TDSLanguageUtils.getMessage("repGestion.tablas.descripcion"), TDSLanguageUtils.getMessage("repGestion.tablas.unidades"), TDSLanguageUtils.getMessage("repGestion.tablas.stock"), TDSLanguageUtils.getMessage("repGestion.tablas.precio")
 	};
 	private static final Object columnNames2[] = {
-		"C\u00F3digo", "Descripci\u00F3n", "Stock", "Precio"
+		TDSLanguageUtils.getMessage("repGestion.tablas.codigo"), TDSLanguageUtils.getMessage("repGestion.tablas.descripción"), TDSLanguageUtils.getMessage("repGestion.tablas.stock"), TDSLanguageUtils.getMessage("repGestion.tablas.precio")
 	};
 	
 	private JScrollPane scrollPanel1;
@@ -93,42 +94,46 @@ public class ReparacionPiezas extends JFrame {
 		this.usuario = usuario;
 		this.ordenReparacion = ordenReparacion;
 		
-		setTitle("Piezas reparación");
+		setTitle(TDSLanguageUtils.getMessage("repPiezas.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 778, 424);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		JLabel lblPiezasReparacion = new JLabel("Piezas Reparación");
+		JLabel lblPiezasReparacion = new JLabel(TDSLanguageUtils.getMessage("repPiezas.titulo"));
 		lblPiezasReparacion.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblPiezasReparacion.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		JLabel lblOrdenReparacion = new JLabel("Orden reparación");
+		JLabel lblOrdenReparacion = new JLabel(TDSLanguageUtils.getMessage("repPiezas.ordenrep"));
 		
 		txtOrdenReparacion = new JTextField();
+		txtOrdenReparacion.setEditable(false);
 		txtOrdenReparacion.setColumns(10);
 		
-		JLabel lblMatricula = new JLabel("Matricula");
+		JLabel lblMatricula = new JLabel(TDSLanguageUtils.getMessage("repPiezas.matricula"));
 		
 		txtMatricula = new JTextField();
+		txtMatricula.setEditable(false);
 		txtMatricula.setColumns(10);
 		
-		JLabel lblMarca = new JLabel("Marca");
+		JLabel lblMarca = new JLabel(TDSLanguageUtils.getMessage("repPiezas.marca"));
 		
 		txtMarca = new JTextField();
+		txtMarca.setEditable(false);
 		txtMarca.setColumns(10);
 		
-		JLabel lblModelo = new JLabel("Modelo");
+		JLabel lblModelo = new JLabel(TDSLanguageUtils.getMessage("repPiezas.modelo"));
 		
 		txtModelo = new JTextField();
+		txtModelo.setEditable(false);
 		txtModelo.setColumns(10);
 		
-		JLabel lblObservaciones = new JLabel("Observaciones para la reparación");
+		JLabel lblObservaciones = new JLabel(TDSLanguageUtils.getMessage("repPiezas.obsrep"));
 		
 		txtObservaciones = new JTextArea();
 		
-		btnAnadir = new JButton("Añadir");
+		btnAnadir = new JButton(TDSLanguageUtils.getMessage("repPiezas.anadir"));
 		btnAnadir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -136,7 +141,7 @@ public class ReparacionPiezas extends JFrame {
 			}
 		});
 		
-		JButton btnEliminar = new JButton("Eliminar");
+		JButton btnEliminar = new JButton(TDSLanguageUtils.getMessage("repPiezas.eliminar"));
 		btnEliminar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -144,7 +149,7 @@ public class ReparacionPiezas extends JFrame {
 			}
 		});
 		
-		btnBuscarPieza = new JButton("Buscar pieza");
+		btnBuscarPieza = new JButton(TDSLanguageUtils.getMessage("repPiezas.buscarpieza"));
 		btnBuscarPieza.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -161,7 +166,7 @@ public class ReparacionPiezas extends JFrame {
 		txtBuscarPieza = new JTextField();
 		txtBuscarPieza.setColumns(10);
 		
-		JButton btnRealizarPedido = new JButton("Realizar pedido");
+		JButton btnRealizarPedido = new JButton(TDSLanguageUtils.getMessage("repPiezas.realizarpedido"));
 		btnRealizarPedido.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -169,24 +174,33 @@ public class ReparacionPiezas extends JFrame {
 			}
 		});
 		
-		JButton btnAsignarMecanico = new JButton("Asignar mecánico");
+		JButton btnAsignarMecanico = new JButton(TDSLanguageUtils.getMessage("repPiezas.asignarmec"));
 		btnAsignarMecanico.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ReparacionAsignarMecanico dialog = new ReparacionAsignarMecanico(gestorReparacion, usuario, ordenReparacion);
-				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-				dialog.setSize(1000, 500);
-				dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
-				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				dialog.setVisible(true);
-			}
-		});
-		
-		JButton btnSalir = new JButton("Salir");
-		btnSalir.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				dispose();
+				ReparacionAsignarMecanico dialog;
+				try {
+					DetallReparacio reparacionSel = gestorReparacion.getDetalleReparacion(ordenReparacion);
+					if (reparacionSel.getAcceptada()) {
+						int comandasPendientes = gestorReparacion.getNumComandasPendientes(reparacionSel.getOrdreReparacio());
+						if (comandasPendientes == 0) {
+							dialog = new ReparacionAsignarMecanico(gestorReparacion, usuario, ordenReparacion);
+							Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+							dialog.setSize(1000, 500);
+							dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
+							dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+							dialog.setVisible(true);
+						} else {
+							JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.comandaspendientes"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
+						}
+					} else {
+						JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.reparacionnoaceptada"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
+					} 
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
+				} catch (GestorReparacionException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		
@@ -196,28 +210,24 @@ public class ReparacionPiezas extends JFrame {
 		
 		txtAnadir.setColumns(10);
 		
-		JLabel lblUnidades = new JLabel("Unidades");
+		JLabel lblUnidades = new JLabel(TDSLanguageUtils.getMessage("repPiezas.unidades"));
+		
+		JButton btnSalir = new JButton(TDSLanguageUtils.getMessage("repPiezas.salir"));
+		btnSalir.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				dispose();
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(btnRealizarPedido, Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(btnRealizarPedido)
-							.addPreferredGap(ComponentPlacement.RELATED, 444, Short.MAX_VALUE)
-							.addComponent(btnAsignarMecanico)
-							.addGap(22)
-							.addComponent(btnSalir))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGap(136)
-									.addComponent(btnEliminar)
-									.addGap(194)
-									.addComponent(btnBuscarPieza)
-									.addGap(18)
-									.addComponent(txtBuscarPieza, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE))
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 								.addComponent(lblObservaciones)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(lblOrdenReparacion)
@@ -235,23 +245,32 @@ public class ReparacionPiezas extends JFrame {
 									.addComponent(lblModelo)
 									.addPreferredGap(ComponentPlacement.UNRELATED)
 									.addComponent(txtModelo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-								.addComponent(lblPiezasReparacion, GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE)
-								.addComponent(txtObservaciones, GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE))
-							.addGap(94))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(scrollPanel1, GroupLayout.PREFERRED_SIZE, 277, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblPiezasReparacion, GroupLayout.DEFAULT_SIZE, 666, Short.MAX_VALUE)
+								.addComponent(txtObservaciones, GroupLayout.DEFAULT_SIZE, 666, Short.MAX_VALUE)
 								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(btnAnadir, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-									.addGap(16))
+									.addComponent(btnEliminar)
+									.addPreferredGap(ComponentPlacement.RELATED, 379, Short.MAX_VALUE)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+										.addComponent(btnAsignarMecanico)
+										.addComponent(btnBuscarPieza))
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(txtBuscarPieza, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnSalir))))
+							.addGap(193))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(scrollPanel1, GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+								.addComponent(btnAnadir, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(txtAnadir, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(lblUnidades)
-									.addGap(18)))
-							.addComponent(scrollPanel2, GroupLayout.PREFERRED_SIZE, 336, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap())
+									.addComponent(lblUnidades)))
+							.addGap(28)
+							.addComponent(scrollPanel2, GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+							.addGap(97)))
+					.addGap(0))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -276,17 +295,15 @@ public class ReparacionPiezas extends JFrame {
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(scrollPanel2, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)
-								.addComponent(scrollPanel1, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE))
+								.addComponent(scrollPanel1, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)
+								.addComponent(scrollPanel2, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGap(17)
-									.addComponent(btnEliminar))
+								.addComponent(btnEliminar)
 								.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 									.addComponent(txtBuscarPieza, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 									.addComponent(btnBuscarPieza)))
-							.addPreferredGap(ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(btnRealizarPedido)
 								.addComponent(btnAsignarMecanico)
@@ -410,11 +427,11 @@ public class ReparacionPiezas extends JFrame {
 					TableModel model = new DefaultTableModel(rowData, columnNames1);
 					table1.setModel(model);
 				} else {
-					JOptionPane.showMessageDialog(reparacionPiezas, "Debe indicar el número de piezas a añadir.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.numeropiezas"), TDSLanguageUtils.getMessage("repPiezas.alert"), JOptionPane.ERROR_MESSAGE);
 				}
 				
 			} else {
-				JOptionPane.showMessageDialog(reparacionPiezas, "Debe seleccionar una fila para poder añadirla.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.seleccionarfila"), TDSLanguageUtils.getMessage("repPiezas.alert"), JOptionPane.ERROR_MESSAGE);
 			}
 			
 		} catch (RemoteException e1) {
@@ -450,7 +467,7 @@ public class ReparacionPiezas extends JFrame {
 				TableModel model = new DefaultTableModel(rowData, columnNames1);
 				table1.setModel(model);
 		} else {
-			JOptionPane.showMessageDialog(reparacionPiezas, "Debe seleccionar una fila para poder eliminarla.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.seleccionarfilaelim"), TDSLanguageUtils.getMessage("repPiezas.alert"), JOptionPane.ERROR_MESSAGE);
 		}
 			
 		} catch (RemoteException e) {
@@ -462,22 +479,29 @@ public class ReparacionPiezas extends JFrame {
 	
 	private void realizarPedido() {
 		try {
-			if (piezasSeleccionadas != null) {
-				for (int i=0; i<piezasSeleccionadas.size(); i++) {
-					DetallPeca pieza = piezasSeleccionadas.get(i);
-					boolean estado = false;
-					if (pieza.getCantidad() <= pieza.getStockMinim()) {
-						estado = true;
+			DetallReparacio reparacionAct = gestorReparacion.getDetalleReparacion(ordenReparacion);
+			if (!reparacionAct.getAcceptada()) {
+				if (piezasSeleccionadas != null) {
+					for (int i=0; i<piezasSeleccionadas.size(); i++) {
+						DetallPeca pieza = piezasSeleccionadas.get(i);
+						boolean estado = false;
+						if (pieza.getCantidad() <= pieza.getStockMinim()) {
+							estado = true;
+						}
+						gestorReparacion.setPiezaComanda(estado,pieza.getCodiPeca(), usuario.getTaller(), ordenReparacion, pieza.getCantidad(), true);
+						if (estado == true) {
+							gestorReparacion.setDescontarStock(pieza.getCodiPeca(), pieza.getCantidad());
+						}
 					}
-					gestorReparacion.setPiezaComanda(estado,pieza.getCodiPeca(), usuario.getTaller(), ordenReparacion, pieza.getCantidad(), true);
-					if (estado == true) {
-						gestorReparacion.setDescontarStock(pieza.getCodiPeca(), pieza.getCantidad());
-					}
-				}
-				gestorReparacion.setReparacionAceptada(ordenReparacion);
+					gestorReparacion.setReparacionAceptada(ordenReparacion);
+					JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.info.pedidorealizado"), TDSLanguageUtils.getMessage("repPiezas.info"), JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.anadirpiezas"), TDSLanguageUtils.getMessage("repPiezas.alert"), JOptionPane.ERROR_MESSAGE);
+				} 	
 			} else {
-				JOptionPane.showMessageDialog(reparacionPiezas, "Debe añadir piezas antes de realizar el pedido.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repPiezas.alert.repyaaceptada"), TDSLanguageUtils.getMessage("repPiezas.alert"), JOptionPane.ERROR_MESSAGE);
 			}
+			
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
 		} catch (GestorReparacionException e1) {

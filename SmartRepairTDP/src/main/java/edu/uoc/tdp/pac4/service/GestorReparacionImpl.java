@@ -353,6 +353,24 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 		}
 	}
 
+	public int getNumComandasPendientes(int ordenReparacion)
+			throws RemoteException, GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getNumComandasPendientes(ordenReparacion);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public void setContadorReparacion(int ordenReparacion, double contador)
+			throws RemoteException, GestorReparacionException {
+		try {
+			gestorReparacionDAO.setContadorReparacion(ordenReparacion, contador);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
 	
 
 	
