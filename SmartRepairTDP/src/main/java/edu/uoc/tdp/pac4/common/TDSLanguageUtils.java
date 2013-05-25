@@ -30,8 +30,8 @@ public class TDSLanguageUtils  {
 	public static synchronized boolean setDefaultLanguage(String baseName) {
 		try {
 			currentBaseName=baseName;
-//			resourceBundle = ResourceBundle.getBundle(baseName,Locale.getDefault());
-			resourceBundle = ResourceBundle.getBundle(baseName,new Locale("ca"));
+			resourceBundle = ResourceBundle.getBundle(baseName,Locale.getDefault());
+//			resourceBundle = ResourceBundle.getBundle(baseName,new Locale("es"));
 			return true;
 		}catch(MissingResourceException e){
 			e.printStackTrace();
