@@ -83,7 +83,7 @@ public class AltaSolicitud extends JDialog {
 
 	public AltaSolicitud() {
 		try {
-			//seleccionIdioma();
+			seleccionIdioma();
 			initialize();
 			CargarControles();
 
@@ -95,7 +95,7 @@ public class AltaSolicitud extends JDialog {
 	
 	public AltaSolicitud(GestorAdministracionInterface remoto) {
 		try {
-			//seleccionIdioma();
+			seleccionIdioma();
 		initialize();
 		conexionRemota=remoto;
 		CargarControles();
@@ -109,10 +109,10 @@ public class AltaSolicitud extends JDialog {
 		setSize(new Dimension(469, 426));
 	}
 	
-/*	private void seleccionIdioma() {
+	private void seleccionIdioma() {
 		Locale localLocale = new Locale("", "");
-		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
-	}*/
+		//TDSLanguageUtils.setDefaultLanguage("i18n/messages");
+	}
 	
 
 	

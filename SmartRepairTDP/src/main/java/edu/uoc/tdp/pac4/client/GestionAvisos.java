@@ -61,7 +61,7 @@ public class GestionAvisos extends JDialog {
 		getContentPane().setLayout(null);
 
 		try {
-			//seleccionIdioma();
+			seleccionIdioma();
 			initialize();
 			CargarControles();
 
@@ -79,7 +79,7 @@ public class GestionAvisos extends JDialog {
 		getContentPane().setLayout(null);
 
 		try {
-		//	seleccionIdioma();
+			seleccionIdioma();
 			initialize();
 			conexionRemota=remoto; 
 			CargarControles();
@@ -97,11 +97,11 @@ public class GestionAvisos extends JDialog {
 		setSize(new Dimension(912, 250));
 	}
 
-/*	private void seleccionIdioma() {
+	private void seleccionIdioma() {
 		Locale localLocale = new Locale("", "");
-		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
+		//TDSLanguageUtils.setDefaultLanguage("i18n/messages");
 	}
-	*/
+	
 
 	private void LeerError(String paramString1, String paramString2) {
 		JOptionPane.showMessageDialog(this, paramString1, paramString2, 0);
