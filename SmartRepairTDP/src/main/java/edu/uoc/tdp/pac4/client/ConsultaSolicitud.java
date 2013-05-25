@@ -318,6 +318,7 @@ private JPanel contentPane;
 				}
 				String strAnyo = String.valueOf(sol.getDatafinalitzacio());
 				String[] arrayAnyo = strAnyo.split("-");
+				
 				if (arrayAnyo != null) {
 					txtAnyo.setText(arrayAnyo[0]);
 					txtMes.setText(arrayAnyo[1]);
@@ -330,15 +331,17 @@ private JPanel contentPane;
 				}
 				if(sol.isPendent())
 				{	lblEstadoInfo.setText("Pendiente");
+				   lblEstadoInfo.setForeground(Color.GREEN);
 				Imput(true);
 				}
 			}
 			else
 			{
+				clearControles();
 				String title = TDSLanguageUtils
 						.getMessage("solicitud.upd.titulo");
 				String strMsg = TDSLanguageUtils
-						.getMessage("mensaje.ErrorCombo");
+						.getMessage("solicitud.msg.cliente.noexiste");
 				LeerError(strMsg, title);
 			}
 			
@@ -347,6 +350,22 @@ private JPanel contentPane;
 		}
 	}
 
+	private void clearControles()
+	{
+		
+		textAreaComentario.setText("");
+		lblInfoSolicitud.setText("");
+		lblInfoModelo.setText("");
+		lblInfoMatricula.setText("");
+		lblInfoMarca.setText("");
+		lblInfoBastidor.setText("");
+		lblEstadoInfo.setText("");
+		textAreaComentario.setText("");
+		txtAnyo.setText("");
+		txtMes.setText("");
+		txtDia.setText("");
+	}
+	
 	private void Imput(boolean b) {
 		lblInfoSolicitud.setEnabled(b);
 		lblInfoModelo.setEnabled(b);

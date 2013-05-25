@@ -125,12 +125,12 @@ public class NuevoPedido extends JDialog {
 		contentPane.add(lblDescripcion);
 
 		lblStock = new JLabel();
-		lblStock.setBounds(17, 232, 88, 14);
+		lblStock.setBounds(17, 232, 170, 14);
 		lblStock.setText(TDSLanguageUtils.getMessage("nuevo.pedido.cantidad"));
 		contentPane.add(lblStock);
 
 		txtStock = new JTextField();
-		txtStock.setBounds(120, 229, 67, 20);
+		txtStock.setBounds(207, 229, 67, 20);
 		txtStock.addKeyListener(new KeyAdapterNumbersOnly());
 		contentPane.add(txtStock);
 		txtStock.setColumns(10);

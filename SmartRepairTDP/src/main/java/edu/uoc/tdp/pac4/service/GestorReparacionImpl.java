@@ -317,6 +317,42 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 		}
 	}
 
+	public void setHoraInicioReparacion(int ordenReparacion)
+			throws RemoteException, GestorReparacionException {
+		try {
+			gestorReparacionDAO.setHoraInicioReparacion(ordenReparacion);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public void setHoraFinReparacion(int ordenReparacion)
+			throws RemoteException, GestorReparacionException {
+		try {
+			gestorReparacionDAO.setHoraFinReparacion(ordenReparacion);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public Date getHoraInicioReparacion(int ordenReparacion)
+			throws RemoteException, GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getHoraInicioReparacion(ordenReparacion);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
+	public Date getHoraFinReparacion(int ordenReparacion)
+			throws RemoteException, GestorReparacionException {
+		try {
+			return gestorReparacionDAO.getHoraFinReparacion(ordenReparacion);
+		} catch (DAOException e) {
+			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
+		}
+	}
+
 	
 
 	

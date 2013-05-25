@@ -264,6 +264,38 @@ public interface GestorReparacionInterface extends Remote{
 	 */
 	public List<DetallPeca> getDetallePiezasTallerFiltro(int idTaller, int filtro, String valor) 
 			throws RemoteException, GestorReparacionException;
+	
+	/**
+	 * Actualiza la hora de unicio de una reparación
+	 * @param ordenReparacion
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void setHoraInicioReparacion(int ordenReparacion) throws RemoteException, GestorReparacionException;
+	
+	/**
+	 * Actualiza la hora de finalización de una reparación
+	 * @param ordenReparacion
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public void setHoraFinReparacion(int ordenReparacion) throws RemoteException, GestorReparacionException;
+
+	/**
+	 * Recupera la hora de unicio de una reparación
+	 * @param ordenReparacion
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public Date getHoraInicioReparacion(int ordenReparacion) throws RemoteException, GestorReparacionException;
+	
+	/**
+	 * Recupera la hora de finalización de una reparación
+	 * @param ordenReparacion
+	 * @return
+	 * @throws GestorReparacionException
+	 */
+	public Date getHoraFinReparacion(int ordenReparacion) throws RemoteException, GestorReparacionException;
 }
 
 
