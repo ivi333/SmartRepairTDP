@@ -280,10 +280,10 @@ public class GestorReparacionImpl extends java.rmi.server.UnicastRemoteObject im
 	}
 
 	public List<DetallReparacio> getDetalleReparacionesFiltro(int idFiltro,
-			String valor, String nombre, String apellido)
+			String valor, String nombre, String apellido, String fechaDe, String fechaHasta)
 			throws RemoteException, GestorReparacionException {
 		try {
-			return gestorReparacionDAO.getDetalleReparacionesFiltro(idFiltro, valor, nombre, apellido);
+			return gestorReparacionDAO.getDetalleReparacionesFiltro(idFiltro, valor, nombre, apellido, fechaDe, fechaHasta);
 		} catch (DAOException e) {
 			throw new GestorReparacionException(GestorReparacionException.ERR_DAO +  e.getMessage());
 		}

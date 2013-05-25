@@ -27,6 +27,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.swing.UIManager;
@@ -129,7 +131,25 @@ public class ReparacionGestion extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				try {
-					table.setModel(getTableModel(true));
+					boolean fechaValida = true;
+					if (String.valueOf(txtDe.getText()) != "") {
+						if (!validarFecha(txtDe.getText())) {
+							fechaValida = false;
+							JOptionPane.showMessageDialog(reparacionGestion, "Debe indicar una fecha 'De' valida.", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					
+					if (String.valueOf(txtHasta.getText()) != "") {
+						if (!validarFecha(txtHasta.getText())) {
+							fechaValida = false;
+							JOptionPane.showMessageDialog(reparacionGestion, "Debe indicar una fecha 'Hasta' valida.", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					
+					if (fechaValida) {
+						table.setModel(getTableModel(true));
+					}
+					
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				} catch (GestorReparacionException e) {
@@ -388,7 +408,7 @@ public class ReparacionGestion extends JFrame {
 	private TableModel getTableModel (boolean filtro) throws RemoteException, GestorReparacionException  {
 		List<DetallReparacio> list = null; 
 		if (filtro) {
-			list = gestorReparacion.getDetalleReparacionesFiltro(cmbFiltro.getSelectedIndex(), String.valueOf(txtFiltro.getText()), String.valueOf(txtNombreCliente.getText()), String.valueOf(txtApellidoCliente.getText()));
+			list = gestorReparacion.getDetalleReparacionesFiltro(cmbFiltro.getSelectedIndex(), String.valueOf(txtFiltro.getText()), String.valueOf(txtNombreCliente.getText()), String.valueOf(txtApellidoCliente.getText()), String.valueOf(txtDe.getText()), String.valueOf(txtHasta.getText()));
 		} else {
 			list = gestorReparacion.getDetalleReparaciones();
 		}
@@ -417,6 +437,27 @@ public class ReparacionGestion extends JFrame {
 			return -1;
 		}
 	}
+	
+	private boolean validarFecha(String fecha) {  
+		  
+		if (fecha == null)  
+		return false;  
+		  
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); //año-mes-dia  
+		  
+		if (fecha.trim().length() != dateFormat.toPattern().length())  
+		return false;  
+		  
+		dateFormat.setLenient(false);  
+		  
+		try {  
+			dateFormat.parse(fecha.trim());  
+		}  
+		catch (ParseException pe) {  
+			return false;  
+		}  
+		return true;  
+	}  
 
 	
 }

@@ -227,12 +227,13 @@ public interface GestorReparacionDAO {
 	
 	/**
 	 * Obtiene todos los detalles de la reparación aplicando unos filtros
-	 * @param idFiltro, valor, nombre, apellido
+	 * @param idFiltro, valor, nombre, apellido, fechaDe, fechaHasta
 	 * @return
 	 * @throws GestorReparacionException
 	 */
 	public List<DetallReparacio> getDetalleReparacionesFiltro(
-			int idFiltro, String valor, String nombre, String apellido) throws DAOException;
+			int idFiltro, String valor, String nombre, String apellido, 
+			String fechaDe, String fechaHasta) throws DAOException;
 	
 	/**
 	 * Obtiene la marca del coche de una pieza

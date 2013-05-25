@@ -884,7 +884,7 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 
 
 	public List<DetallReparacio> getDetalleReparacionesFiltro(int idFiltro,
-			String valor, String nombre, String apellido) throws DAOException {
+			String valor, String nombre, String apellido, String fechaDe, String fechaHasta) throws DAOException {
 		List<DetallReparacio> result = new LinkedList<DetallReparacio>();
 		getConnectionDB();
 		
@@ -930,6 +930,14 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			
 			if (apellido != "") {
 				condiciones = condiciones + " and cli.cognoms like '%" + apellido + "%' ";
+			}
+			
+			if (fechaDe != "") {
+				condiciones = condiciones + " and sol.dataalta >= '" + fechaDe + "' ";
+			}
+			
+			if (fechaHasta != "") {
+				condiciones = condiciones + " and sol.dataalta <= '" + fechaHasta + "' ";
 			}
 			
 			String QUERY = QUERY_GET_DETALLE_REPARACIONES;
