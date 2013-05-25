@@ -63,9 +63,9 @@ public class AltaSolicitud extends JDialog {
 	private JButton  btnConsultar;
 	private boolean isOkCLiente = false;
 	private JLabel lblNewLabel_2;
-	private JTextField txtDia;
+	/*private JTextField txtDia;
 	private JTextField txtMes;
-	private JTextField txtAnyo;
+	private JTextField txtAnyo;*/
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -130,7 +130,6 @@ public class AltaSolicitud extends JDialog {
 		contentPane.add(lblNSolicitud);
 		
 		lblInfoSolicitud = new JLabel();
-		lblInfoSolicitud.setText("lblInfoSolicitud");
 		lblInfoSolicitud.setBounds(123, 56, 185, 14);
 		contentPane.add(lblInfoSolicitud);
 		
@@ -174,11 +173,11 @@ public class AltaSolicitud extends JDialog {
 		
 		lblComentario = new JLabel();
 		lblComentario.setText(TDSLanguageUtils.getMessage("solicitud.lbl.comentarios"));
-		lblComentario.setBounds(24, 243, 89, 14);
+		lblComentario.setBounds(24, 210, 89, 14);
 		contentPane.add(lblComentario);
 		
 		 textAreaComentario = new JTextArea();
-		textAreaComentario.setBounds(123, 243, 257, 76);
+		textAreaComentario.setBounds(123, 210, 257, 76);
 		contentPane.add(textAreaComentario);
 		
 	
@@ -204,7 +203,7 @@ public class AltaSolicitud extends JDialog {
 		
 		contentPane.add(getBtnConsultar());
 		
-		JLabel lblNewLabel_1 = new JLabel();
+		/*JLabel lblNewLabel_1 = new JLabel();
 		lblNewLabel_1.setText("F.de finalización:");
 		lblNewLabel_1.setBounds(24, 207, 106, 14);
 		contentPane.add(lblNewLabel_1);
@@ -237,7 +236,7 @@ public class AltaSolicitud extends JDialog {
 		txtAnyo.setDocument(new JTextFieldLimit(4));
 		JLabel lblddmmyyy = new JLabel("(dd/mm/yyy)");
 		lblddmmyyy.setBounds(322, 207, 82, 14);
-		contentPane.add(lblddmmyyy);
+		contentPane.add(lblddmmyyy);*/
 		
 	}
 	
@@ -277,15 +276,15 @@ public class AltaSolicitud extends JDialog {
 				sol.setPendent(B_PENDIENTE);
 				sol.setFinalitzada(B_FINALIZADA);
 				
-				String anyo = txtAnyo.getText().toString();
-				String dia = txtDia.getText().toString();
-				String mes = txtMes.getText().toString();
-				String strFecha = dia + "/" + mes + "/" + anyo;
+			//	String anyo = txtAnyo.getText().toString();
+				//	String dia = txtDia.getText().toString();
+				//	String mes = txtMes.getText().toString();
+				//	String strFecha = dia + "/" + mes + "/" + anyo;
 
-				DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-				java.util.Date dt1 = (java.util.Date) formatter.parse(strFecha);
-				java.sql.Date datafinalitzacio = new java.sql.Date(dt1.getTime());
-				sol.setDatafinalitzacio(datafinalitzacio);
+				//	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+				//java.util.Date dt1 = (java.util.Date) formatter.parse(strFecha);
+				//java.sql.Date datafinalitzacio = new java.sql.Date(dt1.getTime());
+				//	sol.setDatafinalitzacio(datafinalitzacio);
 				
 				if(conexionRemota.getNuevoSolicitud(sol)==1)
 				{  String tittle =  TDSLanguageUtils.getMessage("solicitud.new.titulo");
@@ -320,7 +319,7 @@ public class AltaSolicitud extends JDialog {
 						.getMessage("solicitud.msg.falta.comentario");
 				return strResult;
 			}
-			if (txtDia.getText().toString().equals("")) {
+			/*if (txtDia.getText().toString().equals("")) {
 				strResult = TDSLanguageUtils
 						.getMessage("solicitud.msg.falta.ffinalizacion");
 				return strResult;
@@ -337,7 +336,7 @@ public class AltaSolicitud extends JDialog {
 						.getMessage("solicitud.msg.falta.ffinalizacion");
 				return strResult;
 
-			}
+			}*/
 			
 		} catch (Exception e) {
 			e.printStackTrace();

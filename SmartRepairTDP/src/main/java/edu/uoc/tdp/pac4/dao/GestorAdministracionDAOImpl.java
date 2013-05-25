@@ -745,16 +745,16 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		try {
 			
 			String sql = " insert into  solicitud "
-					+ "( comentaris, dataalta,    datafinalitzacio, client,   pendent,finalitzada) "
-					+ " VALUES (?,?,  ?,?,   ?,?)";
+					+ "( comentaris, dataalta,    client,   pendent,finalitzada) "
+					+ " VALUES (?,?,  ?,?,   ?)";
 			 prep = cPostgressDB.createPrepareStatment(sql,
 					ResultSet.CONCUR_UPDATABLE);
     		prep.setString(1, solicitud.getComentaris().toString().trim());
 			prep.setDate(2, (java.sql.Date) solicitud.getDataalta());
-			prep.setDate(3, (java.sql.Date) solicitud.getDatafinalitzacio());
-			prep.setInt(4, solicitud.getClient());
-			prep.setBoolean(5, solicitud.isPendent());
-			prep.setBoolean(6, solicitud.isFinalitzada());
+			//prep.setDate(3, (java.sql.Date) solicitud.getDatafinalitzacio());
+			prep.setInt(3, solicitud.getClient());
+			prep.setBoolean(4, solicitud.isPendent());
+			prep.setBoolean(5, solicitud.isFinalitzada());
 
 			if(prep.executeUpdate()>0)
 			{
