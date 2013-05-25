@@ -50,15 +50,15 @@ public class RecepcionPedidos extends JDialog {
 		setSize(new Dimension(762, 250));
 	}
 
-	private void seleccionIdioma() {
+/*	private void seleccionIdioma() {
 		Locale localLocale = new Locale("", "");
 		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
-	}
+	}*/
 
 	public RecepcionPedidos() {
 		try {
 			initialize();
-			seleccionIdioma();
+		//	seleccionIdioma();
 			
 			CargarControles();
 			GruposTableModel gtm = (GruposTableModel) jTableResultado
@@ -72,7 +72,7 @@ public class RecepcionPedidos extends JDialog {
 	public RecepcionPedidos(GestorAdministracionInterface remoto) {
 		try {
 			initialize();
-			seleccionIdioma();
+			//seleccionIdioma();
 			conexionRemota=remoto;
 			CargarControles();
 			GruposTableModel gtm = (GruposTableModel) jTableResultado

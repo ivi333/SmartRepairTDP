@@ -140,7 +140,7 @@ public class AltaCliente extends JDialog {
 	public AltaCliente() {
 		try {
 
-			seleccionIdioma();
+			//seleccionIdioma();
 			initialize();
 			CargarControles();
 			CargarCmbMarca();
@@ -153,7 +153,7 @@ public class AltaCliente extends JDialog {
 	public AltaCliente(String tipo,GestorAdministracionInterface remoto) {
 		try {
 			NEW_UPD = tipo;
-			seleccionIdioma();
+		//	seleccionIdioma();
 			
 			conexionRemota=remoto;
 			
@@ -170,10 +170,10 @@ public class AltaCliente extends JDialog {
 		setSize(new Dimension(422, 781));
 	}
 
-	private void seleccionIdioma() {
+/*	private void seleccionIdioma() {
 		Locale localLocale = new Locale("", "");
 		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
-	}
+	}*/
 
 	private void CargarControles() {
 		if (NEW_UPD.equals("NEW"))

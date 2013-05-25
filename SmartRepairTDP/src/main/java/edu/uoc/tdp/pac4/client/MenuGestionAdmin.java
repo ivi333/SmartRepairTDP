@@ -91,7 +91,9 @@ public class MenuGestionAdmin extends JFrame {
 
 	private void seleccionIdioma() {
 		Locale localLocale = new Locale("", "");
-		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
+		//TDSLanguageUtils.getCurrentBaseName();
+		//TDSLanguageUtils.getCurrentLocale();
+		//TDSLanguageUtils.setDefaultLanguage("i18n/messages");
 	}
 
 	private void initialize() {

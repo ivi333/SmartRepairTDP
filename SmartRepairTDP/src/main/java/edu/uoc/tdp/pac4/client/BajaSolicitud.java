@@ -87,17 +87,17 @@ public class BajaSolicitud extends JDialog {
 		setSize(new Dimension(398, 526));
 	}
 
-	private void seleccionIdioma() {
+/*	private void seleccionIdioma() {
 		Locale localLocale = new Locale("", "");
 		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
 	}
-	
+	*/
 	public BajaSolicitud() {
 		
 		try{
 			initialize();
 		
-			seleccionIdioma();
+			//seleccionIdioma();
 			CargarControles();
 		}catch(Exception ex)
 		{
@@ -110,7 +110,7 @@ public class BajaSolicitud extends JDialog {
 		try{
 			initialize();
 			conexionRemota=remoto;
-			seleccionIdioma();
+			//seleccionIdioma();
 			CargarControles();
 		}catch(Exception ex)
 		{

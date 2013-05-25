@@ -75,15 +75,15 @@ public class NuevoPedido extends JDialog {
 			}
 		});
 	}
-
+/*
 	private void seleccionIdioma() {
 		Locale localLocale = new Locale("", "");
 		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
 	}
-
+*/
 	public NuevoPedido() {
 		try {
-			seleccionIdioma();
+			//seleccionIdioma();
 			initialize();
 			CargarControles();
 			CargarCmbProveedores();
@@ -93,7 +93,7 @@ public class NuevoPedido extends JDialog {
 	}
 	public NuevoPedido(GestorAdministracionInterface conexion) {
 		try {
-			seleccionIdioma();
+			//seleccionIdioma();
 			initialize();
 			conexionRemota=conexion;
 			CargarControles();

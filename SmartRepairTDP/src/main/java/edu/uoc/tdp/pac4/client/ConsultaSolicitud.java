@@ -89,7 +89,7 @@ private JPanel contentPane;
 		try{
 			initialize();
 		
-			seleccionIdioma();
+		//	seleccionIdioma();
 			
 			CargarControles();
 		}catch (Exception ex) {
@@ -101,7 +101,7 @@ private JPanel contentPane;
     	try{
 			initialize();
 			conexionRemota=remoto;
-			seleccionIdioma();
+		//	seleccionIdioma();
 			
 			CargarControles();
 		}catch (Exception ex) {
@@ -113,10 +113,10 @@ private JPanel contentPane;
 		setSize(new Dimension(398, 441));
 	}
 	
-    private void seleccionIdioma() {
+  /*  private void seleccionIdioma() {
 		Locale localLocale = new Locale("", "");
 		TDSLanguageUtils.setDefaultLanguage("i18n/messages");
-	}
+	}*/
 	
     private void CargarControles()
 	{
