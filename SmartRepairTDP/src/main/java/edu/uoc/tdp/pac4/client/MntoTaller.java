@@ -7,6 +7,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.JTextComponent;
 
 import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.beans.Usuari;
@@ -17,6 +18,8 @@ import edu.uoc.tdp.pac4.service.GestorConexionInterface;
 import javax.swing.JButton;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -232,10 +235,12 @@ public class MntoTaller extends JFrame {
 		
 		txtCapacidad = new JTextField();
 		txtCapacidad.setColumns(10);
+		txtCapacidad.addKeyListener(new KeyAdapterNumbersOnly());
 		
 		cmbJefeTaller = new JComboBox();
 		
 		txtTelefono = new JTextField();
+		txtTelefono.addKeyListener(new KeyAdapterNumbersOnly());
 		
 		txtWeb = new JTextField();
 		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
@@ -449,9 +454,10 @@ public class MntoTaller extends JFrame {
 				taller.setCif(txtCif.getText().toUpperCase());
 				taller.setAdreca(txtDireccion.getText());
 				taller.setCapacitat(Integer.valueOf(txtCapacidad.getText()));
-
 				taller.setActiu(chkActivo.isSelected());
 				taller.setCapTaller(Integer.valueOf(cbJefeTaller.get(cmbJefeTaller.getSelectedIndex()).getAux()));
+				taller.setWeb(txtWeb.getText());
+				taller.setTelefon(txtTelefono.getText());
 				String msg = validarCampos();
 				if (msg.equals("")) {
 				
@@ -476,6 +482,8 @@ public class MntoTaller extends JFrame {
 				taller.setCapacitat(Integer.valueOf(txtCapacidad.getText()));
 				taller.setActiu(chkActivo.isSelected());
 				taller.setCapTaller(Integer.valueOf(cbJefeTaller.get(cmbJefeTaller.getSelectedIndex()).getAux()));
+				taller.setWeb(txtWeb.getText());
+				taller.setTelefon(txtTelefono.getText());
 				String msg = validarCampos();
 				if (msg.equals("")) {
 					try {
@@ -522,18 +530,20 @@ public class MntoTaller extends JFrame {
 	private String validarCampos () {
 		String msg = "";
 		if (txtCif.getText().length() == 0 )
-			msg = "debe informar Cif";
+			msg = "mntotaller.valida.cif";
 		if (txtDireccion.getText().length() == 0 )
-			msg = "Debe informarn direccion";
+			msg = "mntotaller.valida.direccion";
 		if (txtCapacidad.getText().length() == 0)
-			msg = "Debe informar capacidad";
+			msg = "mntotaller.valida.capacidad";
+		if (Integer.valueOf(txtCapacidad.getText()) == 0)
+			msg = "mntotaller.valida.capacidad0";
 		if (txtTelefono.getText().length() == 0)
-			msg = "Debe informar telefono";
+			msg = "mntotaller.valida.telefono";
 		if (txtWeb.getText().length() == 0)
-			msg = "Debe informar la Web";
+			msg = "mntotaller.valida.web";
 		if (chkActivo.isSelected()) {
 			if (cbJefeTaller.get(cmbJefeTaller.getSelectedIndex()).getId()==0){
-				msg = "Debe informar Jefe de Taller";
+				msg = "mntotaller.valida.jefetaller";
 			}
 		}
 		return msg;
@@ -557,5 +567,21 @@ public class MntoTaller extends JFrame {
 		JOptionPane.showMessageDialog(this, message, title, messageType);
 	}
 	
+	public class KeyAdapterNumbersOnly extends KeyAdapter {
 
+		/**
+		 * Regular expression which defines the allowed characters.
+		 */
+		private String allowedRegex = "[^0-9]";
+
+		/**
+		 * Key released on field.
+		 */
+		public void keyReleased(KeyEvent e) {
+			String curText = ((JTextComponent) e.getSource()).getText();
+			curText = curText.replaceAll(allowedRegex, "");
+
+			((JTextComponent) e.getSource()).setText(curText);
+		}
+	}
 }

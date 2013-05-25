@@ -460,6 +460,7 @@ public class MntoUsuario extends JFrame {
 	private void mostrarUsuari () {				
 		int perfiles[] = new int[PerfilUsuari.values().length];		 
 		int indPerfiles = 0;
+		boolean isAdministrador = false;
 		
 		txtId.setText(String.valueOf(usuari.getId()));
 		txtNif.setText(usuari.getNif());
@@ -478,13 +479,17 @@ public class MntoUsuario extends JFrame {
 		for (int i=0; i < perfiles.length; i++)
 			perfiles[i] = -1;
 		
-		for (String perfil : usuari.getPerfil().split(";"))			
+		for (String perfil : usuari.getPerfil().split(";")) {	
+			if (perfil.equals(PerfilUsuari.Administrador.toString())) {
+				isAdministrador = true;
+			}
 			for (int i=0; i < cbPerfil.size(); i++ ) {
 				if (cbPerfil.get(i).getValue().equals(perfil)){
 					perfiles[indPerfiles] = Integer.valueOf(cbPerfil.get(i).getAux());
 					indPerfiles ++;
 					break;
 				}
+			}
 		}
 		
 		listPerfil.setSelectedIndices(perfiles);
@@ -499,7 +504,7 @@ public class MntoUsuario extends JFrame {
 		if (usuari.getDataBaixa() != null)
 			txtFbaja.setText(usuari.getDataBaixa().toString());
 		
-		if (usuari.isActiu()){
+		if (usuari.isActiu() && (!isAdministrador)){
 			try {
 				Taller taller = gestorConexion.getTallerById(usuari.getTaller());
 				if (!taller.isActiu()){
@@ -548,6 +553,7 @@ public class MntoUsuario extends JFrame {
 				
 				
 			}else if (this.accion.equalsIgnoreCase("MODIFICAR")){	
+			
 				usuari.setNif(txtNif.getText().toUpperCase());
 				usuari.setNom(txtNombre.getText());
 				usuari.setCognoms(txtApellidos.getText());

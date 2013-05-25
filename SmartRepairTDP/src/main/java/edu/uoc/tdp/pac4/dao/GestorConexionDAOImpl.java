@@ -29,7 +29,7 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 	 */
 	
 	private static final String QUERY_ALL_USUARIS = 
-			"SELECT * FROM usuari";
+			"SELECT * FROM usuari ORDER BY id";
 	
 	private static final String QUERY_USUARI_BY_ID = 
 			"SELECT * FROM usuari WHERE id = ?";
@@ -104,10 +104,10 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			" WHERE idmecanic = ?";
 
 	private static final String QUERY_ALL_TALLERS = 
-			"SELECT * FROM taller";
+			"SELECT * FROM taller ORDER BY id";
 	
 	private static final String QUERY_TALLER_BY_ID = 
-			"SELECT * FROM taller WHERE id = ?";
+			"SELECT * FROM taller WHERE id = ? ORDER BY id";
 	
 	private static final String QUERY_TALLER_BY_CIF = 
 			"SELECT * FROM taller WHERE cif = ?";
@@ -337,6 +337,7 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			sql += " AND UPPER(cognoms) like '" + apellidos.replace("*", "%").toUpperCase() +"'";
 		if (perfil.length() > 0)
 			sql += " AND perfil like '%" + perfil +"%'";
+		sql += " ORDER BY id";
 		getConnectionDB();	
 		
 		Statement stm = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -808,6 +809,7 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			sql += " AND capacitat = " + capacitat;
 		if (idCapTaller.length() > 0)
 			sql += " AND captaller = " + idCapTaller;
+		sql += " ORDER BY id";
 		getConnectionDB();	
 		
 		Statement stm = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -920,7 +922,11 @@ public class GestorConexionDAOImpl extends ConnectionPostgressDB implements Gest
 			ps.setString(1, taller.getCif());
 			ps.setString(2, taller.getAdreca());
 			ps.setInt(3, taller.getCapacitat());
-			ps.setInt(4, taller.getCapTaller());
+			if (taller.getCapTaller() !=0){
+				ps.setInt(4, taller.getCapTaller());
+			} else {
+				ps.setNull(4, Types.INTEGER);
+			}
 			ps.setString(5, taller.getTelefon());
 			ps.setString(6, taller.getWeb());
 			ps.setBoolean(7, taller.isActiu());

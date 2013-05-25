@@ -179,6 +179,10 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 	
 	public void altaUsuari(Usuari usuari)
 			throws RemoteException, GestorConexionException {
+
+		boolean isJefeTaller = false, isMecanico = false;
+		Usuari newUsuari = null;
+
 		String perfiles [] = usuari.getPerfil().split(";");
 		try {
 			if (!gestorConexionDAO.usuariExist(usuari.getNif(),usuari.getUsuari())) {		
@@ -198,12 +202,27 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 
 				for (String perfil : perfiles) {
 					if (perfil.equals(PerfilUsuari.Mecanico.toString())) {
-						Usuari mecanic = getUsuariByUsuari(usuari.getUsuari());					
-						gestorConexionDAO.altaMecanic(new Mecanic(mecanic.getId(), mecanic.isActiu(), 0, 0));
-						break;
+						isMecanico = true;
+					} else if (perfil.equals(PerfilUsuari.JefeTaller.toString())) {
+						isJefeTaller = true;
 					}
 				}
-					
+				
+				if (isMecanico || isJefeTaller) {
+					newUsuari = getUsuariByUsuari(usuari.getUsuari());
+				}
+				if (isMecanico) {
+										
+					gestorConexionDAO.altaMecanic(new Mecanic(newUsuari.getId(), newUsuari.isActiu(), 0, 0));
+				}
+				
+				if ((isJefeTaller) && (usuari.getTaller()!=0)) {
+					Taller taller = gestorConexionDAO.getTallerById(usuari.getTaller());
+					if (taller.getCapTaller() == 0){
+						taller.setCapTaller(newUsuari.getId());
+						gestorConexionDAO.modificarTaller(taller);
+					}
+				}
 			} else {
 				throw new GestorConexionException(GestorConexionException.ERR_USER_EXIST);
 			}
@@ -214,36 +233,40 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 	
 	public void modificarUsuari(Usuari usuari)
 			throws RemoteException, GestorConexionException {
-		try {
-			Usuari usuariOld = gestorConexionDAO.getUsuariById(usuari.getId());
-			boolean administrador = false;
+		try {			
 			boolean mecanic = false;
 			boolean jefeTaller = false;
+			boolean updTaller = false;
+			Taller taller = null;
+			
+			Usuari usuariOld = gestorConexionDAO.getUsuariById(usuari.getId());
 			String perfiles [] = usuariOld.getPerfil().split(";");
 			
 			for (String perfil : perfiles) {
-				if (perfil.equals(PerfilUsuari.Administrador.toString())){
-					administrador = true;
-				}
 				if (perfil.equals(PerfilUsuari.Mecanico.toString())){
 					mecanic = true;
 				}
 				if (perfil.equals(PerfilUsuari.JefeTaller.toString())){
 					jefeTaller = true;
 				}
-
 			}
 
 			if (usuariOld.getReparacionsAssignades() > 0 && usuariOld.getTaller() != usuari.getTaller()){
 				throw new GestorConexionException(GestorConexionException.ERR_USER_REP_TALLER);
 			}
-			if (usuari.isActiu()){
-				if (!administrador) {
-					Taller taller = gestorConexionDAO.getTallerById(usuari.getTaller());
 
-					
-					if (jefeTaller && usuari.getId() != taller.getCapTaller()) {
-						throw new GestorConexionException(GestorConexionException.ERR_JEFETALLER_TALLER);
+			if (jefeTaller)  {
+				taller = gestorConexionDAO.getTallerById(usuari.getTaller());	
+				if (taller != null) {
+					if (usuari.isActiu()){								
+						if (usuari.getId() != taller.getCapTaller()) {
+							throw new GestorConexionException(GestorConexionException.ERR_JEFETALLER_TALLER);
+						}
+					} else {
+						if (taller.getCapTaller() == 0) {
+							taller.setCapTaller(usuari.getId());
+							updTaller = true;
+						}
 					}
 				}
 			}
@@ -254,6 +277,10 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 					if (usuariOld.isActiu() != usuari.isActiu()) {
 						gestorConexionDAO.estadoMecanic (usuari.getId(), usuari.isActiu());
 					}
+				}
+				
+				if (updTaller) {
+					gestorConexionDAO.modificarTaller(taller);
 				}
 					
 			} else {
@@ -306,6 +333,11 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 					.getTallersByCapTaller(taller.getCapTaller()) == null))
 					|| !(taller.isActiu())) {
 				gestorConexionDAO.altaTaller(taller);
+				if (taller.isActiu()){
+					Usuari usuari = gestorConexionDAO.getUsuariById(taller.getCapTaller());
+					usuari.setTaller(taller.getId());
+					gestorConexionDAO.modificarUsuari(usuari);
+				}
 			} else {
 				throw new GestorConexionException(
 						GestorConexionException.ERR_JEFETALLER_ASIGN);
@@ -319,23 +351,25 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 	
 	public void modificarTaller(Taller taller) throws RemoteException,
 			GestorConexionException {
-		try {
+		try {			
+			Usuari usuari = null;
 			Taller oldTaller = gestorConexionDAO.getTallerById(taller.getId());
 			if (!oldTaller.isActiu() && taller.isActiu()) {
-				Usuari usuari = gestorConexionDAO.getUsuariById(taller.getCapTaller());
-				String perfiles[] = usuari.getPerfil().split(";");
-				if (usuari.getTaller() != taller.getCapTaller() && usuari.getTaller()!=0) {
-					throw new GestorConexionException("Jefe no esta en el mismo taller");
+				usuari = gestorConexionDAO.getUsuariById(taller.getCapTaller());
+				
+				if (usuari.getTaller() != taller.getId() && usuari.getTaller()!=0) {
+					throw new GestorConexionException(GestorConexionException.ERR_JEFETALLER_TALLER);
 				} else if (!usuari.isActiu()) {
-					throw new GestorConexionException("Jefe de taller no activo");
+					throw new GestorConexionException(GestorConexionException.ERR_JEFETALLER_INACTIU);
 				}
-				usuari.setTaller(taller.getId());				
-				gestorConexionDAO.modificarUsuari(usuari);
-				for (String perfil : perfiles){
-					if (perfil.equals(PerfilUsuari.Mecanico.toString())){
-						gestorConexionDAO.estadoMecanic(usuari.getId(), true);
-					}
-				}
+//				usuari.setTaller(taller.getId());				
+//				gestorConexionDAO.modificarUsuari(usuari);
+//				String perfiles[] = usuari.getPerfil().split(";");
+//				for (String perfil : perfiles){
+//					if (perfil.equals(PerfilUsuari.Mecanico.toString())){
+//						gestorConexionDAO.estadoMecanic(usuari.getId(), true);
+//					}
+//				}
 				gestorConexionDAO.modificarTaller(taller);
 
 			} else {
@@ -352,20 +386,19 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 		try {
 			
 			int reparaciones = gestorConexionDAO.getNumRepPendTaller(taller.getId());
-			
-			
+						
 			if (reparaciones == 0) {
-				Taller oldTaller = gestorConexionDAO.getTallerById(taller.getId());
-				Usuari usuari = gestorConexionDAO.getUsuariById(oldTaller.getCapTaller());
-				String perfiles [] = usuari.getPerfil().split(";");
-				usuari.setTaller(0);				
-				gestorConexionDAO.modificarUsuari(usuari);
-				for (String perfil : perfiles){
-					if (perfil.equals(PerfilUsuari.Mecanico.toString())) {
-						gestorConexionDAO.estadoMecanic (usuari.getId(), false);
-						break;
-					}
-				}
+//				Taller oldTaller = gestorConexionDAO.getTallerById(taller.getId());
+//				Usuari usuari = gestorConexionDAO.getUsuariById(oldTaller.getCapTaller());
+//				String perfiles [] = usuari.getPerfil().split(";");
+//				usuari.setTaller(0);				
+//				gestorConexionDAO.modificarUsuari(usuari);
+//				for (String perfil : perfiles){
+//					if (perfil.equals(PerfilUsuari.Mecanico.toString())) {
+//						gestorConexionDAO.estadoMecanic (usuari.getId(), false);
+//						break;
+//					}
+//				}
 				gestorConexionDAO.disableTaller(taller.getId());				
 			} else {
 				throw new GestorConexionException(
