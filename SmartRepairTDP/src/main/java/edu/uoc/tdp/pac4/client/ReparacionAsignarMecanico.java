@@ -41,7 +41,6 @@ public class ReparacionAsignarMecanico extends JFrame {
 	private JTextField txtMarca;
 	private JTextField txtModelo;
 	private JButton btnEliminar;
-	private JLabel lblMecanico;
 	private JTextField txtMecanico;
 	private JButton btnBuscar;
 	private JButton btnAsignar;
@@ -90,7 +89,7 @@ public class ReparacionAsignarMecanico extends JFrame {
 		
 		setTitle(TDSLanguageUtils.getMessage("repAsigMec.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 665, 366);
+		setBounds(100, 100, 665, 460);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -133,8 +132,6 @@ public class ReparacionAsignarMecanico extends JFrame {
 			}
 		});
 		
-		lblMecanico = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.mecanico"));
-		
 		txtMecanico = new JTextField();
 		txtMecanico.setColumns(10);
 		
@@ -172,12 +169,13 @@ public class ReparacionAsignarMecanico extends JFrame {
 		scrollPanel1 = new JScrollPane();
 		
 		scrollPanel2 = new JScrollPane();
+		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 							.addComponent(lblAsignacionMecanico, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 							.addGroup(gl_contentPane.createSequentialGroup()
@@ -197,28 +195,30 @@ public class ReparacionAsignarMecanico extends JFrame {
 								.addPreferredGap(ComponentPlacement.UNRELATED)
 								.addComponent(txtModelo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblMecanicoAsignado, GroupLayout.PREFERRED_SIZE, 298, GroupLayout.PREFERRED_SIZE)
-							.addGap(36)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblMecanicos, GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
+								.addComponent(scrollPanel1, GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+								.addComponent(lblMecanicoAsignado, GroupLayout.PREFERRED_SIZE, 298, GroupLayout.PREFERRED_SIZE)
 								.addGroup(gl_contentPane.createSequentialGroup()
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(lblMecanico)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addGap(10)
+									.addComponent(btnEliminar)))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(10)
 									.addComponent(txtMecanico, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED)
+									.addPreferredGap(ComponentPlacement.UNRELATED)
 									.addComponent(btnBuscar)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnAsignar))
-								.addComponent(btnSalir, Alignment.TRAILING)))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(220)
-							.addComponent(btnEliminar))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(scrollPanel1, GroupLayout.PREFERRED_SIZE, 296, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(scrollPanel2, GroupLayout.PREFERRED_SIZE, 320, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap())
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+										.addComponent(lblMecanicos, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
+										.addComponent(btnAsignar)))
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+									.addComponent(scrollPanel2, GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
+									.addGroup(gl_contentPane.createSequentialGroup()
+										.addPreferredGap(ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
+										.addComponent(btnSalir))))
+							.addGap(43)))
+					.addGap(0))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -240,19 +240,18 @@ public class ReparacionAsignarMecanico extends JFrame {
 						.addComponent(lblMecanicoAsignado)
 						.addComponent(lblMecanicos))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+						.addComponent(scrollPanel2, 0, 0, Short.MAX_VALUE)
+						.addComponent(scrollPanel1, GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPanel1, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
-						.addComponent(scrollPanel2, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE))
-					.addGap(9)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnEliminar)
-						.addComponent(txtMecanico, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblMecanico)
-						.addComponent(btnBuscar)
-						.addComponent(btnAsignar))
-					.addGap(18)
-					.addComponent(btnSalir)
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+							.addComponent(txtMecanico, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(btnBuscar)
+							.addComponent(btnAsignar)))
+					.addPreferredGap(ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+					.addComponent(btnSalir))
 		);
 		
 		table2 = new JTable();

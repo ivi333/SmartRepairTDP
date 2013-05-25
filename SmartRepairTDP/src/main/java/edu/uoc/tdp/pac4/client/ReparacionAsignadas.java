@@ -150,7 +150,7 @@ public class ReparacionAsignadas extends JFrame {
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 406, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(lblFIltro)
 							.addGap(18)
@@ -161,10 +161,10 @@ public class ReparacionAsignadas extends JFrame {
 							.addComponent(btnFiltrar))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(btnDetalle)
-							.addPreferredGap(ComponentPlacement.RELATED, 288, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 232, Short.MAX_VALUE)
 							.addComponent(btnSalir))
-						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 406, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap())
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE))
+					.addGap(8))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
