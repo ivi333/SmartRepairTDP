@@ -189,7 +189,10 @@ public class MainGUI extends JFrame {
 		} 
 		
 		if (isAdministrativo  || isJefeTaller) {
-			crearMenuAdministrativos(isAdministrador, isAdministrativo, isJefeTaller, isMecanico);			
+			crearMenuAdministrativos(isAdministrador, isAdministrativo, isJefeTaller, isMecanico);		
+			if (!isJefeTaller) {
+				crearMenuEstadisticas(isAdministrador, isAdministrativo, isJefeTaller, isMecanico);
+			}
 			jLabelMain.setText("<html>Subsistema de Administracion y <br> Estadisticas. <br> (Administrativos)</html>");			
 			loadPerfilOK=true;
 		}
@@ -230,7 +233,7 @@ public class MainGUI extends JFrame {
 			mntmInfClientes.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent arg0) {
-					InformeClientes dialog = new InformeClientes();
+					InformeClientes dialog = new InformeClientes(gestorEstadistica);
 					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 					dialog.setSize(1000, 500);
 					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
@@ -246,7 +249,7 @@ public class MainGUI extends JFrame {
 			mntmInfEmpleados.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent arg0) {
-					InformeEmpleados dialog = new InformeEmpleados();
+					InformeEmpleados dialog = new InformeEmpleados(gestorEstadistica);
 					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 					dialog.setSize(1000, 500);
 					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
@@ -262,7 +265,7 @@ public class MainGUI extends JFrame {
 			mntmInfReparaciones.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent arg0) {
-					InformeEmpleados dialog = new InformeEmpleados();
+					InformeReparaciones dialog = new InformeReparaciones(gestorEstadistica);
 					Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 					dialog.setSize(1000, 500);
 					dialog.setLocation(dim.width/2-dialog.getSize().width/2, dim.height/2-dialog.getSize().height/2);
