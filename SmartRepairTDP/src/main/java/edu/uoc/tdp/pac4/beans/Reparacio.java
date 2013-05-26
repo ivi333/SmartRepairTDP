@@ -1,5 +1,6 @@
 package edu.uoc.tdp.pac4.beans;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -19,8 +20,9 @@ public class Reparacio implements java.io.Serializable{
 	private Date dataFi;
 	private Solicitud solicitud ;
 	private Calendar calendar ;
-	private Comanda comanda;//
-
+	private float fImporte;
+	//private ArrayList<Comanda> comandas;
+	private Comanda comanda;
 	
 	private Mecanic mecanic;
 	
@@ -42,6 +44,7 @@ public class Reparacio implements java.io.Serializable{
 	}
 	
 	public Reparacio() {
+		
 		this.calendar = Calendar.getInstance();
 	}
 	
@@ -140,6 +143,16 @@ public class Reparacio implements java.io.Serializable{
 	public void setDataFi(Date dataFi) {
 		this.dataFi = dataFi;
 	}
+	
+	/*public ArrayList<Comanda> getComandas()
+	{
+		return ( this.comandas);
+	}
+	
+	public void setComandas(ArrayList<Comanda> comandas)
+	{
+		this.comandas=comandas;
+	}*/
 
 	
 	public Mecanic getMecanic() {
@@ -249,6 +262,15 @@ public class Reparacio implements java.io.Serializable{
 		
 		return ( strResult + String.valueOf(iEntrada) );
 	}
+	public float getImporte()
+	{
+		return ( this.fImporte);
+	}
+	
+	public void setImporte(float fImporte)
+	{
+		this.fImporte = fImporte;
+	}
 
 	public Comanda getComanda() {
 		return comanda;
@@ -257,4 +279,7 @@ public class Reparacio implements java.io.Serializable{
 	public void setComanda(Comanda comanda) {
 		this.comanda = comanda;
 	}
+
+	
+
 }
