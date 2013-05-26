@@ -40,6 +40,7 @@ public class RecepcionPedidos extends JDialog {
 	private JButton btnRecepcionar;
 	private int codigoPedido=0;
 	private static GestorAdministracionInterface conexionRemota;
+	GruposTableModel gtm1;
 	public static void main(String[] args) {
 		try {
 			RecepcionPedidos dialog = new RecepcionPedidos();
@@ -114,10 +115,16 @@ public class RecepcionPedidos extends JDialog {
 		jTableResultado.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
 	        public void valueChanged(ListSelectionEvent event) {
 	        	try{
+	        		if(jTableResultado.getSelectedRow()>-1)
+	        		{
 	        	codigoPedido=Integer.valueOf(jTableResultado.getValueAt(jTableResultado.getSelectedRow(), 0).toString());
+	        		}
 	        	}
 	        	catch(Exception ex)
 	        	{
+	        		gtm1 = (GruposTableModel) jTableResultado
+	    					.getModel();
+	        		gtm1.addRow(new Object[] { "", "", "", "", "" });
 	        		ex.printStackTrace();
 	        		codigoPedido=0;
 	        	}
@@ -150,7 +157,7 @@ public class RecepcionPedidos extends JDialog {
 							
 							GetRecepcionar();
 							
-							getCargarPedidos();
+							
 						}
 						catch(Exception ex)
 						{
@@ -173,6 +180,7 @@ public class RecepcionPedidos extends JDialog {
 		        if (reply == JOptionPane.YES_OPTION) {
 
 		        	conexionRemota.getRecepcionarPedido(codigoPedido,true);
+		        	getCargarPedidos();
 		        }
 		        else {
 		          
@@ -251,10 +259,12 @@ public class RecepcionPedidos extends JDialog {
 			btnGestionar.setBounds(new Rectangle(203, 181, 123, 23));
 			btnGestionar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-
-					getCargarPedidos();
-
-				}
+					try {
+						getCargarPedidos();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+			}
 			});
 		}
 
@@ -266,8 +276,14 @@ public class RecepcionPedidos extends JDialog {
 	private void getCargarPedidos() {
 		
 		try {
-			GruposTableModel gtm1 = (GruposTableModel) jTableResultado.getModel();
+	
+			gtm1 = (GruposTableModel) jTableResultado.getModel();
 			if (gtm1.getRowCount() > 0) {
+				
+				/*for (int i = 0 ; i<gtm1.getRowCount(); i++) {
+			    	gtm1.removeRow(i);
+			    }*/
+				
 			    for (int i = gtm1.getRowCount() - 1; i > -1; i--) {
 			    	gtm1.removeRow(i);
 			    }
@@ -276,8 +292,8 @@ public class RecepcionPedidos extends JDialog {
 			ArrayList<String> list = conexionRemota.getCargarPedidos();
 
 			Iterator<String> it = list.iterator();
-			GruposTableModel gtm = (GruposTableModel) jTableResultado.getModel();
-			gtm.setRowCount(0);
+			gtm1= (GruposTableModel) jTableResultado.getModel();
+			gtm1.setRowCount(0);
 			
 			if (list.size() > 0) {
 				while (it.hasNext()) {
@@ -289,7 +305,7 @@ public class RecepcionPedidos extends JDialog {
 					String taller = it.next();
 					String stock = it.next();
 
-					gtm.addRow(new Object[] { codigo, fecha, cantidad, pieza,
+					gtm1.addRow(new Object[] { codigo, fecha, cantidad, pieza,
 							proveedor, taller });
 
 				}

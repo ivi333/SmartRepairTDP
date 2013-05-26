@@ -737,7 +737,8 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 				+ " inner join stockpeca on stockpeca.codipeca=peca.codipeca "
 				+ " left join proveidor on  comanda.idproveidor=proveidor.idproveidor "
 				+ " left join  taller on comanda.idcaptaller=taller.id "
-				+ " where comanda.estat=false and comanda.tipusreparacio=true ";
+				+ " where comanda.estat=false and comanda.tipusreparacio=true "
+				+ " order by numcom ";
 		try {
 			 pstmt = cPostgressDB.createPrepareStatment(sql,ResultSet.CONCUR_READ_ONLY);
 			
