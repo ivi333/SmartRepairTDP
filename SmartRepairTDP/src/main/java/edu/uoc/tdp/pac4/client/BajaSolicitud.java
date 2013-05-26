@@ -417,7 +417,7 @@ public class BajaSolicitud extends JDialog {
 				txtNumSol.setText(String.valueOf(sol.getNumsol()));
 				
 				textAreaComentario.setText(sol.getComentaris());
-				String NIF = String.valueOf(sol.getClient());
+				String NIF = String.valueOf(sol.getNifCliente());
 				Client client = conexionRemota.getDadeClient(NIF);
 				
 				if (client != null) {
