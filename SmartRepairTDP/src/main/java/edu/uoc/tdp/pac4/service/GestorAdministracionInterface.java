@@ -3,7 +3,7 @@ package edu.uoc.tdp.pac4.service;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-
+import java.util.List;
 
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
@@ -12,6 +12,7 @@ import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Solicitud;
+import edu.uoc.tdp.pac4.beans.Taller;
 
 
 public interface GestorAdministracionInterface extends Remote{
@@ -53,6 +54,8 @@ public int getActualizarSolicitud(Solicitud sol)throws RemoteException;
 public Reparacio getReparacionByCodeReparacion(int numreparacio)throws RemoteException;
 
 public int getFacturarSolicitud(Solicitud sol, String txtFactura)throws RemoteException;
+
+public List<Taller> getAllTallers () throws RemoteException;
 }
 
 

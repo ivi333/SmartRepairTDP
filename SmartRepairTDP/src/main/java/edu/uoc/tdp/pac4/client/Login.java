@@ -122,10 +122,10 @@ public class Login extends JDialog {
 		JLabel lblPassword = new JLabel(TDSLanguageUtils.getMessage("login.label.password"));
 		lblPassword.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		txtUsername = new JTextField();
+		txtUsername = new JTextField("");
 		txtUsername.setColumns(10);
 
-		txtPassword = new JPasswordField();
+		txtPassword = new JPasswordField("");
 		
 		getContentPane().add(panel, BorderLayout.CENTER);
 		chkPassword = new JCheckBox(TDSLanguageUtils.getMessage("login.label.changepass"));
@@ -232,9 +232,9 @@ public class Login extends JDialog {
 	      if (button.isSelected()) {
 	    	  if ("mn1".equals(button.getName())) {
 	    		  TDSLanguageUtils.setLanguage("i18n/messages", new Locale("ca"));
-	    	  } else if ("mn1".equals(button.getName())) {
+	    	  } else if ("mn2".equals(button.getName())) {
 	    		  TDSLanguageUtils.setLanguage("i18n/messages", new Locale("en"));
-	    	  } else if ("mn1".equals(button.getName())) {
+	    	  } else if ("mn3".equals(button.getName())) {
 	    		  TDSLanguageUtils.setLanguage("i18n/messages", new Locale("es"));
 	    	  }
 	      }

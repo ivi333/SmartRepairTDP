@@ -3,6 +3,7 @@ package edu.uoc.tdp.pac4.service;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
@@ -11,6 +12,7 @@ import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Solicitud;
+import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.dao.ConnectionPostgressDB;
 import edu.uoc.tdp.pac4.dao.GestorAdministracionDAOImpl;
 import edu.uoc.tdp.pac4.exception.DAOException;
@@ -277,7 +279,12 @@ public class GestorAdministracionImpl extends
 			e.printStackTrace();
 		}
 		try {
-			return gestorAdministracionDAO.getNuevoSolicitud(solicitud);
+			int _newRep = gestorAdministracionDAO.altaReparacion (solicitud);
+			int _newSol=-1;
+			if (_newRep!=-1) {
+				_newSol = gestorAdministracionDAO.getNuevoSolicitud(solicitud);
+			}
+			return _newSol;
 		} catch (DAOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -354,5 +361,23 @@ public class GestorAdministracionImpl extends
 			e.printStackTrace();
 		}
 		return -2;
+	}
+	
+	public List<Taller> getAllTallers () throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			e.printStackTrace();
+		}
+		try {
+			return gestorAdministracionDAO.getAllTallers();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new ArrayList<Taller>();
+
 	}
 }

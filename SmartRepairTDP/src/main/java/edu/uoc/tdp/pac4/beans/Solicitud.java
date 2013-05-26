@@ -11,16 +11,16 @@ public class Solicitud implements java.io.Serializable {
 	private String  comentaris;
 	private Date dataalta;
 	private Date datafinalitzacio;
-	private int client;
 	private int numreparacio;
 	private boolean pendent;
 	private boolean finalitzada;
 	private String numpoliza;
-	private Client clientOb;
+	private Client client;
+	private int taller;
 	
 	public Solicitud()
 	{
-		
+		this.client = new Client();		
 	}
 	public int getNumsol() {
 		return numsol;
@@ -46,10 +46,18 @@ public class Solicitud implements java.io.Serializable {
 	public void setDatafinalitzacio(Date datafinalitzacio) {
 		this.datafinalitzacio = datafinalitzacio;
 	}
+	
 	public int getClient() {
-		return client;
+		return client.getNumClient();
 	}
 	public void setClient(int client) {
+		this.client.setNumClient(client);
+	}
+	
+	public Client getObjClient() {
+		return client;
+	}
+	public void setObjClient(Client client) {
 		this.client = client;
 	}
 	public int getNumreparacio() {
@@ -79,11 +87,10 @@ public class Solicitud implements java.io.Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	public Client getClientOb() {
-		return clientOb;
+	public int getTaller() {
+		return taller;
 	}
-	public void setClientOb(Client clientOb) {
-		this.clientOb = clientOb;
+	public void setTaller(int taller) {
+		this.taller = taller;
 	}
-	
 }

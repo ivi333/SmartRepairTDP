@@ -1,13 +1,12 @@
 package edu.uoc.tdp.pac4.dao;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
@@ -17,6 +16,7 @@ import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Solicitud;
 import edu.uoc.tdp.pac4.beans.Stockpeca;
+import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.exception.DAOException;
 import edu.uoc.tdp.pac4.exception.GestorAdministracionException;
 
@@ -29,6 +29,10 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 
 	private ConnectionPostgressDB cPostgressDB;
 
+	private static final String QUERY_ALL_TALLERS = 
+			"SELECT * FROM taller ORDER BY id";
+	
+	
 	public GestorAdministracionDAOImpl(ConnectionPostgressDB cPostgressDB)
 			throws GestorAdministracionException {
 		this.cPostgressDB = cPostgressDB;
@@ -745,8 +749,8 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		try {
 			
 			String sql = " insert into  solicitud "
-					+ "( comentaris, dataalta,    client,   pendent,finalitzada) "
-					+ " VALUES (?,?,  ?,?,   ?)";
+					+ "( comentaris, dataalta,    client,   pendent,finalitzada, idTaller, numreparacio) "
+					+ " VALUES (?,?,?,?,?,?,?)";
 			 prep = cPostgressDB.createPrepareStatment(sql,
 					ResultSet.CONCUR_UPDATABLE);
     		prep.setString(1, solicitud.getComentaris().toString().trim());
@@ -755,6 +759,8 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			prep.setInt(3, solicitud.getClient());
 			prep.setBoolean(4, solicitud.isPendent());
 			prep.setBoolean(5, solicitud.isFinalitzada());
+			prep.setInt(6, solicitud.getTaller());
+			prep.setInt(7, solicitud.getNumreparacio());
 
 			if(prep.executeUpdate()>0)
 			{
@@ -762,6 +768,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 			}
 			return iResult;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
 		} finally {
 			if (prep!=null) {
@@ -958,9 +965,108 @@ public Solicitud getConsultarSolicitud(int numsol) throws DAOException {
 
 		}
 	}
+
+	public int altaReparacion(Solicitud solicitud) throws DAOException {
+		PreparedStatement prep=null;
+		try {
+
+			int key = -1;
+			String sql="INSERT INTO REPARACIO (captaller, acceptada, assignada, observacions) values (" + 
+						getCapTaller(solicitud.getTaller()) + ", false, false, '" + solicitud.getComentaris().trim() + "')";
+			
+			Statement statement = cPostgressDB.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			
+			statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			ResultSet rs = statement.getGeneratedKeys();
+			if (rs != null && rs.next()) {
+			    key = rs.getInt(1);
+			}
+			
+			solicitud.setNumreparacio(key);
+			
+			return key;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (prep!=null) {
+				try {prep.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			
+		}
+	}
 	
+	public List<Taller> getAllTallers () throws DAOException {
+		List<Taller> result = new LinkedList<Taller>();
+		getConnectionDB();	
+		
+		Statement stm = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		try {
+			rs = stm.executeQuery(QUERY_ALL_TALLERS);
+			while (rs.next()){			
+				result.add(
+						new Taller(rs.getInt("id"), rs.getString("cif"), rs.getString("adreca"), rs.getInt("capacitat"), 
+								rs.getInt("capTaller"), rs.getString("telefon"), rs.getString("web"), rs.getBoolean("actiu"), 
+								rs.getDate("dataApertura"), rs.getDate("dataModificacio"), rs.getDate("dataBaixa")));	
+			}
+			return result;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (stm!=null) {
+				try {
+					stm.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	}
 
 
-
+	public int getCapTaller (int taller) throws DAOException {
+		int result=-1;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "SELECT captaller FROM Taller where id = " + taller;
+		try {
+			pstmt = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				result = rs.getInt(1);
+			}
+			return result;
+		}  catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (pstmt!=null) {
+				try {pstmt.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+		
+	}
+	
 } 
 

@@ -1,42 +1,36 @@
 package edu.uoc.tdp.pac4.client;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Rectangle;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-import javax.swing.JFrame;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
-import javax.swing.JLabel;
 
 import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Solicitud;
+import edu.uoc.tdp.pac4.beans.Taller;
+import edu.uoc.tdp.pac4.common.ItemCombo;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
-
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-
-import javax.swing.JSeparator;
-import java.awt.Color;
 
 public class AltaSolicitud extends JDialog {
 	private static int port = 1099;
@@ -63,6 +57,8 @@ public class AltaSolicitud extends JDialog {
 	private JButton  btnConsultar;
 	private boolean isOkCLiente = false;
 	private JLabel lblNewLabel_2;
+	private JComboBox cmbTaller;
+	private ArrayList<ItemCombo> cbTaller;
 	/*private JTextField txtDia;
 	private JTextField txtMes;
 	private JTextField txtAnyo;*/
@@ -86,6 +82,7 @@ public class AltaSolicitud extends JDialog {
 			seleccionIdioma();
 			initialize();
 			CargarControles();
+			initCmbTaller ();
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -99,6 +96,7 @@ public class AltaSolicitud extends JDialog {
 		initialize();
 		conexionRemota=remoto;
 		CargarControles();
+		initCmbTaller ();
 
 	} catch (Exception ex) {
 		ex.printStackTrace();
@@ -106,7 +104,7 @@ public class AltaSolicitud extends JDialog {
 	}
 
 	private void initialize() {
-		setSize(new Dimension(469, 426));
+		setSize(new Dimension(469, 481));
 	}
 	
 	private void seleccionIdioma() {
@@ -203,6 +201,15 @@ public class AltaSolicitud extends JDialog {
 		
 		contentPane.add(getBtnConsultar());
 		
+		JLabel lblTaller = new JLabel();
+		lblTaller.setText("Taller");
+		lblTaller.setBounds(24, 337, 89, 14);
+		contentPane.add(lblTaller);
+		
+		cmbTaller = new JComboBox();
+		cmbTaller.setBounds(123, 333, 210, 22);
+		contentPane.add(cmbTaller);
+		
 		/*JLabel lblNewLabel_1 = new JLabel();
 		lblNewLabel_1.setText("F.de finalización:");
 		lblNewLabel_1.setBounds(24, 207, 106, 14);
@@ -245,7 +252,7 @@ public class AltaSolicitud extends JDialog {
 		if (btnAlta == null) {
 			btnAlta = new JButton();
 			btnAlta.setForeground(new Color(0, 128, 0));
-			btnAlta.setBounds(new Rectangle(24, 341, 89, 23));
+			btnAlta.setBounds(new Rectangle(24, 379, 89, 23));
 			btnAlta.setText(TDSLanguageUtils.getMessage("solicitud.btn.alta"));
 			btnAlta.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -275,6 +282,7 @@ public class AltaSolicitud extends JDialog {
 				sol.setDataalta(dateAlta);
 				sol.setPendent(B_PENDIENTE);
 				sol.setFinalitzada(B_FINALIZADA);
+				sol.setTaller(Integer.valueOf(cbTaller.get(cmbTaller.getSelectedIndex()).getAux()));
 				
 			//	String anyo = txtAnyo.getText().toString();
 				//	String dia = txtDia.getText().toString();
@@ -348,7 +356,7 @@ public class AltaSolicitud extends JDialog {
 		if (btnCancelar == null) {
 			btnCancelar = new JButton();
 			btnCancelar.setForeground(Color.RED);
-			btnCancelar.setBounds(new Rectangle(291, 341, 89, 23));
+			btnCancelar.setBounds(new Rectangle(291, 379, 89, 23));
 			btnCancelar.setText(TDSLanguageUtils.getMessage("solicitud.btn.cancelar"));
 			btnCancelar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -411,7 +419,23 @@ public class AltaSolicitud extends JDialog {
 			ex.printStackTrace();
 		}
 	}
-	
+
+	private void initCmbTaller () {
+		cbTaller = new ArrayList<ItemCombo>();
+		List<Taller> talleres;
+		try {
+			talleres = conexionRemota.getAllTallers();
+			//cbTaller.add(new ItemCombo(0, "", "0"));
+			for (int i= 0; i < talleres.size(); i ++)
+				cbTaller.add(new ItemCombo(i+1,talleres.get(i).getCif(),String.valueOf(talleres.get(i).getId())));
+			for (int i=0; i < cbTaller.size(); i++) {
+				cmbTaller.insertItemAt(cbTaller.get(i).getValue(), i);				
+			}
+			cmbTaller.setSelectedIndex(0);
+		} catch (Exception e) {
+		}
+	}
+
 	private void LeerError(String paramString1, String paramString2) {
 		JOptionPane.showMessageDialog(this, paramString1, paramString2, 0);
 	}

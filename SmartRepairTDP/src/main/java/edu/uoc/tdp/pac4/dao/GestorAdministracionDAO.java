@@ -4,6 +4,7 @@ package edu.uoc.tdp.pac4.dao;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
@@ -12,6 +13,7 @@ import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Solicitud;
+import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.exception.DAOException;
 
 
@@ -56,4 +58,7 @@ public interface  GestorAdministracionDAO {
 
 	public int getFacturarSolicitud(Solicitud solicitud, String txtFactura)throws DAOException;
 
+	public int altaReparacion(Solicitud solicitud) throws DAOException;
+	
+	public List<Taller> getAllTallers() throws DAOException;
 }

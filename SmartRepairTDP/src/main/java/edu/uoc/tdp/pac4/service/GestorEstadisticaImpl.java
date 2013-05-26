@@ -37,10 +37,10 @@ public class GestorEstadisticaImpl extends java.rmi.server.UnicastRemoteObject i
 	}
 	
 
-	public ArrayList <Reparacio> obtenirReparacions(int intOrdreReparacio, String strNomClient, String strCognomClient, String strNomMecanic, String strCognomMecanic , String strEstado, String dataInici, String dataFi)
+	public ArrayList <Reparacio> obtenirReparacions(String strOrdreReparacio, String strNomClient, String strCognomClient, String strNomMecanic, String strCognomMecanic , String strEstado, String dataInici, String dataFi)
 			throws RemoteException, GestorEstadisticaException {
 		try {
-			return gestorEstadisticaDAO.obtenirReparacions(intOrdreReparacio, strNomClient, strCognomClient, strNomMecanic, strCognomMecanic , strEstado , dataInici, dataFi);
+			return gestorEstadisticaDAO.obtenirReparacions(strOrdreReparacio, strNomClient, strCognomClient, strNomMecanic, strCognomMecanic , strEstado , dataInici, dataFi);
 			
 		} catch (DAOException e) {
 			throw new GestorEstadisticaException(GestorEstadisticaException.ERR_DAO +  e.getMessage());
@@ -55,8 +55,8 @@ public class GestorEstadisticaImpl extends java.rmi.server.UnicastRemoteObject i
 	
 	
 	public float calcularTempsMigEspera (ArrayList<Reparacio> reparacions) throws  RemoteException, GestorEstadisticaException {
+		long lMilliseconds = 0 ;
 		float fHoras = 0 ;
-		float fMedia = 0 ;
 		
 		if ( !reparacions.isEmpty()){
 			Iterator<Reparacio> it = reparacions.iterator();
@@ -64,18 +64,20 @@ public class GestorEstadisticaImpl extends java.rmi.server.UnicastRemoteObject i
 			while ( it.hasNext())
 			{
 				Reparacio rep = it.next();
-				fHoras += rep.getDataInici().getHours() - rep.getSolicitud().getDataalta().getHours() ;			
+				lMilliseconds += rep.getDataInici().getTime() - rep.getSolicitud().getDataalta().getTime();			
 			}
-			fMedia = fHoras / reparacions.size();
+			
+			fHoras = lMilliseconds / 1000 ;
+			fHoras /= (reparacions.size()*60*60);
 		}
 		
-		return(fMedia);		
+		return(fHoras);
 	}
 
 	
 	public float calcularTempsMigReparacio (ArrayList<Reparacio> reparacions) throws RemoteException, GestorEstadisticaException {
+		long lMilliseconds = 0 ;
 		float fHoras = 0 ;
-		float fMedia = 0 ;
 		
 		if ( !reparacions.isEmpty()){
 			Iterator<Reparacio> it = reparacions.iterator();
@@ -83,39 +85,50 @@ public class GestorEstadisticaImpl extends java.rmi.server.UnicastRemoteObject i
 			while ( it.hasNext())
 			{
 				Reparacio rep = it.next();
-				fHoras += rep.getDataFi().getHours() - rep.getDataInici().getHours();			
+				lMilliseconds += rep.getDataInici().getTime() - rep.getDataFi().getTime();			
 			}
-			fMedia = fHoras / reparacions.size();
+			
+			fHoras = lMilliseconds / 1000 ;
+			fHoras /= (reparacions.size()*60*60);
 		}
 		
-		return(fMedia);		
+		return(fHoras);	
 	}
 	
 	
 	public float calcularTempsMigFinalitzacio (ArrayList<Reparacio> reparacions) throws RemoteException, GestorEstadisticaException {
+		long lMilliseconds = 0 ;
 		float fHoras = 0 ;
-		float fMedia = 0 ;
+		ArrayList<Reparacio> vectorAux = new ArrayList<Reparacio>();
 		
-		if ( !reparacions.isEmpty()){
-			Iterator<Reparacio> it = reparacions.iterator();
+		for ( Reparacio reparacio : reparacions )
+		{
+			if ( reparacio.getSolicitud().isFinalitzada())
+				vectorAux.add(reparacio);
+		}
+		
+		if ( !vectorAux.isEmpty()){
+			Iterator<Reparacio> it = vectorAux.iterator();
 			
 			while ( it.hasNext())
 			{
 				Reparacio rep = it.next();
-				fHoras += rep.getDataFi().getHours() - rep.getSolicitud().getDataalta().getHours() ;			
+				lMilliseconds += rep.getDataInici().getTime() - rep.getDataFi().getTime();			
 			}
-			fMedia = fHoras / reparacions.size();
+			
+			fHoras = lMilliseconds / 1000 ;
+			fHoras /= (reparacions.size()*60*60);
 		}
 		
-		return(fMedia);		
+		return(fHoras);
 	}
 	
 	//Informe de Clients
 	
-	public ArrayList <Client> obtenirClients(String strNomClient, String strCognom, String strMarca, String strNomAsseguradora) throws RemoteException, GestorEstadisticaException {
+	public ArrayList <Reparacio> obtenirClients(String strOrdreReparacio, String strNomClient, String strCognom, String strMarca, String strNomAsseguradora) throws RemoteException, GestorEstadisticaException {
 		
 		try {
-			return gestorEstadisticaDAO.obtenirClients(strNomClient, strCognom, strMarca, strNomAsseguradora);
+			return gestorEstadisticaDAO.obtenirClients(strOrdreReparacio, strNomClient, strCognom, strMarca, strNomAsseguradora);
 		} catch (DAOException e) {
 			throw new GestorEstadisticaException(GestorEstadisticaException.ERR_DAO +  e.getMessage());
 		}
@@ -124,34 +137,31 @@ public class GestorEstadisticaImpl extends java.rmi.server.UnicastRemoteObject i
 	
 	//Informe d'empleats
 
-	public ArrayList <Usuari> obtenirEmpleats(int intIdUsuari, String strNomUsuari, String strCognom) throws GestorEstadisticaException{
+	public ArrayList <Usuari> obtenirEmpleats(String strIdUsuari, String strNomUsuari, String strCognomUsuari) throws RemoteException, GestorEstadisticaException {
 		
 		try {
-			return gestorEstadisticaDAO.obtenirEmpleats(intIdUsuari, strNomUsuari, strCognom);
+			return gestorEstadisticaDAO.obtenirEmpleats(strIdUsuari, strNomUsuari, strCognomUsuari);
 		} catch (DAOException e) {
 			throw new GestorEstadisticaException(GestorEstadisticaException.ERR_DAO +  e.getMessage());
 		}
 	}
 	
-	//Calcular nº de horas que un Mecanic SI ha trabajado
-	public int calcularNumHoresTreballades () throws RemoteException, GestorEstadisticaException {
-		return 0;
 	
-	}
-	
-	//usuari.reparacionsAssignadades con r.dataFi 
-	public int calcularNumRepRessoltes (int intIdMecanic) throws RemoteException, GestorEstadisticaException {
-		return intIdMecanic;
-	
-	
-	}
-	//Calcular nº de horas que un Mecanic NO ha trabajado
-	public int calcularNumFaltesAssistencia () throws RemoteException, GestorEstadisticaException {
-		return 0;
-	
+	public ArrayList<Reparacio> calcularNumRepRessoltes (String strIdMecanic, String strNomMecanic, String strCognomMecanic) throws RemoteException, GestorEstadisticaException {
+		
+		try {
+			return gestorEstadisticaDAO.calcularNumRepRessoltes(strIdMecanic, strNomMecanic, strCognomMecanic);
+		} catch (DAOException e) {
+			throw new GestorEstadisticaException(GestorEstadisticaException.ERR_DAO +  e.getMessage());
+		}
 	}
 
-
-
-				
+	public ArrayList<Reparacio> calcularNumHoresTreballades (String strIdMecanic, String strNomMecanic, String strCognomMecanic) throws RemoteException, GestorEstadisticaException {
+		
+		try {
+			return gestorEstadisticaDAO.calcularNumHoresTreballades(strIdMecanic, strNomMecanic, strCognomMecanic);
+		} catch (DAOException e) {
+			throw new GestorEstadisticaException(GestorEstadisticaException.ERR_DAO +  e.getMessage());
+		}
+	}
 }
