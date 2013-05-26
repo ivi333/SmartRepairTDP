@@ -1,5 +1,6 @@
 package edu.uoc.tdp.pac4.beans;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class Reparacio implements java.io.Serializable{
@@ -17,6 +18,8 @@ public class Reparacio implements java.io.Serializable{
 	private Date dataInici;
 	private Date dataFi;
 	private Solicitud solicitud ;
+	private Calendar calendar ;
+	private Comanda comanda;//
 
 	
 	private Mecanic mecanic;
@@ -24,6 +27,7 @@ public class Reparacio implements java.io.Serializable{
 	public Reparacio(int ordreReparacio, int capTaller, boolean acceptada, int idMecanic,
 					 boolean assignada, double comptador, String observacions, int numCom,
 					 Date dataAssignacio, Date dataInici, Date dataFi){
+		this();
 		this.ordreReparacio = ordreReparacio;
 		this.capTaller = capTaller;
 		this.acceptada = acceptada;
@@ -38,7 +42,7 @@ public class Reparacio implements java.io.Serializable{
 	}
 	
 	public Reparacio() {
-		
+		this.calendar = Calendar.getInstance();
 	}
 	
 	public Solicitud getSolicitud() {
@@ -150,14 +154,107 @@ public class Reparacio implements java.io.Serializable{
 	{
 		String strEstado = "" ;
 		
-		if (this.acceptada) strEstado = "Acceptada" ;
-		else if (this.assignada && this.acceptada && !this.solicitud.isPendent() && this.solicitud.isFinalitzada()) strEstado = "Rebudes" ;
-		else if (this.assignada && this.acceptada && this.solicitud.isPendent() && !this.solicitud.isFinalitzada()) strEstado = "En Curs" ;
-		else if (!this.acceptada && !this.assignada && this.solicitud.isPendent() && !this.solicitud.isFinalitzada()) strEstado = "En Espera" ;
+		if (!this.assignada && this.acceptada && !this.solicitud.isPendent() && !this.solicitud.isFinalitzada()) strEstado = "Rebuda" ;
+		else if (this.assignada && this.acceptada && !this.solicitud.isPendent() && !this.solicitud.isFinalitzada()) strEstado = "En Curs" ;
+		else if (!this.assignada && !this.acceptada && this.solicitud.isPendent() && !this.solicitud.isFinalitzada()) strEstado = "En Espera" ;
 		else if (!this.assignada && !this.acceptada && !this.solicitud.isPendent() && this.solicitud.isFinalitzada()) strEstado = "Rebutjada" ;
 		else if (this.assignada && this.acceptada && !this.solicitud.isPendent() && this.solicitud.isFinalitzada()) strEstado = "Finalitzada" ;
-		else strEstado = "Totes" ;
 		
 		return ( strEstado );
-	}	
+	}
+	
+
+	public int getHoursDataInici () {
+		if (dataInici!=null) {
+			calendar.setTime(dataInici);
+			return calendar.get(Calendar.HOUR_OF_DAY);
+		} else {
+			return -1;
+		}
+	}
+
+	
+	public int getMinuteDataInici () {
+		if (dataInici!=null) {
+			calendar.setTime(dataInici);
+			return calendar.get(Calendar.MINUTE);
+		} else {
+			return -1;
+		}
+	}
+
+
+	public int getSecondDataInici () {
+		if (dataInici!=null) {
+			calendar.setTime(dataInici);
+			return calendar.get(Calendar.SECOND);
+		} else {
+			return -1;
+		}
+	}
+	
+
+	public int getHoursDataFi () {
+		if (dataFi!=null) {
+			calendar.setTime(dataFi);
+			return calendar.get(Calendar.HOUR_OF_DAY);
+		} else {
+			return -1;
+		}
+	}
+
+
+	public int getMinuteDataFi () {
+		if (dataFi!=null) {
+			calendar.setTime(dataFi);
+			return calendar.get(Calendar.MINUTE);
+		} else {
+			return -1;
+		}
+	}
+
+	
+	public int getSecondDataFi () {
+		if (dataFi!=null) {
+			calendar.setTime(dataFi);
+			return calendar.get(Calendar.SECOND);
+		} else {
+			return -1;
+		}
+	}
+	
+	public String prettyHoraInici()
+	{
+		return (
+				a2Digitos(this.getHoursDataInici()) + ":" +
+				a2Digitos(this.getMinuteDataInici()) + ":" +
+				a2Digitos(this.getSecondDataInici())
+			);
+	}
+	
+	public String prettyHoraFi()
+	{
+		return (
+				a2Digitos(this.getHoursDataFi()) + ":" +
+				a2Digitos(this.getMinuteDataFi()) + ":" +
+				a2Digitos(this.getSecondDataFi())
+			);
+	}
+	
+	private String a2Digitos (int iEntrada)
+	{
+		String strResult = "";
+		
+		if ( iEntrada <= 9 ) strResult = "0";
+		
+		return ( strResult + String.valueOf(iEntrada) );
+	}
+
+	public Comanda getComanda() {
+		return comanda;
+	}
+
+	public void setComanda(Comanda comanda) {
+		this.comanda = comanda;
+	}
 }
