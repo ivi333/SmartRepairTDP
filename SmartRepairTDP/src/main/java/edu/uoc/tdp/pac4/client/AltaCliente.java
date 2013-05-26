@@ -1,5 +1,6 @@
 package edu.uoc.tdp.pac4.client;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Rectangle;
@@ -7,44 +8,33 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 
-import javax.swing.JFrame;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
-import javax.swing.JLabel;
 
 import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.common.ItemCombo;
+import edu.uoc.tdp.pac4.common.Nif;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
-
-import javax.swing.InputVerifier;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.JSeparator;
-import javax.swing.JComboBox;
-import java.awt.Color;
 
 public class AltaCliente extends JDialog {
 	private JPanel contentPanel;
@@ -203,7 +193,7 @@ public class AltaCliente extends JDialog {
 		txtNIF = new JTextField();
 		txtNIF.setBounds(82, 39, 86, 20);
 		contentPanel.add(txtNIF);
-		txtNIF.addKeyListener(new KeyAdapterNumbersOnly());
+		txtNIF.setDocument(new JTextFieldLimit(9));
 		txtNIF.setColumns(10);
 
 		separator1 = new JSeparator();
@@ -638,6 +628,14 @@ public class AltaCliente extends JDialog {
 	private String getMsgExisteCliente(String strNIF) {
 		String strResult = "";
 		try {
+			if(!Nif.validar(txtNIF.getText().toString()))
+			{
+				strResult = TDSLanguageUtils
+						.getMessage("solicitud.msg.nif.error");
+				return strResult;
+			}
+			else
+			{
 			isOkCLiente = false;
 			boolean bMsg = conexionRemota.getExistCliente(strNIF);
 			if (bMsg) {
@@ -648,6 +646,7 @@ public class AltaCliente extends JDialog {
 				strResult = TDSLanguageUtils
 						.getMessage("cliente.msg.cliente.noexiste");
 				isOkCLiente = false;
+			}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -740,6 +739,15 @@ public class AltaCliente extends JDialog {
 			if (txtNifNew.getText().toString().equals("")) {
 				strResult = TDSLanguageUtils.getMessage("cliente.msg.falta.nif");
 				return strResult;
+			}
+			else
+			{
+				if(!Nif.validar(txtNifNew.getText().toString()))
+				{
+					strResult = TDSLanguageUtils
+							.getMessage("solicitud.msg.nif.error");
+					return strResult;
+				}
 			}
 			if (txtNombre.getText().toString().equals("")) {
 				strResult = TDSLanguageUtils.getMessage("cliente.msg.falta.nombre");

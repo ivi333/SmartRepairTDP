@@ -29,6 +29,7 @@ import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Solicitud;
 import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.common.ItemCombo;
+import edu.uoc.tdp.pac4.common.Nif;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.service.GestorAdministracionInterface;
 
@@ -196,7 +197,8 @@ public class AltaSolicitud extends JDialog {
 		txtNIF = new JTextField();
 		txtNIF.setBounds(172, 17, 120, 20);
 		txtNIF.setColumns(10);
-		txtNIF.addKeyListener(new KeyAdapterNumbersOnly());
+//		txtNIF.addKeyListener(new KeyAdapterNumbersOnly());
+		txtNIF.setDocument(new JTextFieldLimit(9));
 		contentPane.add(txtNIF);
 		
 		contentPane.add(getBtnConsultar());
@@ -211,7 +213,7 @@ public class AltaSolicitud extends JDialog {
 		contentPane.add(cmbTaller);
 		
 		/*JLabel lblNewLabel_1 = new JLabel();
-		lblNewLabel_1.setText("F.de finalización:");
+		lblNewLabel_1.setText("F.de finalizaci�n:");
 		lblNewLabel_1.setBounds(24, 207, 106, 14);
 		contentPane.add(lblNewLabel_1);
 		
@@ -321,6 +323,12 @@ public class AltaSolicitud extends JDialog {
 						.getMessage("solicitud.msg.falta.nif");
 				return strResult;
 
+			}
+			if(!Nif.validar(txtNIF.getText().toString()))
+			{
+				strResult = TDSLanguageUtils
+						.getMessage("solicitud.msg.nif.error");
+				return strResult;
 			}
 			if (textAreaComentario.getText().toString().equals("")) {
 				strResult = TDSLanguageUtils
@@ -447,6 +455,14 @@ public class AltaSolicitud extends JDialog {
 	 private String getMsgExisteCliente(String strNIF) {
 		String strResult = "";
 		try {
+			if(!Nif.validar(txtNIF.getText().toString()))
+			{
+				strResult = TDSLanguageUtils
+						.getMessage("solicitud.msg.nif.error");
+				return strResult;
+			}
+			else
+			{
 			isOkCLiente = false;
 			boolean bMsg = conexionRemota.getExistCliente(strNIF);
 			if (bMsg) {
@@ -457,6 +473,7 @@ public class AltaSolicitud extends JDialog {
 				strResult = TDSLanguageUtils
 						.getMessage("cliente.msg.cliente.noexiste");
 				isOkCLiente = false;
+			}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
