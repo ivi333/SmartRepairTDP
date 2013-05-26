@@ -28,6 +28,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -40,7 +41,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 
-public class MntoUsuario extends JFrame {
+public class MntoUsuario extends JDialog {
 
 	/**
 	 * 
@@ -75,6 +76,8 @@ public class MntoUsuario extends JFrame {
 	private JLabel lblTitle;
 	private JList listPerfil;
 	
+	private boolean  refresh; 
+	
 	/**
 	 * Launch the application.
 	 */
@@ -101,6 +104,7 @@ public class MntoUsuario extends JFrame {
 	public MntoUsuario (GestorConexionInterface gestorConexion) {
 		this.gestorConexion = gestorConexion;
 		this.accion = "NUEVO";
+		this.refresh = false;
 		initialize ();
 		initCmbTaller();
 		initListPerfil ();
@@ -112,6 +116,7 @@ public class MntoUsuario extends JFrame {
 		this.gestorConexion = gestorConexion;
 		this.accion = accion;
 		this.idUsuari = idUsuari;
+		this.refresh = false;
 		initialize ();
 		initCmbTaller ();
 		initListPerfil ();
@@ -546,6 +551,7 @@ public class MntoUsuario extends JFrame {
 				
 					try {
 						gestorConexion.altaUsuari(usuari);
+						refresh = true;
 						showInfo(TDSLanguageUtils.getMessage("mntousuario.alta.ok"), lblTitle.getText());
 						this.accion = "MODIFICAR";
 						leerUsuariByNif();
@@ -574,6 +580,7 @@ public class MntoUsuario extends JFrame {
 				if (msg.equals("")) {
 					try {
 						gestorConexion.modificarUsuari(usuari);
+						refresh = true;
 						showInfo(TDSLanguageUtils.getMessage("mntousuario.modif.ok"), lblTitle.getText());
 						leerUsuariById();
 						mostrarUsuari();
@@ -591,6 +598,7 @@ public class MntoUsuario extends JFrame {
 						TDSLanguageUtils.getMessage("mntousuario.atencion"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {					
 					try {					
 						gestorConexion.disableUser(usuari.getId());
+						refresh ();
 						showInfo(TDSLanguageUtils.getMessage("mntousuario.baja.ok"), lblTitle.getText());
 					} catch (GestorConexionException e){
 						showErrorKey(e.getMessage(), lblTitle.getText());
@@ -693,6 +701,6 @@ public class MntoUsuario extends JFrame {
 	}
 	
 	public boolean refresh () {
-		return true;
+		return this.refresh;
 	}
 }

@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.EventQueue;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.JTextComponent;
@@ -21,13 +20,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -37,7 +36,7 @@ import javax.swing.SwingConstants;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 
-public class MntoTaller extends JFrame {
+public class MntoTaller extends JDialog {
 
 	/**
 	 * 
@@ -69,6 +68,8 @@ public class MntoTaller extends JFrame {
 	private JComboBox cmbJefeTaller;
 	private JLabel lblTitle;
 	
+	private boolean refresh;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -95,6 +96,7 @@ public class MntoTaller extends JFrame {
 	public MntoTaller (GestorConexionInterface gestorConexion) {
 		this.gestorConexion = gestorConexion;
 		this.accion = "NUEVO";
+		this.refresh = false;
 		initialize ();
 		initCmbJefeTaller();
 		cargarOperacion ();
@@ -104,6 +106,7 @@ public class MntoTaller extends JFrame {
 	public MntoTaller (GestorConexionInterface gestorConexion, String accion, int idTaller){
 		this.gestorConexion = gestorConexion;
 		this.accion = accion;
+		this.refresh = false;
 		this.idTaller = idTaller;
 		initialize ();
 		initCmbJefeTaller ();
@@ -468,6 +471,7 @@ public class MntoTaller extends JFrame {
 				
 					try {
 						gestorConexion.altaTaller(taller);
+						this.refresh = true;						
 						showInfo(TDSLanguageUtils.getMessage("mntotaller.alta.ok"), lblTitle.getText());
 						this.accion = "MODIFICAR";
 						leerTallerByCif();
@@ -495,6 +499,7 @@ public class MntoTaller extends JFrame {
 				if (msg.equals("")) {
 					try {
 						gestorConexion.modificarTaller(taller);
+						refresh = true;
 						showInfo(TDSLanguageUtils.getMessage("mntotaller.modif.ok"), lblTitle.getText());
 						leerTallerById();
 						mostrarTaller();
@@ -513,6 +518,7 @@ public class MntoTaller extends JFrame {
 					try {					
 						taller.setActiu(chkActivo.isSelected());
 						gestorConexion.disableTaller(taller);
+						refresh = true;
 						showInfo(TDSLanguageUtils.getMessage("mntotaller.baja.ok"), lblTitle.getText());
 					} catch (GestorConexionException e) {
 						showError (e.getMessage(), lblTitle.getText());
@@ -599,5 +605,9 @@ public class MntoTaller extends JFrame {
 
 			((JTextComponent) e.getSource()).setText(curText);
 		}
+	}
+	
+	public boolean refresh () {
+		return this.refresh;
 	}
 }

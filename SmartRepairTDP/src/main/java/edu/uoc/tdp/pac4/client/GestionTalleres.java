@@ -22,6 +22,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -49,7 +50,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JSeparator;
 
 
-public class GestionTalleres extends JFrame {
+public class GestionTalleres extends JDialog {
 
 	/**
 	 * 
@@ -72,6 +73,8 @@ public class GestionTalleres extends JFrame {
 	private JTable tabla;
 	
 	private ArrayList<ItemCombo> cbCapTaller;
+	
+	private MntoTaller mnto;
 	
 	
 	private static final Object columnNames[] = {
@@ -369,23 +372,32 @@ public class GestionTalleres extends JFrame {
 	
 	private void actions (ActionEvent actionEvent){
 		if (actionEvent.getActionCommand().toString().equals("BTN_FILTRAR")) {
-			if ((txtId.getText().length()> 0) || (txtCif.getText().length() > 0) ||					
-					(txtAdreca.getText().length()> 0) || (txtCapacitat.getText().length() > 0) ||
-					(cmbCapTaller.getSelectedIndex())> -1)					
-				tabla.setModel(getTallersByFilter());
-			else
-				tabla.setModel(getAllTallers());
-			enableButtons(false);
+			doFiltrar();
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_NUEVO")) {
 			winMantenimiento("ALTA","");
+			if (mnto.refresh())
+				doFiltrar ();
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_MODIFICAR")){
 			winMantenimiento("MODIFICAR",tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
+			if (mnto.refresh())
+				doFiltrar ();
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_BAJA")){
 			winMantenimiento("BAJA",tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
-			
+			if (mnto.refresh ())
+				doFiltrar ();
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_SALIR")){
 			dispose();
 		}
+	}
+	
+	private void doFiltrar () {
+		if ((txtId.getText().length()> 0) || (txtCif.getText().length() > 0) ||					
+				(txtAdreca.getText().length()> 0) || (txtCapacitat.getText().length() > 0) ||
+				(cmbCapTaller.getSelectedIndex())> -1)					
+			tabla.setModel(getTallersByFilter());
+		else
+			tabla.setModel(getAllTallers());
+		enableButtons(false);
 	}
 	
 	private TableModel getTallersByFilter () {
@@ -446,7 +458,7 @@ public class GestionTalleres extends JFrame {
 	}
 	
 	private void winMantenimiento (String accion, String id) {
-		MntoTaller mnto;
+		
 		if (accion.equals("ALTA"))
 			mnto = new MntoTaller(gestorConexion);
 		else
@@ -455,6 +467,7 @@ public class GestionTalleres extends JFrame {
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		mnto.setLocation(dim.width/2-mnto.getSize().width/2, dim.height/2-mnto.getSize().height/2);
 		mnto.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		mnto.setModal(true);
 		mnto.setVisible(true);		
 	}
 	

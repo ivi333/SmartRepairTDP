@@ -17,6 +17,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.List;
 
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -50,7 +53,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JSeparator;
 
 
-public class GestionUsuarios extends JFrame {
+public class GestionUsuarios extends JDialog {
 
 	/**
 	 * 
@@ -115,10 +118,11 @@ public class GestionUsuarios extends JFrame {
 		initialize ();
 		tabla.setModel(getAllUsuaris());		
 		enableButtons(false);
+		
 	}
 	
 	private void initialize (){
-		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		this.setTitle(TDSLanguageUtils.getMessage("gestionusuarios.titulo.ventana"));
 		setBounds(100, 100, 950, 500);
 		contentPane = new JPanel();
@@ -376,11 +380,17 @@ public class GestionUsuarios extends JFrame {
 		if (actionEvent.getActionCommand().toString().equals("BTN_FILTRAR")) {
 			doFiltrar ();
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_NUEVO")) {
-			winMantenimiento("");			
+			winMantenimiento("");	
+			if (mnto.refresh())
+				doFiltrar();
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_MODIFICAR")){
 			winMantenimiento("MODIFICAR");
+			if (mnto.refresh())
+				doFiltrar();
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_BAJA")){
-			winMantenimiento("BAJA");			
+			winMantenimiento("BAJA");	
+			if (mnto.refresh())
+				doFiltrar();
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_SALIR")){
 			dispose ();
 			
@@ -396,6 +406,7 @@ public class GestionUsuarios extends JFrame {
 			tabla.setModel(getAllUsuaris());
 		enableButtons(false);
 	}
+	
 	private TableModel getUsuariByFilter () {
 		List<Usuari> usuaris;
 		TableModel model = null;
@@ -456,6 +467,7 @@ public class GestionUsuarios extends JFrame {
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		mnto.setLocation(dim.width/2-mnto.getSize().width/2, dim.height/2-mnto.getSize().height/2);
 		mnto.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		mnto.setModal(true);
 		mnto.setVisible(true);
 	}
 	
