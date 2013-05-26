@@ -226,7 +226,8 @@ public class AltaCliente extends JDialog {
 		txtNifNew = new JTextField();
 		txtNifNew.setBounds(115, 133, 146, 20);
 		contentPanel.add(txtNifNew);
-		txtNifNew.addKeyListener(new KeyAdapterNumbersOnly());
+		//txtNifNew.addKeyListener(new KeyAdapterNumbersOnly());
+		txtNifNew.setDocument(new JTextFieldLimit(9));
 		txtNifNew.setColumns(10);
 
 		lblNombre = new JLabel();
