@@ -283,7 +283,7 @@ public class MainGUI extends JFrame {
 		mnNewMenu_2.setEnabled(true);
 		menuBar.add(mnNewMenu_2);
 		
-		if (isMecanico || isJefeTaller) {
+		if (isMecanico) {
 			JMenuItem mntmReparacinAsignada = new JMenuItem("Reparación asignada");
 			mntmReparacinAsignada.addMouseListener(new MouseAdapter() {
 				@Override
