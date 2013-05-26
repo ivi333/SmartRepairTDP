@@ -17,6 +17,8 @@ public class Comanda implements java.io.Serializable {
 	private int ordrereparacio;
 	private boolean tipusreparacio;
 	private int cantidad;
+	private Peca Peca;
+	private Reparacio reparacio;
 	
 	public Comanda (int numcom, boolean estat, Date dataalta, int codipeca, int idcaptaller,
 			int codigoProveedor, int ordrereparacio, boolean tipusreparacio, int cantidad){
@@ -119,6 +121,26 @@ public class Comanda implements java.io.Serializable {
 
 	public void setCantidad(int cantidad) {
 		this.cantidad = cantidad;
+	}
+
+
+	public Peca getPeca() {
+		return Peca;
+	}
+
+
+	public void setPeca(Peca peca) {
+		Peca = peca;
+	}
+
+
+	public Reparacio getReparacio() {
+		return reparacio;
+	}
+
+
+	public void setReparacio(Reparacio reparacio) {
+		this.reparacio = reparacio;
 	}
 	
 	

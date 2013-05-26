@@ -1,16 +1,10 @@
 package edu.uoc.tdp.pac4.dao;
 
-import java.sql.Date;
-
 import java.util.ArrayList;
 
-import org.postgresql.jdbc2.EscapedFunctions;
-
-import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.exception.DAOException;
-import edu.uoc.tdp.pac4.exception.GestorEstadisticaException;
 
 
 /**
@@ -27,16 +21,20 @@ public interface GestorEstadisticaDAO {
 
 	//Informe de Reparacions
 	
-	public ArrayList<Reparacio> obtenirReparacions(int intOrdreReparacio, String strNomClient, String strCognomClient, String strNomMecanic, String strCognomMecanic , String strEstado, String dataInici, String dataFi) throws DAOException;
+	public ArrayList <Reparacio> obtenirReparacions(String strOrdreReparacio, String strNomClient, String strCognomClient, String strNomMecanic, String strCognomMecanic , String strEstado, String dataInici, String dataFi) throws DAOException;
 	
 	
 	//Informe de Clients
 	
-	public ArrayList <Client> obtenirClients(String strNomClient, String strCognom, String strMarca, String strNomAsseguradora) throws DAOException;
+	public ArrayList <Reparacio> obtenirClients(String strOrdreReparacio, String strNomClient, String strCognom, String strMarca, String strNomAsseguradora) throws DAOException;
 	
 	
 	//Informe d'empleats
 		
-	public ArrayList <Usuari> obtenirEmpleats(int intIdUsuari, String strNomUsuari, String strCognom) throws DAOException;
+	public ArrayList <Usuari> obtenirEmpleats(String strIdUsuari, String strNomUsuari, String strCognomUsuari) throws DAOException;
 		
+	public ArrayList<Reparacio> calcularNumRepRessoltes (String strIdMecanic, String strNomMecanic, String strCognomMecanic) throws DAOException;
+		
+	public ArrayList<Reparacio> calcularNumHoresTreballades (String strIdMecanic, String strNomMecanic, String strCognomMecanic)throws DAOException;
+				
 }
