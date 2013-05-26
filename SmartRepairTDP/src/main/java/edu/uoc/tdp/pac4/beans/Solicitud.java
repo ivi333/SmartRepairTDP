@@ -17,7 +17,7 @@ public class Solicitud implements java.io.Serializable {
 	private String numpoliza;
 	private Client client;
 	private int taller;
-	
+	private String nifCliente;
 	public Solicitud()
 	{
 		this.client = new Client();		
@@ -92,5 +92,11 @@ public class Solicitud implements java.io.Serializable {
 	}
 	public void setTaller(int taller) {
 		this.taller = taller;
+	}
+	public String getNifCliente() {
+		return nifCliente;
+	}
+	public void setNifCliente(String nifCliente) {
+		this.nifCliente = nifCliente;
 	}
 }

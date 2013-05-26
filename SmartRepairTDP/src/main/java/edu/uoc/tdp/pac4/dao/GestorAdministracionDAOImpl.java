@@ -756,7 +756,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
     		prep.setString(1, solicitud.getComentaris().toString().trim());
 			prep.setDate(2, (java.sql.Date) solicitud.getDataalta());
 			//prep.setDate(3, (java.sql.Date) solicitud.getDatafinalitzacio());
-			prep.setInt(3, solicitud.getClient());
+			prep.setString(3, solicitud.getNifCliente());
 			prep.setBoolean(4, solicitud.isPendent());
 			prep.setBoolean(5, solicitud.isFinalitzada());
 			prep.setInt(6, solicitud.getTaller());

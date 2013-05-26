@@ -277,7 +277,7 @@ public class AltaSolicitud extends JDialog {
 			if(ImputValues().equals(""))
 			{ 
 				Solicitud sol= new Solicitud();
-				sol.setClient(Integer.valueOf(txtNIF.getText().toString()));
+				sol.setNifCliente((txtNIF.getText().toString()));
 				sol.setComentaris(textAreaComentario.getText().toString());
 				java.util.Date dt = new java.util.Date();
 				java.sql.Date dateAlta = new java.sql.Date(dt.getTime());
