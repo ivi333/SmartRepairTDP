@@ -13,6 +13,7 @@ import edu.uoc.tdp.pac4.beans.Proveidor;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Solicitud;
 import edu.uoc.tdp.pac4.beans.Taller;
+import edu.uoc.tdp.pac4.exception.DAOException;
 
 
 public interface GestorAdministracionInterface extends Remote{
@@ -56,6 +57,8 @@ public Reparacio getReparacionByCodeReparacion(int numreparacio)throws RemoteExc
 public int getFacturarSolicitud(Solicitud sol, String txtFactura)throws RemoteException;
 
 public List<Taller> getAllTallers () throws RemoteException;
+
+public int getRecepcionarPedido(int codigoPedido,boolean bEstado)throws RemoteException;
 }
 
 

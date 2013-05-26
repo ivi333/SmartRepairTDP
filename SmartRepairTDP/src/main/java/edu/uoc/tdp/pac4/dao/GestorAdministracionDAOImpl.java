@@ -691,6 +691,41 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 		}
 			}
 	
+	/* ******recepcionar  pedidos******/
+	public int getRecepcionarPedido(int codigoPedido,boolean bEstado) throws DAOException {
+		int iResult = -1;
+		PreparedStatement prep =null;
+		try{
+			 
+			String sql = " update  comanda SET "
+					+ " estat=? "
+					+" WHERE numcom =?";
+
+			 prep = cPostgressDB.createPrepareStatment(sql,
+					ResultSet.CONCUR_UPDATABLE);
+
+			prep.setBoolean(1,bEstado);
+			prep.setInt(2, codigoPedido);
+			
+			
+			int ii=prep.executeUpdate();
+			
+			iResult = 1;
+			return iResult;
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(), e);
+		} finally {
+			if (prep != null) {
+				try {
+					prep.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED,
+							e.getMessage(), e);
+				}
+			}
+
+		}
+	}
 	/* ******Cargar pedidos******/
 	public ArrayList<String> getCargarPedidos() throws DAOException {
 		ArrayList<String> list = new ArrayList<String>();

@@ -380,4 +380,22 @@ public class GestorAdministracionImpl extends
 		return new ArrayList<Taller>();
 
 	}
+
+	public int getRecepcionarPedido(int codigoPedido, boolean bEstado)
+			throws RemoteException {
+		GestorAdministracionDAOImpl gestorAdministracionDAO = null;
+		try {
+			gestorAdministracionDAO = new GestorAdministracionDAOImpl(
+					cPostgressDB);
+		} catch (GestorAdministracionException e) {
+			e.printStackTrace();
+		}
+		try {
+			return gestorAdministracionDAO.getRecepcionarPedido(codigoPedido,bEstado);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -2;
+	}
 }

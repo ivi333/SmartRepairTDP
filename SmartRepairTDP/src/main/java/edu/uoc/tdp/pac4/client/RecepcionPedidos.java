@@ -13,11 +13,14 @@ import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
@@ -34,6 +37,8 @@ public class RecepcionPedidos extends JDialog {
 	JButton btnPedidoNuevo;
 	private JTable jTableResultado;
 	private JScrollPane scrollPaneResultado;
+	private JButton btnRecepcionar;
+	private int codigoPedido=0;
 	private static GestorAdministracionInterface conexionRemota;
 	public static void main(String[] args) {
 		try {
@@ -106,7 +111,19 @@ public class RecepcionPedidos extends JDialog {
 		jTableResultado.getColumnModel().getColumn(3).setPreferredWidth(80);
 		jTableResultado.getColumnModel().getColumn(4).setPreferredWidth(80);
 		jTableResultado.getColumnModel().getColumn(5).setPreferredWidth(80);
-		//jTableResultado.getColumnModel().getColumn(6).setPreferredWidth(50);
+		jTableResultado.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+	        public void valueChanged(ListSelectionEvent event) {
+	        	try{
+	        	codigoPedido=Integer.valueOf(jTableResultado.getValueAt(jTableResultado.getSelectedRow(), 0).toString());
+	        	}
+	        	catch(Exception ex)
+	        	{
+	        		ex.printStackTrace();
+	        		codigoPedido=0;
+	        	}
+	        	
+	        }
+	    });
 	
 		
 		scrollPaneResultado.setViewportView(jTableResultado);
@@ -116,8 +133,71 @@ public class RecepcionPedidos extends JDialog {
 		
 		contentPane.add(getbtnPedidoNuevo());
 		
+	
+		contentPane.add(getbtnRecepcionar());
+		
+	}
+	private JButton getbtnRecepcionar()
+	{
+		if(btnRecepcionar==null)
+		{
+			 btnRecepcionar = new JButton();
+			 btnRecepcionar.setBounds(new Rectangle(391, 181, 170, 23));
+			 btnRecepcionar.setText(TDSLanguageUtils.getMessage("recep.btn.recep.pedido"));
+			 btnRecepcionar.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(java.awt.event.ActionEvent e) {
+						try{
+							
+							GetRecepcionar();
+							
+							getCargarPedidos();
+						}
+						catch(Exception ex)
+						{
+							ex.printStackTrace();
+						}
+					}
+				});
+			}
+		return btnRecepcionar;
 	}
 	
+	private void GetRecepcionar()
+	{
+		String titulo=TDSLanguageUtils.getMessage("recep.titulo");
+		String msg1=TDSLanguageUtils.getMessage("recep.msg.confirmar");
+		try{
+			if(codigoPedido>0)
+			{
+			 int reply = JOptionPane.showConfirmDialog(null,msg1, titulo,  JOptionPane.YES_NO_OPTION);
+		        if (reply == JOptionPane.YES_OPTION) {
+
+		        	conexionRemota.getRecepcionarPedido(codigoPedido,true);
+		        }
+		        else {
+		          
+		           System.exit(0);
+		        }
+			}
+			else
+			{
+				String msg=TDSLanguageUtils.getMessage("recep.msg.recep");
+				LeerError(msg,titulo);
+			}
+			
+			
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		
+	}
+	private void LeerError(String paramString1, String paramString2) {
+		JOptionPane.showMessageDialog(this, paramString1, paramString2, 0);
+	}
+	private void MuestraOk(String paramString1, String paramString2) {
+        JOptionPane.showMessageDialog(this, paramString1, paramString2, 1);
+    }
 	private JButton getbtnPedidoNuevo() {
 		if(btnPedidoNuevo==null)
 		{
@@ -168,7 +248,7 @@ public class RecepcionPedidos extends JDialog {
 			btnGestionar = new JButton();
 			btnGestionar.setText(TDSLanguageUtils
 					.getMessage("recep.btn.actualizar"));
-			btnGestionar.setBounds(new Rectangle(323, 181, 123, 23));
+			btnGestionar.setBounds(new Rectangle(203, 181, 123, 23));
 			btnGestionar.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 

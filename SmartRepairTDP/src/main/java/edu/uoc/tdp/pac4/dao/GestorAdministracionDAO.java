@@ -61,4 +61,6 @@ public interface  GestorAdministracionDAO {
 	public int altaReparacion(Solicitud solicitud) throws DAOException;
 	
 	public List<Taller> getAllTallers() throws DAOException;
+	
+	public int getRecepcionarPedido(int codigoPedido,boolean bEstado)throws DAOException;
 }
