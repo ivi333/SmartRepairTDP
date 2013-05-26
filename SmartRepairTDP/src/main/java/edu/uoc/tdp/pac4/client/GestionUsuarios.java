@@ -457,10 +457,6 @@ public class GestionUsuarios extends JFrame {
 		mnto.setLocation(dim.width/2-mnto.getSize().width/2, dim.height/2-mnto.getSize().height/2);
 		mnto.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		mnto.setVisible(true);
-
-		mnto.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		mnto.setVisible(true);
-
 	}
 	
 	private void enableButtons (boolean status){

@@ -431,9 +431,7 @@ public class MntoTaller extends JFrame {
 		txtCapacidad.setText(String.valueOf(taller.getCapacitat()));
 		chkActivo.setSelected(taller.isActiu());
 
-		for (int i = 0; i < cbJefeTaller.size(); i ++) {
-			System.out.println("cbJefeTaller.get(i).getAux() " + cbJefeTaller.get(i).getAux());
-			System.out.println("taller.getCapTaller() " + taller.getCapTaller());
+		for (int i = 0; i < cbJefeTaller.size(); i ++) {			
 			if (Integer.valueOf(cbJefeTaller.get(i).getAux()) == taller.getCapTaller()) {
 				cmbJefeTaller.setSelectedIndex(i);
 				break;
