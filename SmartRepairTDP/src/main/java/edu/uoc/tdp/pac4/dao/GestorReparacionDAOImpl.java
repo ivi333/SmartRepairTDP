@@ -807,13 +807,19 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 				case 0:
 					break;
 				case 1:
-					condiciones = " and rep.datainici like '%" + valor + "%' ";
+					if (valor != null && !valor.trim().equals("")) {
+						condiciones = " and rep.datainici = '" + valor + "' ";
+					}
 					break;
 				case 2:
-					condiciones = " and rep.datafi like '%" + valor + "%' ";
+					if (valor != null && !valor.trim().equals("")) {
+						condiciones = " and rep.datafi = '" + valor + "' ";
+					}
 					break;
 				case 3:
-					condiciones = " and rep.dataassignacio like '%" + valor + "%' ";
+					if (valor != null && !valor.trim().equals("")) {
+						condiciones = " and rep.dataassignacio = '" + valor + "' ";
+					}
 					break;
 				case 4:
 					condiciones = " and cli.marca like '%" + valor + "%' ";
@@ -822,7 +828,10 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 					condiciones = " and cli.model like '%" + valor + "%' ";
 					break;
 				case 6:
-					condiciones = " and rep.ordrereparacio like " + valor + " ";
+					if (valor != null && !valor.trim().equals("")) {
+						condiciones = " and rep.ordrereparacio = " + valor + " ";
+					}
+					break;
 				default:
 					break;
 				}
@@ -899,7 +908,9 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 				case 0:
 					break;
 				case 1:
-					condiciones = " and rep.ordrereparacio like '%" + valor + "%' ";
+					if (valor != null && !valor.trim().equals("")) {
+						condiciones = " and rep.ordrereparacio = " + valor + " ";
+					}
 					break;
 				case 2:
 					condiciones = " and cli.matricula like '%" + valor + "%' ";
@@ -934,11 +945,11 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 				condiciones = condiciones + " and cli.cognoms like '%" + apellido + "%' ";
 			}
 			
-			if (fechaDe != "") {
+			if (fechaDe != null && !fechaDe.trim().equals("")) {
 				condiciones = condiciones + " and sol.dataalta >= '" + fechaDe + "' ";
 			}
 			
-			if (fechaHasta != "") {
+			if (fechaHasta != null && !fechaHasta.trim().equals("")) {
 				condiciones = condiciones + " and sol.dataalta <= '" + fechaHasta + "' ";
 			}
 			
@@ -1051,16 +1062,16 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 				case 0:
 					break;
 				case 1:
-					condiciones = " and pec.codipeca like '%" + valor + "%' ";
+					condiciones = " and pec.codipeca = '" + valor + "' ";
 					break;
 				case 2:
 					condiciones = " and pec.marca like '%" + valor + "%' ";
 					break;
 				case 3:
-					condiciones = "  ";
+					condiciones = " and stock <= stockminim ";
 					break;
 				case 4:
-					condiciones = " and pec.pvp like '%" + valor + "%' ";
+					condiciones = " and pec.pvp = " + valor + " ";
 					break;
 				default:
 					break;
@@ -1247,8 +1258,4 @@ public class GestorReparacionDAOImpl extends ConnectionPostgressDB implements Ge
 			}
 		}
 	}
-
-
-	
-
 }
