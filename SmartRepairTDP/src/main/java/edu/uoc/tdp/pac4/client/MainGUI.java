@@ -190,7 +190,6 @@ public class MainGUI extends JFrame {
 		
 		if (isAdministrativo  || isJefeTaller) {
 			crearMenuAdministrativos(isAdministrador, isAdministrativo, isJefeTaller, isMecanico);			
-			crearMenuEstadisticas (isAdministrador, isAdministrativo, isJefeTaller, isMecanico);
 			jLabelMain.setText("<html>Subsistema de Administracion y <br> Estadisticas. <br> (Administrativos)</html>");			
 			loadPerfilOK=true;
 		}
