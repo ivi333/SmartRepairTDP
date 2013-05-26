@@ -535,7 +535,7 @@ public class MainGUI extends JFrame {
 			case Frm_NewSol:
 
 				AltaSolicitud NewSol = new AltaSolicitud(this.gestorAdministracion);
-				NewSol.setSize(469, 426);
+				NewSol.setSize(469, 490);
 				final Toolkit toolkit2 = Toolkit.getDefaultToolkit();
 				final Dimension screenSize2 = toolkit2.getScreenSize();
 				x = (screenSize2.width - NewSol.getWidth()) / 2;
