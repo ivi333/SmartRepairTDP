@@ -101,21 +101,25 @@ public class ReparacionAsignarMecanico extends JFrame {
 		JLabel lblOrdenReparacion = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.ordenrep"));
 		
 		txtOrdenReparacion = new JTextField();
+		txtOrdenReparacion.setEditable(false);
 		txtOrdenReparacion.setColumns(10);
 		
 		JLabel lblMatricula = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.matricula"));
 		
 		txtMatricula = new JTextField();
+		txtMatricula.setEditable(false);
 		txtMatricula.setColumns(10);
 		
 		JLabel lblMarca = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.marca"));
 		
 		txtMarca = new JTextField();
+		txtMarca.setEditable(false);
 		txtMarca.setColumns(10);
 		
 		JLabel lblModelo = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.modelo"));
 		
 		txtModelo = new JTextField();
+		txtModelo.setEditable(false);
 		txtModelo.setColumns(10);
 		
 		JLabel lblMecanicoAsignado = new JLabel(TDSLanguageUtils.getMessage("repAsigMec.mecasignadorep"));

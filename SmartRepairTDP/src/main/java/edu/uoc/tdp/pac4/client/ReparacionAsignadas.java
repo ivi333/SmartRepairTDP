@@ -25,6 +25,8 @@ import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.swing.JScrollPane;
@@ -136,7 +138,18 @@ public class ReparacionAsignadas extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				try {
-					table.setModel(getTableModel(true));
+					boolean fechaValida = true;
+					if (cmbFiltro.getSelectedIndex() == 1 || cmbFiltro.getSelectedIndex() == 2 || cmbFiltro.getSelectedIndex() == 3) {
+						if (txtFiltro.getText()!=null && !txtFiltro.getText().trim().equals("")){
+							if (!validarFecha(txtFiltro.getText())) {
+								fechaValida = false;
+								JOptionPane.showMessageDialog(reparacionAsignadas, TDSLanguageUtils.getMessage("repAsigMec.alert.fechanovalida"), TDSLanguageUtils.getMessage("repAsigMec.alert"), JOptionPane.ERROR_MESSAGE);
+							}
+						}
+					}
+					if (fechaValida) {
+						table.setModel(getTableModel(true));
+					}
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				} catch (GestorReparacionException e) {
@@ -237,4 +250,25 @@ public class ReparacionAsignadas extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	private boolean validarFecha(String fecha) {  
+		  
+		if (fecha == null)  
+		return false;  
+		  
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); //año-mes-dia  
+		  
+		if (fecha.trim().length() != dateFormat.toPattern().length())  
+		return false;  
+		  
+		dateFormat.setLenient(false);  
+		  
+		try {  
+			dateFormat.parse(fecha.trim());  
+		}  
+		catch (ParseException pe) {  
+			return false;  
+		}  
+		return true;  
+	}  
 }

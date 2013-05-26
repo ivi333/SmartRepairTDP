@@ -132,12 +132,21 @@ public class ReparacionPiezas extends JFrame {
 		JLabel lblObservaciones = new JLabel(TDSLanguageUtils.getMessage("repPiezas.obsrep"));
 		
 		txtObservaciones = new JTextArea();
+		txtObservaciones.setEditable(false);
 		
 		btnAnadir = new JButton(TDSLanguageUtils.getMessage("repPiezas.anadir"));
 		btnAnadir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				anadirPieza();
+				if (txtAnadir.getText().matches("[0-9]*")) 
+					if (Integer.parseInt(txtAnadir.getText())>0 && Integer.parseInt(txtAnadir.getText())<10000) {
+						anadirPieza();
+					} else {
+						JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repStock.alert.numeropiezas"), TDSLanguageUtils.getMessage("repStock.alert"), JOptionPane.ERROR_MESSAGE);
+					} 
+				else {
+					JOptionPane.showMessageDialog(reparacionPiezas, TDSLanguageUtils.getMessage("repStock.alert.numeropiezas"), TDSLanguageUtils.getMessage("repStock.alert"), JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		

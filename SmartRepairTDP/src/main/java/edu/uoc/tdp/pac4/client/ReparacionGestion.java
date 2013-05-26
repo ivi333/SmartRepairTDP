@@ -61,7 +61,6 @@ public class ReparacionGestion extends JFrame {
 	private JButton btnDetalle;
 	private JButton btnAceptar;
 	private JButton btnAsignar;
-	private JButton btnFinalizar;
 	private JTextField txtFiltro;
 	private JComboBox cmbFiltro;
 	
@@ -133,14 +132,14 @@ public class ReparacionGestion extends JFrame {
 			public void mouseClicked(MouseEvent arg0) {
 				try {
 					boolean fechaValida = true;
-					if (String.valueOf(txtDe.getText()) != "") {
+					if (txtDe.getText()!=null && !txtDe.getText().trim().equals("")){
 						if (!validarFecha(txtDe.getText())) {
 							fechaValida = false;
 							JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.fdevalida"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					
-					if (String.valueOf(txtHasta.getText()) != "") {
+					if (txtHasta.getText()!=null && !txtHasta.getText().trim().equals("")){
 						if (!validarFecha(txtHasta.getText())) {
 							fechaValida = false;
 							JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.fhastavalida"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
@@ -258,25 +257,6 @@ public class ReparacionGestion extends JFrame {
 			}
 		});
 		
-		btnFinalizar = new JButton(TDSLanguageUtils.getMessage("repGestion.finalizar"));
-		btnFinalizar.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				try {
-					int idFilaSeleccionada = getFilaSeleccionada();
-					if (idFilaSeleccionada >= 0) {
-						gestorReparacion.setReparacionFinalizada(getFilaSeleccionada());
-					} else {
-						JOptionPane.showMessageDialog(reparacionGestion, TDSLanguageUtils.getMessage("repGestion.alert.seleccionarfilafinalizar"), TDSLanguageUtils.getMessage("repGestion.alert"), JOptionPane.ERROR_MESSAGE);
-					}
-				} catch (RemoteException e1) {
-					e1.printStackTrace();
-				} catch (GestorReparacionException e1) {
-					e1.printStackTrace();
-				}
-			}
-		});
-		
 		JButton btnSalir = new JButton(TDSLanguageUtils.getMessage("repGestion.salir"));
 		btnSalir.addMouseListener(new MouseAdapter() {
 			@Override
@@ -296,7 +276,7 @@ public class ReparacionGestion extends JFrame {
 					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(scrollPanel, GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)
+							.addComponent(scrollPanel, GroupLayout.DEFAULT_SIZE, 624, Short.MAX_VALUE)
 							.addContainerGap())
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -314,7 +294,7 @@ public class ReparacionGestion extends JFrame {
 											.addComponent(lblHasta)
 											.addGap(18)
 											.addComponent(txtHasta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-									.addPreferredGap(ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+									.addPreferredGap(ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
 									.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 										.addGroup(gl_contentPane.createSequentialGroup()
 											.addComponent(lblNombreCliente)
@@ -332,13 +312,11 @@ public class ReparacionGestion extends JFrame {
 									.addComponent(btnAceptar)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(btnAsignar)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(btnFinalizar)
-									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addPreferredGap(ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
 									.addComponent(btnSalir, GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE)))
 							.addGap(95))
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblReparaciones, GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+							.addComponent(lblReparaciones, GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
 							.addGap(106))))
 		);
 		gl_contentPane.setVerticalGroup(
@@ -371,8 +349,7 @@ public class ReparacionGestion extends JFrame {
 						.addComponent(btnSalir)
 						.addComponent(btnDetalle)
 						.addComponent(btnAceptar)
-						.addComponent(btnAsignar)
-						.addComponent(btnFinalizar))
+						.addComponent(btnAsignar))
 					.addGap(29))
 		);
 		

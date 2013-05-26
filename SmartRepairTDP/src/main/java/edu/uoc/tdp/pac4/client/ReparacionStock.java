@@ -48,10 +48,10 @@ public class ReparacionStock extends JFrame {
 	private Usuari usuario;
 	
 	private static final Object columnNames1[] = {
-		"C\u00F3digo", "Marca", "Modelo", "Unidades", "Precio", "Precio total", "Descripci\u00F3n"
+		TDSLanguageUtils.getMessage("repStock.tablas.codigo"), TDSLanguageUtils.getMessage("repStock.tablas.marca"), TDSLanguageUtils.getMessage("repStock.tablas.modelo"), TDSLanguageUtils.getMessage("repStock.tablas.unidades"), TDSLanguageUtils.getMessage("repStock.tablas.precio"), TDSLanguageUtils.getMessage("repStock.tablas.preciototal"), TDSLanguageUtils.getMessage("repStock.tablas.descripcion")
 	};
 	private static final Object columnNames2[] = {
-		"C\u00F3digo", "Marca", "Modelo", "Stock Min.", "Stock", "Precio2", "Descripci\u00F3n"
+		TDSLanguageUtils.getMessage("repStock.tablas.codigo"), TDSLanguageUtils.getMessage("repStock.tablas.marca"), TDSLanguageUtils.getMessage("repStock.tablas.modelo"), TDSLanguageUtils.getMessage("repStock.tablas.stockmin"), TDSLanguageUtils.getMessage("repStock.tablas.stock"), TDSLanguageUtils.getMessage("repStock.tablas.precio"), TDSLanguageUtils.getMessage("repStock.tablas.descripcion")
 	};
 	private JScrollPane scrollPane1;
 	private JScrollPane scrollPane2;
@@ -303,6 +303,7 @@ public class ReparacionStock extends JFrame {
 	}
 	
 	private void inicializarLista() {
+		piezasSeleccionadas.clear();
 		piezasSeleccionadas.add(new DetallPeca());
 		TableModel model = new DefaultTableModel(new Object [0][7], columnNames1);
 		piezasSeleccionadas.remove(0);
@@ -491,32 +492,44 @@ public class ReparacionStock extends JFrame {
 	private void sumarPiezas() {
 		int idPiezaAnadir;
 		try {
-			if (table1.getSelectedRowCount() == 1) {
-				idPiezaAnadir = getIdPiezaSeleccionada(table1);
-				if (piezasSeleccionadas != null) {
-					for (int i=0; i<piezasSeleccionadas.size(); i++) {
-						if (piezasSeleccionadas.get(i).getCodiPeca() == idPiezaAnadir) {
-							piezasSeleccionadas.get(i).setCantidad(piezasSeleccionadas.get(i).getCantidad() + Integer.valueOf(txtNumero.getText()));
+			if (table1.getSelectedRowCount() == 1) {	
+				if (txtNumero.getText()!=null && !txtNumero.getText().trim().equals("")) {
+					if (txtNumero.getText().matches("[0-9]*"))
+						if (Integer.parseInt(txtNumero.getText())>0 && Integer.parseInt(txtNumero.getText())<10000) {
+							idPiezaAnadir = getIdPiezaSeleccionada(table1);
+							if (piezasSeleccionadas != null) {
+								for (int i=0; i<piezasSeleccionadas.size(); i++) {
+									if (piezasSeleccionadas.get(i).getCodiPeca() == idPiezaAnadir) {
+										piezasSeleccionadas.get(i).setCantidad(piezasSeleccionadas.get(i).getCantidad() + Integer.valueOf(txtNumero.getText()));
+									}
+								}
+							}
+							
+							Object rowData [][] = new Object [piezasSeleccionadas.size()][7];
+							int z=0;
+							for (DetallPeca bean : piezasSeleccionadas) {
+								rowData[z][0] = String.valueOf(bean.getCodiPeca());
+								rowData[z][1] = String.valueOf(bean.getMarca());
+								rowData[z][2] = String.valueOf(bean.getModel());
+								rowData[z][3] = String.valueOf(bean.getCantidad());
+								rowData[z][4] = String.valueOf(bean.getPvp());
+								rowData[z][5] = String.valueOf(bean.getPvp()*bean.getCantidad());
+								rowData[z][6] = String.valueOf(bean.getDescipcio());
+								z++;
+							}
+							TableModel model = new DefaultTableModel(rowData, columnNames1);
+							table1.setModel(model);
 						}
+					    else {
+					    	JOptionPane.showMessageDialog(reparacionStock, TDSLanguageUtils.getMessage("repStock.alert.numeropiezas"), TDSLanguageUtils.getMessage("repStock.alert"), JOptionPane.ERROR_MESSAGE);
+					    }
+			        else {
+			        	JOptionPane.showMessageDialog(reparacionStock, TDSLanguageUtils.getMessage("repStock.alert.numeropiezas"), TDSLanguageUtils.getMessage("repStock.alert"), JOptionPane.ERROR_MESSAGE);
 					}
+				} else {
+					JOptionPane.showMessageDialog(reparacionStock, TDSLanguageUtils.getMessage("repStock.alert.numeropiezas"), TDSLanguageUtils.getMessage("repStock.alert"), JOptionPane.ERROR_MESSAGE);
 				}
-				
-				Object rowData [][] = new Object [piezasSeleccionadas.size()][7];
-				int z=0;
-				for (DetallPeca bean : piezasSeleccionadas) {
-					rowData[z][0] = String.valueOf(bean.getCodiPeca());
-					rowData[z][1] = String.valueOf(bean.getMarca());
-					rowData[z][2] = String.valueOf(bean.getModel());
-					rowData[z][3] = String.valueOf(bean.getCantidad());
-					rowData[z][4] = String.valueOf(bean.getPvp());
-					rowData[z][5] = String.valueOf(bean.getPvp()*bean.getCantidad());
-					rowData[z][6] = String.valueOf(bean.getDescipcio());
-					z++;
-				}
-				TableModel model = new DefaultTableModel(rowData, columnNames1);
-				table1.setModel(model);
-				
-				
+
 			} else {
 				JOptionPane.showMessageDialog(reparacionStock, TDSLanguageUtils.getMessage("repStock.alert.anadirunidades"), TDSLanguageUtils.getMessage("repStock.alert"), JOptionPane.ERROR_MESSAGE);
 			}
@@ -536,6 +549,7 @@ public class ReparacionStock extends JFrame {
 					gestorReparacion.setPiezaComanda(false, pieza.getCodiPeca(), usuario.getTaller(), 0, pieza.getCantidad(), false);
 				}
 				JOptionPane.showMessageDialog(reparacionStock, TDSLanguageUtils.getMessage("repStock.info.pedidorealizado"), TDSLanguageUtils.getMessage("repStock.info"), JOptionPane.INFORMATION_MESSAGE);
+				initCampos();
 			} else {
 				JOptionPane.showMessageDialog(reparacionStock, TDSLanguageUtils.getMessage("repStock.alert.anadirpiezas"), TDSLanguageUtils.getMessage("repStock.alert"), JOptionPane.ERROR_MESSAGE);
 			}
