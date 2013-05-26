@@ -8,7 +8,7 @@ package edu.uoc.tdp.pac4.common;
  */
 public class Nif
 {
-	public static boolean validar (String pnif)
+	/*public static boolean validar (String pnif)
 	{
 		boolean ret = false;
 		char a,b;
@@ -24,7 +24,31 @@ public class Nif
 			}
 		}
 		return ret;
+	}*/
+	public static boolean validar(String pnif) {
+		boolean ret = false;
+		char a, b;
+		try {
+			long num = Long.parseLong(pnif.substring(1, 7));
+			if (pnif.length() == 0)
+				ret = true;
+			else {
+				if (pnif.length() == 9) {
+					a = pnif.charAt(8);
+					if (Character.isLetter(a)) {
+						if (num <= 99999999 & num >= 1)
+							ret = true;
+					} else
+						ret = false;
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			ret = false;
+		}
+		return ret;
 	}
+	
 }
 
 
