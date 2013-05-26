@@ -357,7 +357,6 @@ public class MainGUI extends JFrame {
 		mntmMantUsuario.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("ENTRA");
 				GestionUsuarios gestionUsuarios = new GestionUsuarios (gestorConexion);				
 				Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 				gestionUsuarios.setLocation(dim.width/2-gestionUsuarios.getSize().width/2, dim.height/2-gestionUsuarios.getSize().height/2);

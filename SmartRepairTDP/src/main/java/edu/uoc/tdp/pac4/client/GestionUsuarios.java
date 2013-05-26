@@ -72,6 +72,8 @@ public class GestionUsuarios extends JFrame {
 	
 	private JTable tabla;
 	
+	private MntoUsuario mnto;
+	
 	
 	private static final Object columnNames[] = {
 		TDSLanguageUtils.getMessage("gestionusuarios.label.id"),
@@ -111,7 +113,7 @@ public class GestionUsuarios extends JFrame {
 	public GestionUsuarios (GestorConexionInterface gestorConexion) {
 		this.gestorConexion = gestorConexion;
 		initialize ();
-		tabla.setModel(getAllUsuaris());
+		tabla.setModel(getAllUsuaris());		
 		enableButtons(false);
 	}
 	
@@ -372,36 +374,40 @@ public class GestionUsuarios extends JFrame {
 	
 	private void actions (ActionEvent actionEvent){
 		if (actionEvent.getActionCommand().toString().equals("BTN_FILTRAR")) {
-			if ((txtId.getText().length()> 0) || (txtNif.getText().length() > 0) ||					
-					(txtNombre.getText().length()> 0) || (txtApellidos.getText().length() > 0) || 
-					(cmbPerfil.getSelectedItem().toString().length()> 0))
-				tabla.setModel(getUsuariByFilter());
-			else
-				tabla.setModel(getAllUsuaris());
-			enableButtons(false);
+			doFiltrar ();
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_NUEVO")) {
-			winMantenimiento("x");
+			winMantenimiento("");			
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_MODIFICAR")){
 			winMantenimiento("MODIFICAR");
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_BAJA")){
-			winMantenimiento("BAJA");
+			winMantenimiento("BAJA");			
 		} else if (actionEvent.getActionCommand().toString().equals("BTN_SALIR")){
 			dispose ();
+			
 		}
-	}
+	}	
 	
+	public void doFiltrar () {
+		if ((txtId.getText().length()> 0) || (txtNif.getText().length() > 0) ||					
+				(txtNombre.getText().length()> 0) || (txtApellidos.getText().length() > 0) || 
+				(cmbPerfil.getSelectedItem().toString().length()> 0))
+			tabla.setModel(getUsuariByFilter());
+		else
+			tabla.setModel(getAllUsuaris());
+		enableButtons(false);
+	}
 	private TableModel getUsuariByFilter () {
 		List<Usuari> usuaris;
 		TableModel model = null;
 		try {
 			usuaris = gestorConexion.getUsuarisByFilter( txtId.getText(), txtNif.getText(), 
 						txtNombre.getText(), txtApellidos.getText(), cmbPerfil.getSelectedItem().toString());
-			model = new DefaultTableModel((Object[][]) makeTabla(usuaris), columnNames);
-		}  catch (RemoteException e) {
-			showError (e.getMessage(),"GESCON.showmessage.error");			
+			model = new DefaultTableModel((Object[][]) makeTabla(usuaris), columnNames);			
 		} catch (GestorConexionException e) {
-			showError (e.getMessage(),"GESCON.showmessage.error");
-		} 
+			showErrorKey (e.getMessage(),"GESCON.showmessage.error");
+		} catch (Exception e) {
+			showError(e.getMessage(), "GESCON.showmessage.error");
+		}
 		
 		
 		return model;
@@ -414,10 +420,10 @@ public class GestionUsuarios extends JFrame {
 		List<Usuari> usuaris = null;
 		try {
 			usuaris = gestorConexion.getAllUsuaris();
-		} catch (RemoteException e) {
-			showError (e.getMessage(),"GESCON.showmessage.error");
 		} catch (GestorConexionException e) {
-			showError (e.getMessage(),"GESCON.showmessage.error");
+			showErrorKey (e.getMessage(),"GESCON.showmessage.error");
+		} catch (Exception e) {
+			showError(e.getMessage(), "GESCON.showmessage.error");
 		}
 		
 		TableModel model = new DefaultTableModel((Object[][]) makeTabla(usuaris), columnNames);
@@ -440,7 +446,7 @@ public class GestionUsuarios extends JFrame {
 	}
 	
 	private void winMantenimiento (String accion) {
-		MntoUsuario mnto;
+
 		if (accion.equalsIgnoreCase("MODIFICAR") || accion.equalsIgnoreCase("BAJA")) {
 			mnto = new MntoUsuario(gestorConexion,accion, 
 					Integer.valueOf(tabla.getValueAt(tabla.getSelectedRow(), 0).toString()));
@@ -454,12 +460,20 @@ public class GestionUsuarios extends JFrame {
 
 		mnto.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		mnto.setVisible(true);
+
 	}
 	
 	private void enableButtons (boolean status){
 		btnModificar.setEnabled(status);
 		btnBaja.setEnabled(status);
 		
+	}
+	
+	private void showErrorKey (String key, String title) {
+		String msg = TDSLanguageUtils.getMessage(key);
+		if (msg.equalsIgnoreCase(""))
+			msg = key;
+		showError (msg, title);
 	}
 	
 	private void showError (String message, String title){		

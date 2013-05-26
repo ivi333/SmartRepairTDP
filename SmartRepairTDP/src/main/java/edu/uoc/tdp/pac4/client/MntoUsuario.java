@@ -385,10 +385,12 @@ public class MntoUsuario extends JFrame {
 			}
 			cmbTaller.setSelectedIndex(0);
 
+
+		} catch (GestorConexionException e) {
+			showErrorKey(e.getMessage(), "");
 		} catch (Exception e) {
 			showError(e.getMessage(),"");
-		} 
-		
+		}
 	}
 	
 	private void cargarOperacion () {
@@ -443,15 +445,19 @@ public class MntoUsuario extends JFrame {
 	private void leerUsuariById () {
 		try {
 			usuari = gestorConexion.getUsuariById(idUsuari);
+		} catch (GestorConexionException e) {
+			showErrorKey (e.getMessage(),"");
 		} catch (Exception e) {
-			showError(e.getMessage(), "");
-		} 
+			showError (e.getMessage(),"");
+		}
 	}
 	
 	private void leerUsuariByNif () {
 		try {
 			usuari = gestorConexion.getUsuariByNif(txtNif.getText().toUpperCase());
 			idUsuari = usuari.getId();
+		} catch (GestorConexionException e) {
+			showErrorKey(e.getMessage(), "");
 		} catch (Exception e) {
 			showError(e.getMessage(),"");
 		} 
@@ -510,6 +516,8 @@ public class MntoUsuario extends JFrame {
 				if (!taller.isActiu()){
 					showWarning(TDSLanguageUtils.getMessage("mntousuario.valida.tallernoactivo"), lblTitle.getText());
 				}
+			} catch (GestorConexionException e){
+				showErrorKey(e.getMessage(),"");
 			} catch (Exception e) {
 				showError(e.getMessage(),"");
 			}
@@ -543,7 +551,8 @@ public class MntoUsuario extends JFrame {
 						leerUsuariByNif();
 						cargarOperacion();
 						mostrarUsuari();
-
+					} catch (GestorConexionException e) {
+						showErrorKey(e.getMessage(), lblTitle.getText());
 					} catch (Exception e) {
 						showError(e.getMessage(),lblTitle.getText());
 					}
@@ -568,6 +577,8 @@ public class MntoUsuario extends JFrame {
 						showInfo(TDSLanguageUtils.getMessage("mntousuario.modif.ok"), lblTitle.getText());
 						leerUsuariById();
 						mostrarUsuari();
+					} catch (GestorConexionException e) {
+						showErrorKey(e.getMessage(), lblTitle.getText());
 					} catch (Exception e) {
 						showError(e.getMessage(),lblTitle.getText());
 					}
@@ -581,6 +592,8 @@ public class MntoUsuario extends JFrame {
 					try {					
 						gestorConexion.disableUser(usuari.getId());
 						showInfo(TDSLanguageUtils.getMessage("mntousuario.baja.ok"), lblTitle.getText());
+					} catch (GestorConexionException e){
+						showErrorKey(e.getMessage(), lblTitle.getText());
 					} catch (Exception e ) {
 						showError(e.getMessage(),lblTitle.getText());
 					}				
@@ -597,7 +610,7 @@ public class MntoUsuario extends JFrame {
 				mostrarUsuari();
 			}
 		} else {
-			dispose();
+			dispose();			
 		}
 	}
 	
@@ -637,6 +650,13 @@ public class MntoUsuario extends JFrame {
 		return msg;
 	}
 	
+	private void showErrorKey (String key, String title) {
+		String msg = TDSLanguageUtils.getMessage(key);
+		if (msg.equalsIgnoreCase(""))
+			msg = key;
+		showError (msg, title);
+	}
+	
 	private void showError (String message, String title){
 		String titulo = TDSLanguageUtils.getMessage("GESCON.showmessage.error") + " - " +title; 
 		showMessage (message, titulo, JOptionPane.ERROR_MESSAGE);
@@ -670,5 +690,9 @@ public class MntoUsuario extends JFrame {
 		
 		listPerfil.setModel(listModel);
 		
+	}
+	
+	public boolean refresh () {
+		return true;
 	}
 }

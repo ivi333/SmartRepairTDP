@@ -395,12 +395,11 @@ public class GestionTalleres extends JFrame {
 			talleres = gestorConexion.getTallersByFilter( txtId.getText(), txtCif.getText(), 
 						txtAdreca.getText(), txtCapacitat.getText(), 
 						cbCapTaller.get(cmbCapTaller.getSelectedIndex()).getAux());
-			model = new DefaultTableModel((Object[][]) makeTabla(talleres), columnNames);
-		}  catch (RemoteException e) {
-			showError(e.getMessage(),"GESCON.showmessage.error");		
+			model = new DefaultTableModel((Object[][]) makeTabla(talleres), columnNames);		
 		} catch (GestorConexionException e) {
-			showError(e.getMessage(),"GESCON.showmessage.error");			
-		
+			showErrorKey (e.getMessage(),"GESCON.showmessage.error");					
+		} catch (Exception e) {
+			showError(e.getMessage(), "GESCON.showmessage.error");
 		}
 		return model;
 	}
@@ -409,11 +408,11 @@ public class GestionTalleres extends JFrame {
 		
 		List<Taller> tallers = null;
 		try {
-			tallers = gestorConexion.getAllTallers();
-		} catch (RemoteException e) {
-			showError(e.getMessage(),"GESCON.showmessage.error");		
-		} catch (GestorConexionException e) {
-			showError(e.getMessage(),"GESCON.showmessage.error");		
+			tallers = gestorConexion.getAllTallers();		
+		} catch (GestorConexionException e) {			
+			showErrorKey(e.getMessage(),"GESCON.showmessage.error");		
+		} catch (Exception e) {
+			showError(e.getMessage(), "GESCON.showmessage.error");
 		}
 		
 		TableModel model = new DefaultTableModel((Object[][]) makeTabla(tallers), columnNames);
@@ -430,11 +429,11 @@ public class GestionTalleres extends JFrame {
 				try {			
 					usuari = gestorConexion.getUsuariById(taller.getCapTaller());
 					rowData[z][4] = String.valueOf(usuari.getNomCognoms());
-				} catch (RemoteException e) {
-					showError(e.getMessage(), "GESCON.showmessage.error");
-					rowData[z][4] = String.valueOf(GestorConexionException.ERR_USER_NOTFOUND);
 				} catch (GestorConexionException e) {
+					showErrorKey(e.getMessage(), "GESCON.showmessage.error");
+				} catch (Exception e) {
 					showError(e.getMessage(), "GESCON.showmessage.error");
+					rowData[z][4] = String.valueOf(GestorConexionException.ERR_USER_NOTFOUND);				
 				}
 			}
 			rowData[z][0] = String.valueOf(taller.getId());
@@ -481,14 +480,20 @@ public class GestionTalleres extends JFrame {
 				defaultCombo.insertElementAt(cbCapTaller.get(i).getValue(), i);
 			cmbCapTaller.setModel(defaultCombo);
 			cmbCapTaller.setSelectedIndex(0);
-		} catch (RemoteException e) {
-			showError(e.getMessage(),"GESCON.showmessage.error");
 		} catch (GestorConexionException e) {
-			showError(e.getMessage(),"GESCON.showmessage.error");			
+			showErrorKey(e.getMessage(),"GESCON.showmessage.error");			
+		} catch (Exception e) {
+			showError(e.getMessage(),"GESCON.showmessage.error");
 		}
 		
 	}
-	
+
+	private void showErrorKey (String key, String title) {
+		String msg = TDSLanguageUtils.getMessage(key);
+		if (msg.equalsIgnoreCase(""))
+			msg = key;
+		showError (msg, title);
+	}
 	private void showError (String message, String title){		
 		String txtTitle;		
 		txtTitle = TDSLanguageUtils.getMessage(title);

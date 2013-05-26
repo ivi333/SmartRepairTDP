@@ -47,14 +47,14 @@ public class GestorConexionImpl extends java.rmi.server.UnicastRemoteObject impl
 		try{
 			usuari = gestorConexionDAO.getUsuariByUsuari(username);
 			if (!(usuari == null)) {
-				if (usuari.isActiu()) {
-					if (!(usuari.getContrasenya().equals(contrasenya))) {		
-						usuari = null;
-						throw new GestorConexionException(GestorConexionException.ERR_USER_INVALID);
-					}
+				if (!(usuari.getContrasenya().equals(contrasenya))) {
+					usuari = null;
+					throw new GestorConexionException(GestorConexionException.ERR_USER_INVALID);
 				} else {
-					throw new GestorConexionException(GestorConexionException.ERR_USER_DISABLED);
-					
+					if (!usuari.isActiu()) {
+						usuari = null;
+						throw new GestorConexionException(GestorConexionException.ERR_USER_DISABLED);
+					}					
 				}
 				return usuari;
 			} else {

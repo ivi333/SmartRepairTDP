@@ -204,9 +204,12 @@ public class Login extends JDialog {
 					changePassword.setVisible(true);
 					changePassword.setAlwaysOnTop(true);
 				}
-			} catch (RemoteException e) {
-				JOptionPane.showMessageDialog(this, e.getMessage(), this.getTitle(), JOptionPane.ERROR_MESSAGE);				
 			} catch (GestorConexionException e) {
+				String msg = TDSLanguageUtils.getMessage(e.getMessage());
+				if (msg.equalsIgnoreCase(""))
+					msg = e.getMessage();
+				JOptionPane.showMessageDialog(this, msg, this.getTitle(), JOptionPane.ERROR_MESSAGE);				
+			} catch (Exception e) {
 				JOptionPane.showMessageDialog(this, e.getMessage(), this.getTitle(), JOptionPane.ERROR_MESSAGE);				
 			}
 		}

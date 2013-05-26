@@ -17,16 +17,16 @@ public class GestorConexionException extends Exception {
 	 * Definicion de Errores
 	 */
 	public static final String ERR_DAO = TDSLanguageUtils.getMessage("ERR_DAO");
-	public static final String ERR_USER_INVALID = TDSLanguageUtils.getMessage("ERR_USER_INVALID");
-	public static final String ERR_USER_DISABLED = TDSLanguageUtils.getMessage("ERR_USER_DISABLED");
-	public static final String ERR_USER_NOTFOUND = TDSLanguageUtils.getMessage("ERR_USER_NOTFOUND");
-	public static final String ERR_USER_REPARACIONES = TDSLanguageUtils.getMessage("ERR_USER_REPARACIONES");
-	public static final String ERR_USER_EXIST = TDSLanguageUtils.getMessage("ERR_USER_EXIST");
-	public static final String ERR_USER_REP_TALLER = TDSLanguageUtils.getMessage("ERR_USER_REP_TALLER");
-	public static final String ERR_JEFETALLER_ASIGN = TDSLanguageUtils.getMessage("ERR_JEFETALLER_ASIGNADO");
-	public static final String ERR_JEFETALLER_TALLER = TDSLanguageUtils.getMessage("ERR_JEFETALLER_TALLER");
-	public static final String ERR_TALLER_REPARACIONES = TDSLanguageUtils.getMessage("ERR_TALLER_REPARACIONES");
-	public static final String ERR_JEFETALLER_INACTIU = TDSLanguageUtils.getMessage("ERR_JEFETALLER_INACTIU");
+	public static final String ERR_USER_INVALID = "ERR_USER_INVALID";
+	public static final String ERR_USER_DISABLED = "ERR_USER_DISABLED";
+	public static final String ERR_USER_NOTFOUND = "ERR_USER_NOTFOUND";
+	public static final String ERR_USER_REPARACIONES = "ERR_USER_REPARACIONES";
+	public static final String ERR_USER_EXIST = "ERR_USER_EXIST";
+	public static final String ERR_USER_REP_TALLER = "ERR_USER_REP_TALLER";
+	public static final String ERR_JEFETALLER_ASIGN = "ERR_JEFETALLER_ASIGNADO";
+	public static final String ERR_JEFETALLER_TALLER = "ERR_JEFETALLER_TALLER";
+	public static final String ERR_TALLER_REPARACIONES = "ERR_TALLER_REPARACIONES";
+	public static final String ERR_JEFETALLER_INACTIU ="ERR_JEFETALLER_INACTIU";
 	
 	public GestorConexionException() {
 		super();

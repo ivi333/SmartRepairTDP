@@ -13,6 +13,7 @@ import edu.uoc.tdp.pac4.beans.Taller;
 import edu.uoc.tdp.pac4.beans.Usuari;
 import edu.uoc.tdp.pac4.common.ItemCombo;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
+import edu.uoc.tdp.pac4.exception.GestorConexionException;
 import edu.uoc.tdp.pac4.service.GestorConexionInterface;
 
 import javax.swing.JButton;
@@ -20,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -340,7 +342,6 @@ public class MntoTaller extends JFrame {
 		cbJefeTaller = new ArrayList<ItemCombo>();
 		List<Usuari> usuaris;
 		try {
-			System.out.println("idTaller = " +idTaller);
 			usuaris = this.gestorConexion.getUsuarisCapTallerDisponibles(idTaller);
 			cbJefeTaller.add(new ItemCombo(0, "", "0"));
 			for (int i= 0; i < usuaris.size(); i ++)
@@ -350,9 +351,11 @@ public class MntoTaller extends JFrame {
 			}
 			cmbJefeTaller.setSelectedIndex(0);
 
+		} catch (GestorConexionException e){
+			showErrorKey(e.getMessage(), "");
 		} catch (Exception e) {
-			showError(e.getMessage(),"");
-		} 
+			showError(e.getMessage(), "");
+		}
 		
 	}
 	
@@ -401,19 +404,23 @@ public class MntoTaller extends JFrame {
 	}
 	private void leerTallerById () {
 		try {
-			taller = gestorConexion.getTallerById(idTaller);
+			taller = gestorConexion.getTallerById(idTaller);		
+		} catch (GestorConexionException e) {
+			showErrorKey(e.getMessage(), "");
 		} catch (Exception e) {
 			showError(e.getMessage(), "");
-		} 
+		}
 	}
 	
 	private void leerTallerByCif () {
 		try {
 			taller = gestorConexion.getTallerByCif (txtCif.getText().toUpperCase());
 			idTaller = taller.getId();
+		} catch (GestorConexionException e) {
+			showErrorKey(e.getMessage(), "");
 		} catch (Exception e) {
-			showError(e.getMessage(),"");
-		} 
+			showError(e.getMessage(), "");
+		}
 	}
 
 	private void mostrarTaller () {				
@@ -468,8 +475,10 @@ public class MntoTaller extends JFrame {
 						leerTallerByCif();
 						cargarOperacion();
 						mostrarTaller();					
+					} catch (GestorConexionException e){
+						showErrorKey(e.getMessage(), lblTitle.getText());
 					} catch (Exception e) {
-						showError(e.getMessage(),lblTitle.getText());
+						showError(e.getMessage(), lblTitle.getText());
 					}
 				} else {
 					showWarning(TDSLanguageUtils.getMessage(msg), lblTitle.getText());
@@ -491,10 +500,10 @@ public class MntoTaller extends JFrame {
 						showInfo(TDSLanguageUtils.getMessage("mntotaller.modif.ok"), lblTitle.getText());
 						leerTallerById();
 						mostrarTaller();
+					} catch (GestorConexionException e) {
+						showErrorKey(e.getMessage(), lblTitle.getText());
 					} catch (Exception e) {
-						System.out.println("AQUI");
-						e.printStackTrace();
-						showError(e.getMessage(),lblTitle.getText());
+						showError(e.getMessage(), lblTitle.getText());
 					}
 				} else {
 					showWarning(TDSLanguageUtils.getMessage(msg), lblTitle.getText());
@@ -507,9 +516,11 @@ public class MntoTaller extends JFrame {
 						taller.setActiu(chkActivo.isSelected());
 						gestorConexion.disableTaller(taller);
 						showInfo(TDSLanguageUtils.getMessage("mntotaller.baja.ok"), lblTitle.getText());
-					} catch (Exception e ) {
-						showError(e.getMessage(),lblTitle.getText());
-					}				
+					} catch (GestorConexionException e) {
+						showError (e.getMessage(), lblTitle.getText());
+					} catch (Exception e) {
+						showError(e.getMessage(), lblTitle.getText());
+					}
 				}
 				leerTallerById();
 				cargarOperacion();
@@ -547,6 +558,13 @@ public class MntoTaller extends JFrame {
 			}
 		}
 		return msg;
+	}
+	
+	private void showErrorKey (String key, String title) {
+		String msg = TDSLanguageUtils.getMessage(key);
+		if (msg.equalsIgnoreCase(""))
+			msg = key;
+		showError (msg, title);
 	}
 	
 	private void showError (String message, String title){
