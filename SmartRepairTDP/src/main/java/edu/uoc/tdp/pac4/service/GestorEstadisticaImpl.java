@@ -128,7 +128,9 @@ public class GestorEstadisticaImpl extends java.rmi.server.UnicastRemoteObject i
 	public ArrayList <Reparacio> obtenirClients(String strOrdreReparacio, String strNomClient, String strCognom, String strMarca, String strNomAsseguradora) throws RemoteException, GestorEstadisticaException {
 		
 		try {
+			//ArrayList<Reparacio> reparacions = gestorEstadisticaDAO.obtenirClients(strOrdreReparacio, strNomClient, strCognom, strMarca, strNomAsseguradora);
 			return gestorEstadisticaDAO.obtenirClients(strOrdreReparacio, strNomClient, strCognom, strMarca, strNomAsseguradora);
+			//return ( reparacions ) ;
 		} catch (DAOException e) {
 			throw new GestorEstadisticaException(GestorEstadisticaException.ERR_DAO +  e.getMessage());
 		}
@@ -147,19 +149,19 @@ public class GestorEstadisticaImpl extends java.rmi.server.UnicastRemoteObject i
 	}
 	
 	
-	public ArrayList<Reparacio> calcularNumRepRessoltes (String strIdMecanic, String strNomMecanic, String strCognomMecanic) throws RemoteException, GestorEstadisticaException {
+	public int calcularNumRepRessoltes (int idMecanic) throws RemoteException, GestorEstadisticaException {
 		
 		try {
-			return gestorEstadisticaDAO.calcularNumRepRessoltes(strIdMecanic, strNomMecanic, strCognomMecanic);
+			return gestorEstadisticaDAO.calcularNumRepRessoltes(idMecanic);
 		} catch (DAOException e) {
 			throw new GestorEstadisticaException(GestorEstadisticaException.ERR_DAO +  e.getMessage());
 		}
 	}
 
-	public ArrayList<Reparacio> calcularNumHoresTreballades (String strIdMecanic, String strNomMecanic, String strCognomMecanic) throws RemoteException, GestorEstadisticaException {
+	public float calcularNumHoresRep (int idMecanic) throws RemoteException, GestorEstadisticaException {
 		
 		try {
-			return gestorEstadisticaDAO.calcularNumHoresTreballades(strIdMecanic, strNomMecanic, strCognomMecanic);
+			return gestorEstadisticaDAO.calcularNumHoresRep(idMecanic);
 		} catch (DAOException e) {
 			throw new GestorEstadisticaException(GestorEstadisticaException.ERR_DAO +  e.getMessage());
 		}

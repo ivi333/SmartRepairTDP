@@ -433,9 +433,9 @@ public class ReparacionDetalle extends JFrame {
 			}
 			
 			Reparacio datosReparacion = gestorReparacion.getReparacion(datosDetalleReparacion.getOrdreReparacio());
-			this.txtFechaAsignacion.setText(String.valueOf(datosReparacion.getDataAssignacio()));
-			this.txtFechaInicio.setText(String.valueOf(datosReparacion.getDataInici()));
-			this.txtFechaFin.setText(String.valueOf(datosReparacion.getDataFi()));
+			this.txtFechaAsignacion.setText(datosReparacion.getDataAssignacio()!=null ? String.valueOf(datosReparacion.getDataAssignacio()) : "");
+			this.txtFechaInicio.setText(datosReparacion.getDataInici()!=null ? String.valueOf(datosReparacion.getDataInici()) : "");
+			this.txtFechaFin.setText(datosReparacion.getDataFi() != null ? String.valueOf(datosReparacion.getDataFi()) : "");
 			
 			this.lblMinutos.setText(String.valueOf(datosReparacion.getComptador()));
 			

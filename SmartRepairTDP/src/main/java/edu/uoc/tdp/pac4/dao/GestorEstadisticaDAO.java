@@ -26,15 +26,18 @@ public interface GestorEstadisticaDAO {
 	
 	//Informe de Clients
 	
-	public ArrayList <Reparacio> obtenirClients(String strOrdreReparacio, String strNomClient, String strCognom, String strMarca, String strNomAsseguradora) throws DAOException;
+	public ArrayList <Reparacio> obtenirClients(String strOrdreReparacio, String strNomClient, String strCognom, String strMarca, String strNomAsseguradoraa) throws DAOException;
 	
 	
 	//Informe d'empleats
 		
 	public ArrayList <Usuari> obtenirEmpleats(String strIdUsuari, String strNomUsuari, String strCognomUsuari) throws DAOException;
 		
-	public ArrayList<Reparacio> calcularNumRepRessoltes (String strIdMecanic, String strNomMecanic, String strCognomMecanic) throws DAOException;
+	public int calcularNumRepRessoltes (int idMecanic) throws DAOException;
 		
-	public ArrayList<Reparacio> calcularNumHoresTreballades (String strIdMecanic, String strNomMecanic, String strCognomMecanic)throws DAOException;
+	public float calcularNumHoresRep (int idMecanic) throws DAOException;
+
+
+	//public ArrayList<Comanda> obtenirComandasDeReparacio(String strOrdreReparacio)throws DAOException;
 				
 }

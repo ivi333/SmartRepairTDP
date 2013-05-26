@@ -14,7 +14,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -32,17 +35,18 @@ public class InformeEmpleados extends JFrame {
 	private JTextField tbxHoresTrab;
 	private JTextField tbxRepRessolt;
 	private JTable table;
+	private ListSelectionModel lsm;
 	private final static String urlRMIEstad = new String("rmi://localhost/GestorEstadistica");
 	
 	private GestorEstadisticaInterface gestorEstadistica;
 	
 	private static final Object columnNames[] = {
-		TDSLanguageUtils.getMessage("infReparacion.id"),
-		TDSLanguageUtils.getMessage("infReparacion.nomClient"),
-		TDSLanguageUtils.getMessage("infReparacion.cognomClient"),
-		TDSLanguageUtils.getMessage("infReparacion.nif"),
-		TDSLanguageUtils.getMessage("infReparacion.dataAta"),
-		TDSLanguageUtils.getMessage("infReparacion.actiu"),};
+		TDSLanguageUtils.getMessage("infEmpleado.idEmpleat"),
+		TDSLanguageUtils.getMessage("infEmpleado.nomEmpleat"),
+		TDSLanguageUtils.getMessage("infEmpleado.cognomEmpleat"),
+		TDSLanguageUtils.getMessage("infEmpleado.nif"),
+		TDSLanguageUtils.getMessage("infEmpleado.actiu")
+		,};
 	private JTextField tbxCognom;
 
 
@@ -54,7 +58,7 @@ public class InformeEmpleados extends JFrame {
 		gestorEstadistica = gi;
 		setTitle(TDSLanguageUtils.getMessage("infEmpleado.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 680, 263);
+		setBounds(100, 100, 830, 394);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -62,16 +66,16 @@ public class InformeEmpleados extends JFrame {
 		
 		JLabel lbIdUsuari = new JLabel(TDSLanguageUtils.getMessage("infEmpleado.idEmpleat"));
 		lbIdUsuari.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lbIdUsuari.setBounds(157, 11, 80, 14);
+		lbIdUsuari.setBounds(157, 11, 105, 14);
 		contentPane.add(lbIdUsuari);
 		
 		JLabel lblNomUsuari = new JLabel(TDSLanguageUtils.getMessage("infEmpleado.nomEmpleat"));
 		lblNomUsuari.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblNomUsuari.setBounds(312, 11, 117, 14);
+		lblNomUsuari.setBounds(312, 11, 155, 14);
 		contentPane.add(lblNomUsuari);
 		
 		tbxIdUsuari = new JTextField();
-		tbxIdUsuari.setBounds(157, 28, 80, 20);
+		tbxIdUsuari.setBounds(157, 28, 105, 20);
 		contentPane.add(tbxIdUsuari);
 		tbxIdUsuari.setColumns(10);
 		
@@ -84,66 +88,90 @@ public class InformeEmpleados extends JFrame {
 		
 		JButton btnSortir = new JButton(TDSLanguageUtils.getMessage("infEmpleado.btn.sortir"));
 		btnSortir.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnSortir.setBounds(545, 199, 89, 23);
+		btnSortir.setBounds(547, 310, 89, 23);
 		contentPane.add(btnSortir);
+		btnSortir.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				dispose();
+			}
+		});
 		
 		JLabel lblNHorasTrabajadas = new JLabel(TDSLanguageUtils.getMessage("infEmpleado.lbl.horesTreballades"));
 		lblNHorasTrabajadas.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblNHorasTrabajadas.setBounds(52, 163, 131, 14);
+		lblNHorasTrabajadas.setBounds(39, 266, 259, 14);
 		contentPane.add(lblNHorasTrabajadas);
 		
 		JLabel lblNReparacionesResueltas = new JLabel(TDSLanguageUtils.getMessage("infEmpleado.lbl.repRessoltes"));
 		lblNReparacionesResueltas.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblNReparacionesResueltas.setBounds(52, 203, 168, 14);
+		lblNReparacionesResueltas.setBounds(39, 314, 250, 14);
 		contentPane.add(lblNReparacionesResueltas);
 		
 		tbxHoresTrab = new JTextField();
-		tbxHoresTrab.setBounds(221, 160, 86, 20);
+		tbxHoresTrab.setBounds(308, 263, 86, 20);
 		contentPane.add(tbxHoresTrab);
 		tbxHoresTrab.setColumns(10);
 		
 		tbxRepRessolt = new JTextField();
-		tbxRepRessolt.setBounds(221, 200, 86, 20);
+		tbxRepRessolt.setBounds(308, 311, 86, 20);
 		contentPane.add(tbxRepRessolt);
 		tbxRepRessolt.setColumns(10);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(39, 92, 581, 50);
+		scrollPane.setBounds(10, 92, 776, 153);
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setModel(new DefaultTableModel(
 			null,
 			columnNames
 			
 		));
 		scrollPane.setViewportView(table);
+		lsm = table.getSelectionModel();
+		lsm.addListSelectionListener(new ListSelectionListener() {			
+			public void valueChanged(ListSelectionEvent arg0) {
+				try{
+					GestorEstadisticaInterface gestorEstadistica = new GestorEstadisticaImpl();
+					
+					if ( table.getSelectedRow() != -1)
+					{
+						int iIDMecanic = Integer.parseInt(table.getModel().getValueAt(table.getSelectedRow(), 0).toString());
+						tbxRepRessolt.setText(String.valueOf(gestorEstadistica.calcularNumRepRessoltes(iIDMecanic)));
+						tbxHoresTrab.setText(String.valueOf(gestorEstadistica.calcularNumHoresRep(iIDMecanic)));
+					}					 
+				}
+				catch ( RemoteException e)//tbxDataAlta
+				{
+					//JOptionPane.showMessageDialog(, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (NumberFormatException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (GestorEstadisticaException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				}
+			});
 		
 
-		JButton btnSalir = new JButton(TDSLanguageUtils.getMessage("infReparacion.sortir"));
-		btnSalir.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnSalir.setBounds(522, 416, 89, 23);
-		contentPane.add(btnSalir);
-		btnSalir.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent e) {
-				dispose();
-			}
-		});
+
 		
-		JLabel lblCognom = new JLabel("New label");
+		
+		JLabel lblCognom = new JLabel(TDSLanguageUtils.getMessage("infEmpleado.cognomEmpleat"));
 		lblCognom.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblCognom.setBounds(519, 11, 46, 14);
+		lblCognom.setBounds(519, 11, 147, 14);
 		contentPane.add(lblCognom);
 		
 		tbxCognom = new JTextField();
-		tbxCognom.setBounds(506, 28, 86, 20);
+		tbxCognom.setBounds(506, 28, 155, 20);
 		contentPane.add(tbxCognom);
 		tbxCognom.setColumns(10);
 		
 		
 		JButton btnConsultar = new JButton(TDSLanguageUtils.getMessage("infEmpleado.btn.consultar"));
 		btnConsultar.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnConsultar.setBounds(276, 58, 89, 23);
+		btnConsultar.setBounds(322, 58, 131, 23);
 		contentPane.add(btnConsultar);
 		btnConsultar.addMouseListener(new MouseAdapter() {
 			@Override
@@ -155,7 +183,7 @@ public class InformeEmpleados extends JFrame {
 				
 				ArrayList<Usuari> usuaris = gestorEstadistica.obtenirEmpleats(tbxIdUsuari.getText(),tbxNomUsuari.getText(),tbxCognom.getText());
 				rellenarTabla(table,usuaris);
-				//tbxTMigEspera.setText(df.format(gestorEstadistica.calcularTempsMigEspera(reparacions)));
+				//tbxHoresTrab.setText(df.format(gestorEstadistica.calcularNumRepRessoltes(usuaris)));
 				//tbxTMigReparacio.setText(df.format(gestorEstadistica.calcularTempsMigReparacio(reparacions)));
 				//tbxTMigFi.setText(df.format(gestorEstadistica.calcularTempsMigFinalitzacio(reparacions)));
 				 
@@ -182,7 +210,7 @@ public class InformeEmpleados extends JFrame {
 	
 	private void rellenarTabla(JTable tabla, ArrayList<Usuari> usuaris){	//Obtener todos los datos de la tabla de reparación
 
-		Object rowData [][] = new Object [usuaris.size()][6];
+		Object rowData [][] = new Object [usuaris.size()][5];
 		
 		int z=0;
 		for (Usuari usuari : usuaris) {
@@ -191,8 +219,7 @@ public class InformeEmpleados extends JFrame {
 			rowData[z][1] = String.valueOf(usuari.getNom());
 			rowData[z][2] = String.valueOf(usuari.getCognoms());
 			rowData[z][3] = String.valueOf(usuari.getNif());
-			rowData[z][4] = String.valueOf(usuari.getDataAlta());
-			rowData[z][5] = String.valueOf(usuari.isActiu());
+			rowData[z][4] = String.valueOf(usuari.isActiu());
 		
 			
 			z++;						

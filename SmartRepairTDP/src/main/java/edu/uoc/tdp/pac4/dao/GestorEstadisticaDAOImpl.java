@@ -10,7 +10,6 @@ import edu.uoc.tdp.pac4.beans.Asseguradora;
 import edu.uoc.tdp.pac4.beans.Client;
 import edu.uoc.tdp.pac4.beans.Comanda;
 import edu.uoc.tdp.pac4.beans.Mecanic;
-import edu.uoc.tdp.pac4.beans.Peca;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.beans.Solicitud;
 import edu.uoc.tdp.pac4.beans.Usuari;
@@ -162,7 +161,7 @@ public class GestorEstadisticaDAOImpl extends ConnectionPostgressDB implements G
 			
 			
 			String query =
-					" SELECT c.nom, c.cognoms, c.marca, a.nom, (p.pvp*co.cantidad) AS importe " +
+					" SELECT c.nom, c.cognoms, c.marca, a.nom, r.ordreReparacio, sum ( co.cantidad *  p.pvp ) as Importe " +
 					" FROM Solicitud s, Client c, Reparacio r, Comanda co, Peca p, Asseguradora a " +
 					" WHERE r.ordreReparacio = s.numReparacio " +
 					" AND r.ordreReparacio = co.ordreReparacio " +
@@ -171,10 +170,11 @@ public class GestorEstadisticaDAOImpl extends ConnectionPostgressDB implements G
 					" AND s.client = c.nif " +
 					" AND s.finalitzada=true " +
 					" AND to_char(r.ordreReparacio,'999999999999') LIKE '%" + strOrdreReparacio + "%' " +
-					" AND c.nom LIKE '%" + strNomClient + "%' " +
+					" AND lower(c.nom) LIKE '%" + strNomClient.toLowerCase() + "%' " +
 					" AND c.cognoms LIKE '%" + strCognom + "%' " +
 					" AND c.marca LIKE '%" + strMarca + "%' " +
-					" AND a.nom LIKE '%" + strNomAsseguradora + "%' ";
+					" AND a.nom LIKE '%" + strNomAsseguradora + "%' " +
+					" GROUP BY c.nom, c.cognoms, c.marca, a.nom, r.ordreReparacio ";
 			
 			 
 			rs = st.executeQuery(query);
@@ -184,27 +184,22 @@ public class GestorEstadisticaDAOImpl extends ConnectionPostgressDB implements G
 				Reparacio repAux = new Reparacio();
 				Asseguradora asseAux = new Asseguradora();
 				Client cliAux = new Client();
-				Peca pecaAux = new Peca();
-				Comanda comAux = new Comanda();
 				Solicitud solAux = new Solicitud();
+				Comanda comAux = new Comanda();
 				
 				cliAux.setNom(rs.getString(1));
 				cliAux.setCognoms(rs.getString(2));
 				cliAux.setMarca(rs.getString(3));
 				asseAux.setNom(rs.getString(4));
-				pecaAux.setPVP(rs.getInt(5));
-				comAux.setCantidad(rs.getInt(6));
-				
+				repAux.setOrdreReparacio(rs.getInt(5));
+				repAux.setImporte(rs.getFloat(6));
+		
 				//La columna "Import" se muestra en el Informe
 				
-				solAux.setObjClient(cliAux);//Accedo desde solicitud a cliente
-				repAux.setSolicitud(solAux);
 				cliAux.setAsseguradora(asseAux);
-				comAux.setPeca(pecaAux);
-				repAux.setComanda(comAux);//
-				
-				taulaClients.add(repAux);
-			
+				solAux.setObjClient(cliAux);
+				repAux.setSolicitud(solAux);
+				taulaClients.add(repAux);			
 			}
 			
 		} catch (SQLException e) {
@@ -242,7 +237,7 @@ public class GestorEstadisticaDAOImpl extends ConnectionPostgressDB implements G
 		try {
 			
 			String query =
-					" SELECT u.id, u.nom, u.cognoms, u.nif, u.dataAlta, u.actiu" +
+					" SELECT u.id, u.nom, u.cognoms, u.nif, u.actiu" +
 					" FROM Usuari u " +
 					" WHERE u.nom LIKE '%" + strNomUsuari + "%' " +
 					" AND u.cognoms LIKE '%" + strCognomUsuari + "%' " +
@@ -259,8 +254,7 @@ public class GestorEstadisticaDAOImpl extends ConnectionPostgressDB implements G
 				usuAux.setNom(rs.getString(2));
 				usuAux.setCognoms(rs.getString(3));
 				usuAux.setNif(rs.getString(4));
-				usuAux.setDataAlta(rs.getDate(5));
-				usuAux.setActiu(rs.getBoolean(6));
+				usuAux.setActiu(rs.getBoolean(5));
 				
 				taulaEmpleats.add(usuAux);
 			}
@@ -287,137 +281,147 @@ public class GestorEstadisticaDAOImpl extends ConnectionPostgressDB implements G
 				
 	}
 
-	
-	
+	//usuari.reparacionsAssignadas con r.dataFi 
+	public int calcularNumRepRessoltes (int iIdMecanic) throws DAOException {
 		
-		//usuari.reparacionsAssignadades con r.dataFi 
-		public ArrayList<Reparacio> calcularNumRepRessoltes (String strIdMecanic, String strNomMecanic, String strCognomMecanic) throws DAOException {
-			//consulta rep fecha finalit
+		int iResult = 0 ;
+		getConnectionDB();
+		
+		Statement st = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		
+		try {	
+			String query =
+					" SELECT COUNT (*)" +
+					" FROM Reparacio r, Mecanic m, Solicitud s" +
+					" WHERE r.idMecanic = m.idmecanic " +
+					" AND s.numreparacio = r.ordreReparacio " +
+					" AND s.finalitzada=true " +
+					" AND m.idmecanic = " + iIdMecanic;
+			
+			rs = st.executeQuery(query);
+			
+			if (rs.next()) {iResult = rs.getInt(1);}
+			
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (st!=null) {
+				try {st.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	
+		return (iResult);					
+	}
+	
+			
+		//Calcular nÂº de horas que un Mecanic ha trabajado
+	public float calcularNumHoresRep (int iIdMecanic) throws DAOException {
+		
+		float fResult = 0 ;
+		getConnectionDB();
+		
+		Statement st = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = null;
+		
+		try {	
+			String query =
+					" SELECT (SUM(r.comptador)/60) as horasTrabajadas" +
+					" FROM Reparacio r, Mecanic m, Solicitud s" +
+					" WHERE r.idMecanic = m.idmecanic " +
+					" AND s.numreparacio = r.ordreReparacio " +
+					" AND s.finalitzada=true " +
+					" AND m.idmecanic = " + iIdMecanic;
+			
+			rs = st.executeQuery(query);
+			
+			if (rs.next()) {fResult = rs.getFloat(1);}
+			
+		} catch (SQLException e) {
+			throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+		} finally {
+			if (st!=null) {
+				try {st.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+			if (rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+				}
+			}
+		}
+	
+		return (fResult);					
+	}
 
-			ArrayList <Reparacio> taulaRepR = new ArrayList <Reparacio>();
+
+	
+				
+		/*public ArrayList<Comanda> obtenirComandasDeReparacio (String strOrdreReparacio) throws DAOException {
+		
+			ArrayList <Comanda> listaComandas = new ArrayList <Comanda>();
 			getConnectionDB();
 			
 			Statement st = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs = null;
-			
 			try {	
 				String query =
-						" SELECT COUNT (m.idmecanic)" +
-						" FROM Reparacio r, Mecanic m, Solicitud s" +
-						" WHERE r.idMecanic = m.idmecanic " +
-						" AND s.numreparacio = r.ordreReparacio" +
-						" AND u.nom LIKE '%" + strNomMecanic + "%' " +
-						" AND u.cognoms LIKE '%" + strCognomMecanic + "%' " +
-						" AND to_char(m.idmecanic,'999999999999') LIKE '%" + strIdMecanic + "%' " +
-						" AND s.finalitzada=true";
-				
-				
-				rs = st.executeQuery(query);
-				
-				while (rs.next()) {
-					
-					Reparacio repAux = new Reparacio();
-					Mecanic mecAux = new Mecanic();
-					Solicitud solAux = new Solicitud();
-					
-					repAux.setOrdreReparacio(rs.getInt(1));
-					mecAux.setIdmecanic(rs.getInt(2));
-					solAux.setFinalitzada(rs.getBoolean(3));
-					
-					repAux.setMecanic(mecAux);
-					repAux.setSolicitud(solAux);
-				
-					taulaRepR.add(repAux);
-					
-			
-				}
-				
-			} catch (SQLException e) {
-				throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
-			} finally {
-				if (st!=null) {
-					try {st.close();
-					} catch (SQLException e) {
-						throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
-					}
-				}
-				if (rs!=null) {
-					try {
-						rs.close();
-					} catch (SQLException e) {
-						throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
-					}
-				}
-			}
-		
-			return taulaRepR;
-					
-		}
-			
-		//Calcular nÂº de horas que un Mecanic ha trabajado
-		public ArrayList<Reparacio> calcularNumHoresTreballades (String strIdMecanic, String strNomMecanic, String strCognomMecanic) throws DAOException {
-					
-					//join de mecanico y reparaciones, 
-					
-					ArrayList <Reparacio> taulaRepMec = new ArrayList <Reparacio>();
-					getConnectionDB();
-					
-					Statement st = createStatement (ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-					ResultSet rs = null;
-					try {	
-						String query =
-								" SELECT r.ordreReparacio, r.comptador m.idmecanic, s.finalitzada" +
-								" FROM Reparacio r, Mecanic m, Solicitud s" +
-								" WHERE r.idMecanic = m.idmecanic " +
-								" AND s.numreparacio = r.ordreReparacio" +
-								" AND u.nom LIKE '%" + strNomMecanic + "%' " +
-								" AND u.cognoms LIKE '%" + strCognomMecanic + "%' " +
-								" AND to_char(m,idmecanic,'999999999999') LIKE '%" + strIdMecanic + "%' " +
-								" AND s.finalitzada=true";
-					
-					
-						rs = st.executeQuery(query);
-							
-							while (rs.next()) {
-								
-								Reparacio repAux = new Reparacio();
-								Mecanic mecAux = new Mecanic();
-								Solicitud solAux = new Solicitud();
-								
-								repAux.setOrdreReparacio(rs.getInt(1));
-								repAux.setComptador(rs.getDouble(2));
-								mecAux.setIdmecanic(rs.getInt(3));
-								solAux.setFinalitzada(rs.getBoolean(4));
-								
-								repAux.setMecanic(mecAux);
-								repAux.setSolicitud(solAux);
-							
-								taulaRepMec.add(repAux);
-								
-							}
-							
-						} catch (SQLException e) {
-							throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
-						} finally {
-							if (st!=null) {
-								try {st.close();
-								} catch (SQLException e) {
-									throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
-								}
-							}
-							if (rs!=null) {
-								try {
-									rs.close();
-								} catch (SQLException e) {
-									throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
-								}
-							}
-						}
-					
-					return taulaRepMec;
-								
-				}
+						" SELECT r.ordreReparacio, c.numcom" +
+						" FROM Reparacio r, Comanda c" +
+						" WHERE r.ordrereparacio = c.ordrereparacio " +
+						" AND to_char(m.ordrereparacio,'999999999999') LIKE '%" + strOrdreReparacio + "%' ";
 						
+			
+			
+				rs = st.executeQuery(query);
+					
+					while (rs.next()) {
+						
+						Reparacio repAux = new Reparacio();
+						Comanda comAux = new Comanda();
+						
+						repAux.setOrdreReparacio(rs.getInt(1));
+						comAux.set
+					
+						listaComandas.add(repAux);
+						
+					}
+					
+				} catch (SQLException e) {
+					throw new DAOException(DAOException.ERR_SQL, e.getMessage(),  e);
+				} finally {
+					if (st!=null) {
+						try {st.close();
+						} catch (SQLException e) {
+							throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+						}
+					}
+					if (rs!=null) {
+						try {
+							rs.close();
+						} catch (SQLException e) {
+							throw new DAOException(DAOException.ERR_RESOURCE_CLOSED, e.getMessage(), e);
+						}
+					}
+				}
+			
+			return taulaRepMec;
+						
+		}*/
 						
 		
 	

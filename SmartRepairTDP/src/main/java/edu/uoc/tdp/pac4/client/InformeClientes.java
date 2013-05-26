@@ -21,7 +21,6 @@ import javax.swing.table.TableModel;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.exception.GestorEstadisticaException;
-import edu.uoc.tdp.pac4.service.GestorEstadisticaImpl;
 import edu.uoc.tdp.pac4.service.GestorEstadisticaInterface;
 
 
@@ -45,6 +44,7 @@ public class InformeClientes extends JFrame {
 		TDSLanguageUtils.getMessage("infReparacion.cognomClient"),
 		TDSLanguageUtils.getMessage("infReparacion.nomMecanic"),
 		TDSLanguageUtils.getMessage("infReparacion.cognomMecanic"),
+		TDSLanguageUtils.getMessage("infReparacion.import"),
 	};
 	private JTextField tbxOrdre;
 	private JTextField tbxCognom;
@@ -56,61 +56,64 @@ public class InformeClientes extends JFrame {
 		gestorEstadistica = gi;
 		setTitle(TDSLanguageUtils.getMessage("infCliente.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 659, 433);
+		setBounds(100, 100, 814, 433);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblNewLabel_1 = new JLabel(TDSLanguageUtils.getMessage("infCliente.nomClient"));
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblNewLabel_1.setBounds(100, 11, 94, 14);
-		contentPane.add(lblNewLabel_1);
+		JLabel lblNomClient = new JLabel(TDSLanguageUtils.getMessage("infCliente.nomClient"));
+		lblNomClient.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblNomClient.setBounds(117, 3, 120, 14);
+		contentPane.add(lblNomClient);
 		
-		JLabel lblNombreMecnico = new JLabel(TDSLanguageUtils.getMessage("infCliente.marca"));
-		lblNombreMecnico.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblNombreMecnico.setBounds(238, 11, 103, 14);
-		contentPane.add(lblNombreMecnico);
+		JLabel lblMarca = new JLabel(TDSLanguageUtils.getMessage("infCliente.marca"));
+		lblMarca.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblMarca.setBounds(379, 3, 121, 14);
+		contentPane.add(lblMarca);
 		
 		tbxNomClient = new JTextField();
-		tbxNomClient.setBounds(96, 28, 121, 20);
+		tbxNomClient.setBounds(116, 28, 121, 20);
 		contentPane.add(tbxNomClient);
 		tbxNomClient.setColumns(10);
 		
 		tbxOrdre = new JTextField();
-		tbxOrdre.setBounds(0, 28, 86, 20);
+		tbxOrdre.setBounds(10, 28, 86, 20);
 		contentPane.add(tbxOrdre);
 		tbxOrdre.setColumns(10);
 		
-		JLabel lblOrdreR = new JLabel("New label");
-		lblOrdreR.setBounds(10, 3, 46, 14);
+		JLabel lblOrdreR = new JLabel(TDSLanguageUtils.getMessage("infCliente.idReparacio"));
+		lblOrdreR.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblOrdreR.setBounds(10, 3, 86, 14);
 		contentPane.add(lblOrdreR);
 		
 		tbxCognom = new JTextField();
-		tbxCognom.setBounds(10, 93, 86, 20);
+		tbxCognom.setBounds(256, 28, 106, 20);
 		contentPane.add(tbxCognom);
 		tbxCognom.setColumns(10);
 		
-		JLabel lblCognom = new JLabel("New label");
-		lblCognom.setBounds(10, 69, 46, 14);
+		JLabel lblCognom = new JLabel(TDSLanguageUtils.getMessage("infCliente.cognomClient"));
+		lblCognom.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblCognom.setBounds(263, 3, 106, 14);
 		contentPane.add(lblCognom);
 		
 		tbxMarca = new JTextField();
-		tbxMarca.setBounds(238, 28, 121, 20);
+		tbxMarca.setBounds(379, 28, 121, 20);
 		contentPane.add(tbxMarca);
 		tbxMarca.setColumns(10);
 		
 		tbxAsseg = new JTextField();
-		tbxAsseg.setBounds(411, 28, 86, 20);
+		tbxAsseg.setBounds(522, 28, 86, 20);
 		contentPane.add(tbxAsseg);
 		tbxAsseg.setColumns(10);
 		
-		JLabel lblAsseg = new JLabel("New label");
-		lblAsseg.setBounds(411, 11, 46, 14);
+		JLabel lblAsseg = new JLabel(TDSLanguageUtils.getMessage("infCliente.cAsseguradora"));
+		lblAsseg.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblAsseg.setBounds(522, 3, 111, 14);
 		contentPane.add(lblAsseg);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(30, 188, 581, 173);
+		scrollPane.setBounds(30, 165, 758, 173);
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
@@ -124,7 +127,7 @@ public class InformeClientes extends JFrame {
 		
 		JButton btnConsultar = new JButton(TDSLanguageUtils.getMessage("infCliente.btn.consultar"));
 		btnConsultar.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnConsultar.setBounds(266, 61, 89, 23);
+		btnConsultar.setBounds(244, 97, 89, 23);
 		contentPane.add(btnConsultar);
 		
 	btnConsultar.addMouseListener(new MouseAdapter() {
@@ -164,36 +167,38 @@ public class InformeClientes extends JFrame {
 		btnConsultar.setBounds(246, 131, 118, 23);
 		contentPane.add(btnConsultar);
 		
+		JButton btnSortir = new JButton(TDSLanguageUtils.getMessage("infCliente.btn.sortir"));
+		btnSortir.setBounds(522, 360, 89, 23);
+		contentPane.add(btnSortir);
+		btnSortir.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				dispose();
+			}
+		});
+		
 		
 		
 		
 		
 	}
 	
-	private void rellenarTabla (JTable table , ArrayList<Reparacio> ar){
+	private void rellenarTabla (JTable table , ArrayList<Reparacio> repClients){
 		float fImporte ;
 		Reparacio auxr = new Reparacio();
 
-		/*for ( Reparacio rep : ar )
-		{
-			fImporte = 0 ;
+		
 			
-			//for ( Comanda com : com.getReparacio().getComanda.getComandas())
-			for ( Comanda com : auxr.getComanda())
-			{
-				fImporte += com.getNumPeces() * com.getPeca().getPVP();
-			}*/
-			
-			Object rowData [][] = new Object [ar.size()][8];
+			Object rowData [][] = new Object [repClients.size()][6];
 			
 			int z=0;
-			for (Reparacio reparacio : ar) {
+			for (Reparacio reparacio : repClients) {
 						
 				rowData[z][0] = String.valueOf(reparacio.getOrdreReparacio());
 				rowData[z][1] = String.valueOf(reparacio.getSolicitud().getObjClient().getNom());
 				rowData[z][2] = String.valueOf(reparacio.getSolicitud().getObjClient().getCognoms());
 				rowData[z][3] = String.valueOf(reparacio.getSolicitud().getObjClient().getMarca());
 				rowData[z][4] = String.valueOf(reparacio.getSolicitud().getObjClient().getIdasseguradora());
+				rowData[z][5] = String.valueOf(reparacio.getImporte());
 				
 				z++;						
 			}
@@ -203,11 +208,11 @@ public class InformeClientes extends JFrame {
 			table.setModel(model);
 			
 			
-			//Rellena campo rep.GetNumReparacio()
-			//Rellena campo rep.getSolicitud().getClient().getNom()
-			//Rellena campo rep.getSolicitud().getClient().gerMrca()
-			//Rellena campo Compañía
-			//Rellena fImporte			
+			//Rellenar campo rep.GetNumReparacio()
+			//Rellenar campo rep.getSolicitud().getClient().getNom()
+			//Rellenar campo rep.getSolicitud().getClient().gerMrca()
+			//Rellenar campo Compañía
+			//Rellenar fImporte			
 		}
 	}//empleados crear consulta por rep cliente en dao y hacer calculos en service*/
 

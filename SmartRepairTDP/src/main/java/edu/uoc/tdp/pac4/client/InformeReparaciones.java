@@ -22,7 +22,6 @@ import javax.swing.table.TableModel;
 import edu.uoc.tdp.pac4.beans.Reparacio;
 import edu.uoc.tdp.pac4.common.TDSLanguageUtils;
 import edu.uoc.tdp.pac4.exception.GestorEstadisticaException;
-import edu.uoc.tdp.pac4.service.GestorEstadisticaImpl;
 import edu.uoc.tdp.pac4.service.GestorEstadisticaInterface;
 
 public class InformeReparaciones extends JFrame {
@@ -59,7 +58,7 @@ public class InformeReparaciones extends JFrame {
 		gestorEstadistica=gi;
 		setTitle(TDSLanguageUtils.getMessage("infReparacion.titulo"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 659, 494);
+		setBounds(100, 100, 805, 494);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -72,7 +71,7 @@ public class InformeReparaciones extends JFrame {
 		
 		JLabel lblNomClient = new JLabel(TDSLanguageUtils.getMessage("infReparacion.nomClient"));
 		lblNomClient.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblNomClient.setBounds(114, 11, 94, 14);
+		lblNomClient.setBounds(114, 11, 112, 14);
 		contentPane.add(lblNomClient);
 		
 		JLabel lblNombMecnic = new JLabel(TDSLanguageUtils.getMessage("infReparacion.nomMecanic"));
@@ -101,7 +100,7 @@ public class InformeReparaciones extends JFrame {
 		tbxIDReparacio.setColumns(10);
 		
 		tbxNomClient = new JTextField();
-		tbxNomClient.setBounds(114, 28, 89, 20);
+		tbxNomClient.setBounds(114, 28, 103, 20);
 		contentPane.add(tbxNomClient);
 		tbxNomClient.setColumns(10);
 		
@@ -126,7 +125,7 @@ public class InformeReparaciones extends JFrame {
 
 		JButton btnSalir = new JButton(TDSLanguageUtils.getMessage("infReparacion.sortir"));
 		btnSalir.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnSalir.setBounds(522, 416, 89, 23);
+		btnSalir.setBounds(522, 416, 134, 23);
 		contentPane.add(btnSalir);
 		btnSalir.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -137,7 +136,7 @@ public class InformeReparaciones extends JFrame {
 		
 		JLabel lblCognomclient = new JLabel(TDSLanguageUtils.getMessage("infReparacion.cognomClient"));
 		lblCognomclient.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblCognomclient.setBounds(226, 11, 82, 14);
+		lblCognomclient.setBounds(236, 11, 110, 14);
 		contentPane.add(lblCognomclient);
 		
 		JLabel lblCognomMecanic = new JLabel(TDSLanguageUtils.getMessage("infReparacion.cognomMecanic"));
@@ -146,7 +145,7 @@ public class InformeReparaciones extends JFrame {
 		contentPane.add(lblCognomMecanic);
 		
 		tbxCognomClient = new JTextField();
-		tbxCognomClient.setBounds(222, 28, 112, 20);
+		tbxCognomClient.setBounds(236, 28, 98, 20);
 		contentPane.add(tbxCognomClient);
 		tbxCognomClient.setColumns(10);
 		
@@ -166,7 +165,7 @@ public class InformeReparaciones extends JFrame {
 		tbxDataFi.setColumns(10);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(30, 188, 581, 173);
+		scrollPane.setBounds(30, 188, 749, 173);
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
@@ -211,6 +210,21 @@ public class InformeReparaciones extends JFrame {
 		btnConsultar.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnConsultar.setBounds(246, 131, 118, 23);
 		contentPane.add(btnConsultar);
+		
+		JLabel lblHoras = new JLabel("horas");
+		lblHoras.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblHoras.setBounds(351, 375, 46, 14);
+		contentPane.add(lblHoras);
+		
+		JLabel lblHoras_1 = new JLabel("horas");
+		lblHoras_1.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblHoras_1.setBounds(351, 400, 46, 14);
+		contentPane.add(lblHoras_1);
+		
+		JLabel lblHoras_2 = new JLabel("horas");
+		lblHoras_2.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblHoras_2.setBounds(351, 425, 46, 14);
+		contentPane.add(lblHoras_2);
 		btnConsultar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -269,7 +283,5 @@ public class InformeReparaciones extends JFrame {
 		
 		tabla.setModel(model);
 	}
-		
-	
 	}
 

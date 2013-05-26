@@ -47,9 +47,9 @@ public interface GestorEstadisticaInterface extends Remote{
 	public ArrayList <Usuari> obtenirEmpleats(String strIdUsuari, String strNomUsuari, String strCognomUsuari) throws  RemoteException, GestorEstadisticaException;
 	
 	
-	public ArrayList<Reparacio> calcularNumRepRessoltes (String strIdMecanic, String strNomMecanic, String strCognomMecanic) throws  RemoteException, GestorEstadisticaException;
+	public int calcularNumRepRessoltes (int idMecanic) throws  RemoteException, GestorEstadisticaException;
 
-	public ArrayList<Reparacio> calcularNumHoresTreballades (String strIdMecanic, String strNomMecanic, String strCognomMecanic) throws  RemoteException, GestorEstadisticaException;
+	public float calcularNumHoresRep (int idMecanic) throws  RemoteException, GestorEstadisticaException;
 	
 
 }
