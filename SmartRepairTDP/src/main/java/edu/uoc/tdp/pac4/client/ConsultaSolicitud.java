@@ -62,10 +62,10 @@ private JPanel contentPane;
 	private JLabel lblEstado;
 	private JLabel lblEstadoInfo;
 	private static GestorAdministracionInterface conexionRemota;
-	private JLabel lblNewLabel;
-	private JTextField txtDia;
-	private JTextField txtMes;
-	private JTextField txtAnyo;
+	//private JLabel lblNewLabel;
+	//private JTextField txtDia;
+	//private JTextField txtMes;
+	//private JTextField txtAnyo;
 	private JLabel label;
 	private JLabel label_1;
 	private JLabel lblddMm;
@@ -219,7 +219,7 @@ private JPanel contentPane;
 		lblEstadoInfo.setBounds(265, 60, 101, 16);
 		contentPane.add(lblEstadoInfo);
 		
-		lblNewLabel = new JLabel("F.de finalización:");
+		/*lblNewLabel = new JLabel("F.de finalización:");
 		lblNewLabel.setBounds(30, 250, 85, 14);
 		contentPane.add(lblNewLabel);
 		
@@ -249,7 +249,7 @@ private JPanel contentPane;
 		lblddMm = new JLabel("(dd / mm/ yyy)");
 		lblddMm.setBounds(298, 244, 82, 20);
 		contentPane.add(lblddMm);
-		
+		*/
 		
 	}
 	
@@ -296,7 +296,7 @@ private JPanel contentPane;
 				txtNumSol.setText(String.valueOf(sol.getNumsol()));
 				
 				textAreaComentario.setText(sol.getComentaris());
-				String NIF = String.valueOf(sol.getClient());
+				String NIF = String.valueOf(sol.getNifCliente());
 				Client client = conexionRemota.getDadeClient(NIF);
 				
 				if (client != null) {
@@ -316,14 +316,14 @@ private JPanel contentPane;
 					lblInfoMarca.setText("");
 					lblInfoBastidor.setText("");
 				}
-				String strAnyo = String.valueOf(sol.getDatafinalitzacio());
+			/*	String strAnyo = String.valueOf(sol.getDatafinalitzacio());
 				String[] arrayAnyo = strAnyo.split("-");
 				
 				if (arrayAnyo != null) {
 					txtAnyo.setText(arrayAnyo[0]);
 					txtMes.setText(arrayAnyo[1]);
 					txtDia.setText(arrayAnyo[2]);
-				}
+				}*/
 				if(sol.isFinalitzada()){
 				lblEstadoInfo.setText("Finalizado");
 				lblEstadoInfo.setForeground(Color.red);
@@ -361,9 +361,9 @@ private JPanel contentPane;
 		lblInfoBastidor.setText("");
 		lblEstadoInfo.setText("");
 		textAreaComentario.setText("");
-		txtAnyo.setText("");
-		txtMes.setText("");
-		txtDia.setText("");
+	//	txtAnyo.setText("");
+		//txtMes.setText("");
+		//txtDia.setText("");
 	}
 	
 	private void Imput(boolean b) {
@@ -374,9 +374,9 @@ private JPanel contentPane;
 		lblInfoBastidor.setEnabled(b);
 		btnGuardar.setEnabled(b);
 		textAreaComentario.setEnabled(b);
-		txtAnyo.setEnabled(b);
-		txtMes.setEnabled(b);
-		txtDia.setEnabled(b);
+		//txtAnyo.setEnabled(b);
+		//txtMes.setEnabled(b);
+		//txtDia.setEnabled(b);
 	}
 	
 	private JButton getBtnGuardar()
@@ -394,7 +394,7 @@ private JPanel contentPane;
 							sol.setNumsol(Integer.parseInt(txtNumSol.getText().toString()));
 							sol.setComentaris(textAreaComentario.getText().toString());
 							
-							String anyo = txtAnyo.getText().toString();
+							/*String anyo = txtAnyo.getText().toString();
 							String dia = txtDia.getText().toString();
 							String mes = txtMes.getText().toString();
 							String strFecha = dia + "/" + mes + "/" + anyo;
@@ -403,7 +403,7 @@ private JPanel contentPane;
 							java.util.Date dt1 = (java.util.Date) formatter.parse(strFecha);
 							java.sql.Date datafinalitzacio = new java.sql.Date(dt1.getTime());
 							sol.setDatafinalitzacio(datafinalitzacio);
-							
+							*/
 							conexionRemota.getActualizarSolicitud(sol);
 							String tittle =  TDSLanguageUtils.getMessage("solicitud.upd.titulo");
 							MuestraOk( TDSLanguageUtils.getMessage("cliente.msg.ok"), tittle);
@@ -433,7 +433,7 @@ private JPanel contentPane;
 						.getMessage("solicitud.msg.falta.comentario");
 				return strResult;
 			}
-			if (txtDia.getText().toString().equals("")) {
+			/*if (txtDia.getText().toString().equals("")) {
 				strResult = TDSLanguageUtils
 						.getMessage("solicitud.msg.falta.ffinalizacion");
 				return strResult;
@@ -450,7 +450,7 @@ private JPanel contentPane;
 						.getMessage("solicitud.msg.falta.ffinalizacion");
 				return strResult;
 
-			}
+			}*/
 			
 		} catch (Exception e) {
 			e.printStackTrace();

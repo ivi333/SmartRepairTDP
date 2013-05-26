@@ -213,7 +213,7 @@ public class GestionAvisos extends JDialog {
 					bPendiente=	sol.isPendent();
 					bFinalizada=sol.isFinalitzada();
 					
-					cli=conexionRemota.getDadeClient(String.valueOf(sol.getClient()));
+					cli=conexionRemota.getDadeClient(String.valueOf(sol.getNifCliente()));
 					if(cli!=null)
 					{
 						nom=cli.getNom();

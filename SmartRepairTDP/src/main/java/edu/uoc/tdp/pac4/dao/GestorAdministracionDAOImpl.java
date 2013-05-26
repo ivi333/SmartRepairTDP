@@ -577,7 +577,7 @@ public class GestorAdministracionDAOImpl extends ConnectionPostgressDB
 				sol.setComentaris(rs.getString("comentaris"));
 				sol.setDataalta(rs.getDate("dataalta"));
 				sol.setDatafinalitzacio(rs.getDate("datafinalitzacio"));
-				sol.setClient(rs.getInt("client"));
+				sol.setNifCliente(rs.getString("client"));
 				sol.setNumreparacio(rs.getInt("numreparacio"));
 				sol.setPendent(rs.getBoolean("pendent"));
 				sol.setFinalitzada(rs.getBoolean("finalitzada"));
@@ -796,7 +796,7 @@ public Solicitud getConsultarSolicitud(int numsol) throws DAOException {
 		while (rs.next()) {
 			solicitud = new Solicitud();
 			solicitud.setNumsol(rs.getInt("numsol"));
-			solicitud.setClient(rs.getInt("client"));
+			solicitud.setNifCliente(rs.getString("client"));
 			solicitud.setComentaris(rs.getString("comentaris"));
 			solicitud.setDataalta(rs.getDate("dataalta"));
 			solicitud.setDatafinalitzacio(rs.getDate("datafinalitzacio"));
